@@ -76,14 +76,14 @@ class WhatHeading extends WhatBase {
       degrees = getCalculatedHeading();
     } else {
       if (currentHeading != null) {
-        degrees = Utils.rad2deg(currentHeading);
+        degrees = rad2deg(currentHeading);
       }
     }
     if (degrees == null) {
       return "";
     }
 
-    return Utils.getCompassDirection(degrees);
+    return getCompassDirection(degrees);
   }
 
   function getCalculatedHeading() {
@@ -97,7 +97,7 @@ class WhatHeading extends WhatBase {
     var llTo = currentLocation.toDegrees();
     var lat2 = llTo[0];
     var lon2 = llTo[1];
-    return Utils.getRhumbLineBearing(lat1, lon1, lat2, lon2);
+    return getRhumbLineBearing(lat1, lon1, lat2, lon2);
   }
 
   function getZoneInfo(rpm) {

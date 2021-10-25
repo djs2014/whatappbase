@@ -2,7 +2,7 @@ module WhatAppBase {
 import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
-  using WhatUtils as Utils;
+ 
 
   class WhatDistance extends WhatBase {
     // in km
@@ -72,11 +72,11 @@ import Toybox.System;
     function convertToMetricOrStatute(value) {
       if (elapsedDistance < 1) {
         if (devSettings.distanceUnits == System.UNIT_STATUTE) {
-          value = Utils.meterToFeet(value);
+          value = meterToFeet(value);
         }
       } else {
         if (devSettings.distanceUnits == System.UNIT_STATUTE) {
-          value = Utils.kilometerToMile(value);
+          value = kilometerToMile(value);
         }
       }
       return value;
@@ -110,7 +110,7 @@ import Toybox.System;
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }
-      var percOfTarget = Utils.percentageOf(distance, targetDistance);
+      var percOfTarget = percentageOf(distance, targetDistance);
 
       var color = percentageToColor(percOfTarget);
       var color100perc = null;

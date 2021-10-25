@@ -46,7 +46,7 @@ class WhatTrainingEffect extends WhatBase {
                           Graphics.COLOR_BLACK, 0, null);
     }
 
-    var percOfTarget = Utils.percentageOf(effect, targetEffect);
+    var percOfTarget = percentageOf(effect, targetEffect);
 
     if (effect < 1) {
       return new ZoneInfo(1, "No effect", WhatColor.COLOR_WHITE_BLUE_3,

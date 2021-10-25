@@ -30,7 +30,7 @@ class WhatPressure extends WhatBase {
     if (info has : ambientPressure) {
       available = true;
       if (info.ambientPressure) {
-        self.ambientPressure = Utils.pascalToMilliBar(info.ambientPressure);
+        self.ambientPressure = pascalToMilliBar(info.ambientPressure);
       } else {
         self.ambientPressure = 0.0f;
       }
@@ -38,7 +38,7 @@ class WhatPressure extends WhatBase {
 
     if (info has : meanSeaLevelPressure) {
       if (info.meanSeaLevelPressure) {
-        self.meanSeaLevelPressure = Utils.pascalToMilliBar(info.meanSeaLevelPressure);
+        self.meanSeaLevelPressure = pascalToMilliBar(info.meanSeaLevelPressure);
       } else {
         self.meanSeaLevelPressure = 0.0f;
       }

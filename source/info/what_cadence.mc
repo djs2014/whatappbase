@@ -78,7 +78,7 @@ class WhatCadence extends WhatBase {
       return new ZoneInfo(0, "Cadence", Graphics.COLOR_WHITE,
                           Graphics.COLOR_BLACK, 0, null);
     }
-    var percOfTarget = Utils.percentageOf(rpm, targetCadence);
+    var percOfTarget = percentageOf(rpm, targetCadence);
     var color = percentageToColor(percOfTarget);
     var color100perc = null;
     if (percOfTarget > 100) {

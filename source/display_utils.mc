@@ -2,7 +2,7 @@ module WhatAppBase {
 import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
-  using WhatUtils as Utils;
+ 
 
   class WhatDisplay {
     hidden var dc;
@@ -78,7 +78,7 @@ import Toybox.Lang;
       // 3 fields: w[246] h[106]
 
       _widthAdditionalInfo =
-          Utils.min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
+          min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
       mFontValueAdditionalIndex = 3;
       if (isSmallField()) {
         _widthAdditionalInfo = 29.0f;
@@ -134,8 +134,8 @@ import Toybox.Lang;
       var columnHeight = left.y - top.y;
       var y = percentageToYpostion(percentage, top.y, columnHeight);
 
-      var slopeLeft = Utils.slopeOfLine(left.x, left.y, top.x, top.y);
-      var slopeRight = Utils.slopeOfLine(right.x, right.y, top.x, top.y);
+      var slopeLeft = slopeOfLine(left.x, left.y, top.x, top.y);
+      var slopeRight = slopeOfLine(right.x, right.y, top.x, top.y);
 
       // System.println("top" + top + "left" + left + " right" + right +
       //                " slopeLeft:" + slopeLeft + " slopeRight:" +

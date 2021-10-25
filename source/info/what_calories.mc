@@ -2,7 +2,7 @@ module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
-  using WhatUtils as Utils;
+ 
 
   class WhatCalories extends WhatBase {
     hidden var calories = 0.0f;           // kcal
@@ -53,7 +53,7 @@ import Toybox.Activity;
                             Graphics.COLOR_BLACK, 0, null);
       }
 
-      var percOfTarget = Utils.percentageOf(cal, targetCalories);
+      var percOfTarget = percentageOf(cal, targetCalories);
       var color = percentageToColor(percOfTarget);
       var color100perc = null;
       if (percOfTarget > 100) {

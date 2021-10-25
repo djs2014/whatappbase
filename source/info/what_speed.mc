@@ -33,7 +33,7 @@ class WhatSpeed extends WhatBase {
       available = true;
       if (info.currentSpeed) {
         // speed is in meters per second
-        currentSpeed = Utils.mpsToKmPerHour(info.currentSpeed);
+        currentSpeed = mpsToKmPerHour(info.currentSpeed);
       } else {
         currentSpeed = 0.0f;
       }
@@ -41,14 +41,14 @@ class WhatSpeed extends WhatBase {
 
     if (info has : averageSpeed) {
       if (info.averageSpeed) {
-        avarageSpeed = Utils.mpsToKmPerHour(info.averageSpeed);
+        avarageSpeed = mpsToKmPerHour(info.averageSpeed);
       } else {
         avarageSpeed = 0.0f;
       }
     }
     if (info has : maxSpeed) {
       if (info.maxSpeed) {
-        maxSpeed = Utils.mpsToKmPerHour(info.maxSpeed);
+        maxSpeed = mpsToKmPerHour(info.maxSpeed);
       } else {
         maxSpeed = 0.0f;
       }
@@ -84,7 +84,7 @@ class WhatSpeed extends WhatBase {
 
   function convertToMetricOrStatute(value) {
     if (devSettings.distanceUnits == System.UNIT_STATUTE) {
-      value = Utils.kilometerToMile(value);
+      value = kilometerToMile(value);
     }
     return value;
   }
@@ -99,7 +99,7 @@ class WhatSpeed extends WhatBase {
       return new ZoneInfo(0, "Speed", Graphics.COLOR_WHITE,
                           Graphics.COLOR_BLACK, 0, null);
     }
-    var percOfTarget = Utils.percentageOf(speed, targetSpeed);
+    var percOfTarget = percentageOf(speed, targetSpeed);
     var label = "Speed";  //(" + percOfTarget.format("%.0f") + "%)";
     var color = percentageToColor(percOfTarget);
     var color100perc = null;

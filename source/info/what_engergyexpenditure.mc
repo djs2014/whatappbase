@@ -2,7 +2,7 @@ module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
-  using WhatUtils as Utils;
+ 
 
   class WhatEngergyExpenditure extends WhatBase {
     hidden var energyExpenditure = 0.0f;          // kcal/min
@@ -46,7 +46,7 @@ import Toybox.Activity;
       }
 
       var percOfTarget =
-          Utils.percentageOf(energyExpenditure, targetEngergyExpenditure);
+          percentageOf(energyExpenditure, targetEngergyExpenditure);
 
       var color = percentageToColor(percOfTarget);
       var color100perc = null;

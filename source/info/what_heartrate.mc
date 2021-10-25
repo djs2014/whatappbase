@@ -78,7 +78,7 @@ class WhateHeartrate extends WhatBase {
                           Graphics.COLOR_BLACK, 0, null);
     }
 
-    var percOfTarget = Utils.percentageOf(hr, hrZones[5]);
+    var percOfTarget = percentageOf(hr, hrZones[5]);
     var color = percentageToColor(percOfTarget);
     var color100perc = null;
     if (percOfTarget > 100) {

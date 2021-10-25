@@ -109,7 +109,7 @@ class WhatPower extends WhatBase {
       return new ZoneInfo(0, "Power (" + getUnitsLong() + ")",
                           Graphics.COLOR_WHITE, Graphics.COLOR_BLACK, 0, null);
     }
-    var percOfTarget = Utils.percentageOf(ppx, ftp);
+    var percOfTarget = percentageOf(ppx, ftp);
     var color = percentageToColor(percOfTarget);
     var color100perc = null;
     if (percOfTarget>100){
