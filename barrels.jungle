@@ -1,0 +1,5 @@
+# Do not hand edit this file. To make changes run the 
+# "Configure Monkey Barrels" command.
+
+WhatUtils = [e:\0_development\projects\ConnectIQWorkspace\barrels\whatutils\monkey.jungle]
+base.barrelPath = $(base.barrelPath);$(WhatUtils)
