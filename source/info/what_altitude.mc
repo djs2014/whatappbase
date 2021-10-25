@@ -2,7 +2,6 @@ module WhatAppBase {
 import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
- 
 
   class WhatAltitude extends WhatBase {
     hidden var previousAltitude = 0;
@@ -70,7 +69,7 @@ import Toybox.System;
     }
 
     function convertToMetricOrStatute(value) {
-      if (devSettings.elevationUnits == System.UNIT_STATUTE) {        
+      if (devSettings.elevationUnits == System.UNIT_STATUTE) {
         value = meterToFeet(value);
       }
       return value;

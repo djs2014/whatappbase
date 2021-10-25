@@ -36,9 +36,7 @@
             Use "Monkey C: Configure Monkey Barrel" from the Visual Studio Code
             command palette to edit the included barrels.
         -->
-        <iq:barrels>
-            <iq:depends name="WhatUtils" version="0.0.0"/>
-        </iq:barrels>
+        <iq:barrels/>
         <!--
             Use "Monkey C: Edit Annotations" from the Visual Studio Code
             command palette to edit the annotations.

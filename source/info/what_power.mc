@@ -3,7 +3,6 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.System;
 import Toybox.Graphics;
-using WhatUtils as Utils;
 
 class WhatPower extends WhatBase {
   hidden var perSec = 3;

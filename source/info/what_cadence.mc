@@ -2,7 +2,6 @@ module WhatAppBase {
   import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
-using WhatUtils as Utils;
 
 class WhatCadence extends WhatBase {
   hidden var currentCadence = 0;

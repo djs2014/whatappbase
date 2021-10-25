@@ -1,7 +1,6 @@
 module WhatAppBase {import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
-using WhatUtils as Utils;
 
 class WhatTrainingEffect extends WhatBase {
   hidden var trainingEffect = 0;

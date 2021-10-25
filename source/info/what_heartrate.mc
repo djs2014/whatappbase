@@ -1,7 +1,6 @@
 module WhatAppBase {using Toybox.UserProfile;
 import Toybox.Lang;
 import Toybox.System;
-using WhatUtils as Utils;
 
 class WhateHeartrate extends WhatBase {
   hidden var currentHeartRate = 0;

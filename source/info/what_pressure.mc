@@ -2,7 +2,6 @@ module WhatAppBase {import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
 using Toybox.SensorHistory;
-using WhatUtils as Utils;
 
 class WhatPressure extends WhatBase {
   hidden var perMin = 30;

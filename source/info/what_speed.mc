@@ -1,7 +1,6 @@
 module WhatAppBase {import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
-using WhatUtils as Utils;
 
 class WhatSpeed extends WhatBase {
   hidden var currentSpeed = 0;
