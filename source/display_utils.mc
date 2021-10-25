@@ -9,6 +9,7 @@ import Toybox.Lang;
     hidden var margin = 1;  // y @@
     hidden var marginLeft = 1;
     hidden var marginRight = 1;
+    hidden var heightPercentageLineBottomBar = 2;
     hidden var backgroundColor = Graphics.COLOR_WHITE;
     hidden var nightMode = false;
     hidden var showTopInfo = true;
@@ -336,10 +337,10 @@ import Toybox.Lang;
       }
       var xb = dc.getWidth() / 2 - wBottomBar / 2;
       var yb = dc.getHeight() - hv + 2;
-      var yPercentage = dc.getHeight() - 2;
+      var yPercentage = dc.getHeight() - heightPercentageLineBottomBar;
       var wPercentage = wBottomBar / 100.0 * percentage;
 
-      if (isSmallField()) {
+      if (leftAndRightCircleFillWholeScreen()) {
         yb = dc.getHeight() - 5;
         dc.fillRoundedRectangle(xb, yb, wBottomBar, hv / 2, 3);
       } else {
@@ -355,7 +356,7 @@ import Toybox.Lang;
       drawPercentageLine(xb, yPercentage, wBottomBar, percentage, 2,
                          colorPercentageLine);
 
-      if (isSmallField()) {
+      if (leftAndRightCircleFillWholeScreen()) {
         return;
       }
 
@@ -406,7 +407,11 @@ import Toybox.Lang;
                                  outlineColor, percentage, color100perc) {
       var heightBottomBar = 0;
       if (showBottomInfo) {
-        heightBottomBar = dc.getFontHeight(mFontBottomValue);
+        if (leftAndRightCircleFillWholeScreen()) {
+          heightBottomBar = heightPercentageLineBottomBar;
+        } else {
+          heightBottomBar = dc.getFontHeight(mFontBottomValue);
+        }
       }
       var wBottomBar = 2 * _widthAdditionalInfo;
       var top = new Point(dc.getWidth() / 2, margin);
