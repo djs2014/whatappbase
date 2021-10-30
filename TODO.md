@@ -1,6 +1,6 @@
 TESTv - heading: ignore when value is 0.0 or null + check min elapseddistance
 
--perctext
+-drawPercentageText
 - units position + size - larger on wide fields?
 - have unitfonts and labelfonts
 - no middle -> left/right bigger?

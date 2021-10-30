@@ -107,7 +107,7 @@ module WhatAppBase {
       var avgZone = mWhatApp._wiLeft.zoneInfoAverage();
       var label = zone.name;
       if (mWhatApp._wiLeft.isLabelHidden()) {
-        label = null;
+        label = "";
       }
       mWD.drawLeftInfo(zone.fontColor, value, zone.color,
                        mWhatApp._wiLeft.units(), avgZone.color, zone.perc,
@@ -122,7 +122,7 @@ module WhatAppBase {
       var avgZone = mWhatApp._wiTop.zoneInfoAverage();
       var label = zone.name;
       if (mWhatApp._wiTop.isLabelHidden()) {
-        label = null;
+        label = "";
       }
       mWD.drawTopInfo(zone.fontColor, value, zone.color,
                       mWhatApp._wiTop.units(), avgZone.color, zone.perc,
@@ -138,7 +138,7 @@ module WhatAppBase {
       var avgZone = mWhatApp._wiRight.zoneInfoAverage();
       var label = zone.name;
       if (mWhatApp._wiRight.isLabelHidden()) {
-        label = null;
+        label = "";
       }
       mWD.drawRightInfo(zone.fontColor, value, zone.color,
                         mWhatApp._wiRight.units(), avgZone.color, zone.perc,
@@ -154,7 +154,7 @@ module WhatAppBase {
       var avgZone = mWhatApp._wiBottom.zoneInfoAverage();
       var label = zone.name;
       if (mWhatApp._wiBottom.isLabelHidden()) {
-        label = null;
+        label = "";
       }
       mWD.drawBottomInfo(zone.fontColor, value, zone.color,
                          mWhatApp._wiBottom.units(), avgZone.color, zone.perc,
