@@ -1,6 +1,7 @@
 module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
+import Toybox.Activity;
 
   enum {
     ShowInfoNothing = 0,

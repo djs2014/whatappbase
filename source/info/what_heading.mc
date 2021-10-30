@@ -69,7 +69,7 @@ class WhatHeading extends WhatBase {
     }
   }
 
-  function convertToDisplayFormat(value, fieldType) as string {
+  function convertToDisplayFormat(value, fieldType) as Lang.String {
     var degrees = null;
     if (currentLocationAccuracy >= minimalLocationAccuracy) {
       degrees = getCalculatedHeading();

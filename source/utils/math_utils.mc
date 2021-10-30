@@ -1,5 +1,7 @@
 module WhatAppBase {
 import Toybox.System;
+import Toybox.Lang;
+
   using Toybox.Math;
 
   function min(a as Lang.Number, b as Lang.Number) {

@@ -1,5 +1,6 @@
 module WhatAppBase {
 import Toybox.System;
+import Toybox.Lang;
 
   const MILE = 1.609344;
   const FEET = 3.281;
@@ -80,7 +81,7 @@ import Toybox.System;
     return km / MILE;
   }
 
-  function removeLeadingZero(value as String) {
+  function removeLeadingZero(value as Lang.String) {
     if (value.substring(0, 1) == "0.") {
       return value.substring(2);
     }

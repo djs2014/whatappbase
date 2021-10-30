@@ -25,7 +25,7 @@ class WhatTime extends WhatBase {
     return "";
   }
 
-  function convertToDisplayFormat(value, fieldType) as string {
+  function convertToDisplayFormat(value, fieldType) as Lang.String {
     if (value == null) {
       return "";
     }
