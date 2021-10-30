@@ -7,16 +7,20 @@ module WhatAppBase {
   class WhatInfoBase {
     var fieldType = Types.SmallField;
     hidden var devSettings;
-    hidden var available = true;
-    hidden var activityPaused = false;
+    hidden var available = true as Lang.Boolean;
+    hidden var labelHidden = false as Lang.Boolean;
+    hidden var activityPaused = false as Lang.Boolean;
 
     function initialize() { devSettings = System.getDeviceSettings(); }
 
-    function isAvailable() { return available; }
-    function setFieldType(fieldType) { self.fieldType = fieldType; }
+    function isAvailable() as Lang.Boolean { return available; }
+    function isLabelHidden() as Lang.Boolean { return labelHidden; }
+    
+    function setFieldType(fieldType) as Void { self.fieldType = fieldType; }
 
-    function updateInfo(info as Activity.Info) {}
-    function activityIsPaused(info as Activity.Info) {
+    function updateInfo(info as Activity.Info) as Void{}
+
+    function activityIsPaused(info as Activity.Info) as Lang.Boolean {
       if (info has : timerState) {
         return info.timerState == Activity.TIMER_STATE_PAUSED;
       }
@@ -31,11 +35,11 @@ module WhatAppBase {
                           null);
     }
 
-    function getUnits() as String { return ""; }
+    function getUnits() as Lang.String { return ""; }
 
-    function getUnitsLong() as String { return ""; }
+    function getUnitsLong() as Lang.String { return ""; }
 
-    function getFormatString(fieldType) as String {
+    function getFormatString(fieldType) as Lang.String {
       switch (fieldType) {
         case Types.OneField:
         case Types.WideField:

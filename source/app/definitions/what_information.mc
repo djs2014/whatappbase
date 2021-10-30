@@ -21,82 +21,8 @@ import Toybox.Activity;
     ShowInfoTrainingEffect = 14,
     ShowInfoTemperature = 15,  // @@ not working yet
     ShowInfoEnergyExpenditure = 16,
-    ShowInfoPowerPerBodyWeight = 17 // @@ TODO
+    ShowInfoPowerPerBodyWeight = 17  // @@ TODO
   }
-
-  // function
-  // getShowInformation(showInfo, showInfoHrFallback,
-  //                    showInfoTrainingEffectFallback, info as Activity.Info)
-  //     as WhatInformation {
-  //   // System.println("showInfo: " + showInfo);
-  //   switch (showInfo) {
-  //     case ShowInfoPower:
-  //       return new WhatInformation(_wPower.powerPerX(),
-  //                                  _wPower.getAveragePower(),
-  //                                  _wPower.getMaxPower(), _wPower);
-  //     case ShowInfoHeartrate:
-  //       if (info != null) {
-  //         _wHeartrate.updateInfo(info);
-  //       }
-  //       if (!_wHeartrate.isAvailable() &&
-  //           showInfoHrFallback != ShowInfoNothing) {
-  //         return getShowInformation(showInfoHrFallback, ShowInfoNothing,
-  //                                   ShowInfoNothing, null);
-  //       }
-  //       return new WhatInformation(_wHeartrate.getCurrentHeartrate(),
-  //                                  _wHeartrate.getAverageHeartrate(),
-  //                                  _wHeartrate.getMaxHeartrate(), _wHeartrate);
-  //     case ShowInfoSpeed:
-  //       return new WhatInformation(_wSpeed.getCurrentSpeed(),
-  //                                  _wSpeed.getAverageSpeed(),
-  //                                  _wSpeed.getMaxSpeed(), _wSpeed);
-  //     case ShowInfoCadence:
-  //       return new WhatInformation(_wCadence.getCurrentCadence(),
-  //                                  _wCadence.getAverageCadence(),
-  //                                  _wCadence.getMaxCadence(), _wCadence);
-  //     case ShowInfoAltitude:
-  //       return new WhatInformation(_wAltitude.getCurrentAltitude(), 0, 0,
-  //                                  _wAltitude);
-  //     case ShowInfoGrade:
-  //       return new WhatInformation(_wGrade.getGrade(), 0, 0, _wGrade);
-  //     case ShowInfoHeading:
-  //       return new WhatInformation(_wHeading.getCurrentHeading(), 0, 0,
-  //                                  _wHeading);
-  //     case ShowInfoDistance:
-  //       return new WhatInformation(_wDistance.getElapsedDistanceMorKm(), 0, 0,
-  //                                  _wDistance);
-  //     case ShowInfoAmbientPressure:
-  //       return new WhatInformation(_wPowerressure.getPressure(), 0, 0,
-  //                                  _wPowerressure);
-  //     case ShowInfoTimeOfDay:
-  //       return new WhatInformation(_wTime.getTime(), 0, 0, _wTime);
-  //     case ShowInfoCalories:
-  //       return new WhatInformation(_wCalories.getCalories(), 0, 0, _wCalories);
-  //     case ShowInfoTotalAscent:
-  //       return new WhatInformation(_wAltitude.getTotalAscent(), 0, 0,
-  //                                  _wAltitude);
-  //     case ShowInfoTotalDescent:
-  //       return new WhatInformation(_wAltitude.getTotalDescent(), 0, 0,
-  //                                  _wAltitude);
-  //     case ShowInfoTrainingEffect:
-  //       if (info != null) {
-  //         _wTrainingEffect.updateInfo(info);
-  //       }
-  //       if (!_wTrainingEffect.isAvailable() &&
-  //           showInfoTrainingEffectFallback != ShowInfoNothing) {
-  //         return getShowInformation(showInfoTrainingEffectFallback,
-  //                                   ShowInfoNothing, ShowInfoNothing, null);
-  //       }
-  //       return new WhatInformation(_wTrainingEffect.getTrainingEffect(), 0, 0,
-  //                                  _wTrainingEffect);
-  //     case ShowInfoEnergyExpenditure:
-  //       return new WhatInformation(_wEngergyExpenditure.getEnergyExpenditure(),
-  //                                  0, 0, _wEngergyExpenditure);
-  //     case ShowInfoNothing:
-  //     default:
-  //       return null;
-  //   }
-  // }
 
   class WhatInformation {
     var value = 0.0f;
@@ -108,6 +34,7 @@ import Toybox.Activity;
     var methodGetZoneInfo;
     var methodGetUnits;
     var methodConvertToDisplayFormat;
+    var methodIsLabelHidden;
 
     function initialize(value, average, max, objInstance as WhatInfoBase) {
       self.value = value;
@@ -121,11 +48,16 @@ import Toybox.Activity;
         methodConvertToDisplayFormat =
             new Lang.Method(self.objInstance,
                             : convertToDisplayFormat);
+        methodIsLabelHidden = new Lang.Method(self.objInstance, : isLabelHidden);
       }
     }
 
     function updateInfo(info as Activity.Info) {
       return methodUpdateInfo.invoke(info);
+    }
+
+    function isLabelHidden() as Lang.Boolean {
+      return methodIsLabelHidden.invoke();
     }
 
     function zoneInfoValue() as ZoneInfo {

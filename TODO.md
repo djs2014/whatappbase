@@ -1,18 +1,24 @@
-move info etc to barrel whatbase
-move display to sep barrel -> whatappbase
+TESTv - heading: ignore when value is 0.0 or null + check min elapseddistance
 
-- label in left/right when wide field
-- font not larger not for wide field middle? if triangle / circle
-font larger
+-perctext
 - units position + size - larger on wide fields?
 - have unitfonts and labelfonts
 - no middle -> left/right bigger?
 - use font for icons heartrate/power etc.
-- heading: ignore when value is 0.0 or null + check min elapseddistance
-watt/kg info field
+
+info fields:
+- watt/kg info field
+- total asc/desc info field
+- add property: label needed, heading not -> N is obvious or callback?
+
 show app name
 organise todo's
 
-lineup parameters draw*Info()
-function drawLeftInfo(color, value, backColor, units, outlineColor,
-                          percentage, color100perc, label) {
+nightmode - when not started or paused
+- circle + line and black background not filled and filled rectangle around text on top of triangle
+
+heading: only after x meters calc lat/lng heading / speed?
+larger font in big fields
+use custom font for icons: wingding oid 
+
+

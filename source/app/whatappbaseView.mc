@@ -105,9 +105,13 @@ module WhatAppBase {
       var value = mWhatApp._wiLeft.formattedValue(Types.SmallField);
       var zone = mWhatApp._wiLeft.zoneInfoValue();
       var avgZone = mWhatApp._wiLeft.zoneInfoAverage();
+      var label = zone.name;
+      if (mWhatApp._wiLeft.isLabelHidden()) {
+        label = null;
+      }
       mWD.drawLeftInfo(zone.fontColor, value, zone.color,
                        mWhatApp._wiLeft.units(), avgZone.color, zone.perc,
-                       zone.color100perc, zone.name);
+                       zone.color100perc, label);
     }
     function drawTopInfo(dc) {
       if (mWhatApp._wiTop == null) {
@@ -116,9 +120,13 @@ module WhatAppBase {
       var value = mWhatApp._wiTop.formattedValue(Types.SmallField);
       var zone = mWhatApp._wiTop.zoneInfoValue();
       var avgZone = mWhatApp._wiTop.zoneInfoAverage();
-      mWD.drawTopInfo(zone.name, zone.fontColor, value, zone.color,
+      var label = zone.name;
+      if (mWhatApp._wiTop.isLabelHidden()) {
+        label = null;
+      }
+      mWD.drawTopInfo(zone.fontColor, value, zone.color,
                       mWhatApp._wiTop.units(), avgZone.color, zone.perc,
-                      zone.color100perc);
+                      zone.color100perc, label);
     }
 
     function drawRightInfo(dc) {
@@ -128,9 +136,13 @@ module WhatAppBase {
       var value = mWhatApp._wiRight.formattedValue(Types.SmallField);
       var zone = mWhatApp._wiRight.zoneInfoValue();
       var avgZone = mWhatApp._wiRight.zoneInfoAverage();
+      var label = zone.name;
+      if (mWhatApp._wiRight.isLabelHidden()) {
+        label = null;
+      }
       mWD.drawRightInfo(zone.fontColor, value, zone.color,
                         mWhatApp._wiRight.units(), avgZone.color, zone.perc,
-                        zone.color100perc, zone.name);
+                        zone.color100perc, label);
     }
 
     function drawBottomInfo(dc) {
@@ -139,23 +151,14 @@ module WhatAppBase {
       }
       var value = mWhatApp._wiBottom.formattedValue(mWD.fieldType);
       var zone = mWhatApp._wiBottom.zoneInfoValue();
-      var label = zone.name;  // @@ should be short
-      mWD.drawBottomInfo(zone.fontColor, label, value,
-                         mWhatApp._wiBottom.units(), zone.color, zone.perc,
-                         zone.color100perc);
-    }
-
-    function drawBottomDataTriangle(dc) {
-      var value = mWhatApp._wiBottom.formattedValue(mWD.fieldType);
-      var zone = mWhatApp._wiBottom.zoneInfoValue();
-      var label = zone.name;  // @@ should be short
-
-      var color = zone.fontColor;
-      var backColor = zone.color;
-
-      mWD.drawInfoTriangleThingy(color, label, value,
-                                 mWhatApp._wiBottom.units(), backColor,
-                                 zone.perc, zone.color100perc);
+      var avgZone = mWhatApp._wiBottom.zoneInfoAverage();
+      var label = zone.name;
+      if (mWhatApp._wiBottom.isLabelHidden()) {
+        label = null;
+      }
+      mWD.drawBottomInfo(zone.fontColor, value, zone.color,
+                         mWhatApp._wiBottom.units(), avgZone.color, zone.perc,
+                         zone.color100perc, label);
     }
 
     function getShowInformation(showInfo, showInfoHrFallback,
@@ -197,8 +200,9 @@ module WhatAppBase {
           return new WhatInformation(mWhatApp._wGrade.getGrade(), 0, 0,
                                      mWhatApp._wGrade);
         case ShowInfoHeading:
-          return new WhatInformation(mWhatApp._wHeading.getCurrentHeading(), 0,
-                                     0, mWhatApp._wHeading);
+          return new WhatInformation(
+              mWhatApp._wHeading.getCurrentHeadingInDegrees(), 0, 0,
+              mWhatApp._wHeading);
         case ShowInfoDistance:
           return new WhatInformation(
               mWhatApp._wDistance.getElapsedDistanceMorKm(), 0, 0,
