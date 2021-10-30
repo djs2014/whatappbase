@@ -1,7 +1,7 @@
-module WhatAppBase {
 import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
+module WhatAppBase {
 
   class WhatDisplay {
     hidden var dc;
@@ -32,18 +32,18 @@ import Toybox.Lang;
       Graphics.FONT_SYSTEM_SMALL, Graphics.FONT_SYSTEM_MEDIUM,
       Graphics.FONT_SYSTEM_LARGE, Graphics.FONT_NUMBER_MILD,
       Graphics.FONT_NUMBER_HOT
-    ];
+    ] as Lang.Array<Lang.Number>;
     hidden var _widthAdditionalInfo = 15;
 
     var width = 0;
     var height = 0;
-    var fieldType = SmallField;
+    var fieldType = Types.SmallField;
 
     function initialize() {}
 
-    function isSmallField() { return fieldType == SmallField; }
-    function isWideField() { return fieldType == WideField; }
-    function isOneField() { return fieldType == OneField; }
+    function isSmallField() { return fieldType == Types.SmallField; }
+    function isWideField() { return fieldType == Types.WideField; }
+    function isOneField() { return fieldType == Types.OneField; }
     function isNightMode() { return nightMode; }
     function setNightMode(nightMode) { self.nightMode = nightMode; }
     function setMiddleLayout(middleLayout) { self.middleLayout = middleLayout; }
@@ -62,12 +62,12 @@ import Toybox.Lang;
 
       self.width = dc.getWidth();
       self.height = dc.getHeight();
-      self.fieldType = SmallField;
+      self.fieldType = Types.SmallField;
 
       if (self.width >= 246) {
-        self.fieldType = WideField;
+        self.fieldType = Types.WideField;
         if (self.height >= 322) {
-          self.fieldType = OneField;
+          self.fieldType = Types.OneField;
         }
       }
 
@@ -80,7 +80,7 @@ import Toybox.Lang;
       // 3 fields: w[246] h[106]
 
       // @@ function to set fonts + some dimensions
-      _widthAdditionalInfo = min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
+      _widthAdditionalInfo = Utils.min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
       mFontValueAdditionalIndex = 4;
       if (isSmallField()) {
         _widthAdditionalInfo = 29.0f;
@@ -138,8 +138,8 @@ import Toybox.Lang;
       var columnHeight = left.y - top.y;
       var y = percentageToYpostion(percentage, top.y, columnHeight);
 
-      var slopeLeft = slopeOfLine(left.x, left.y, top.x, top.y);
-      var slopeRight = slopeOfLine(right.x, right.y, top.x, top.y);
+      var slopeLeft = Utils.slopeOfLine(left.x, left.y, top.x, top.y);
+      var slopeRight = Utils.slopeOfLine(right.x, right.y, top.x, top.y);
 
       // System.println("top" + top + "left" + left + " right" + right +
       //                " slopeLeft:" + slopeLeft + " slopeRight:" +
@@ -542,12 +542,13 @@ import Toybox.Lang;
 
     hidden function getFontAdditionalInfo(maxwidth, value) {
       var index = mFontValueAdditionalIndex;
-      var font = mFontValueAdditional[index];
+      var fontList = mFontValueAdditional as Lang.Array<Lang.Number>;
+      var font = fontList[index];
       var widthValue = dc.getTextWidthInPixels(value, font);
 
       while (widthValue > maxwidth && index > 0) {
         index = index - 1;
-        font = mFontValueAdditional[index];
+        font = fontList[index];
         widthValue = dc.getTextWidthInPixels(value, font);
       }      
       // System.println("font index: " + index);
@@ -593,12 +594,7 @@ import Toybox.Lang;
     }
   }
 
-  enum {
-    SmallField = 0,
-    WideField = 1,
-    OneField = 2
-  }
-
+  
   enum {
     LayoutMiddleCircle = 0,
     LayoutMiddleTriangle = 1,

@@ -2,23 +2,23 @@ module WhatAppBase {import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
 
-class WhatTrainingEffect extends WhatBase {
+class WhatTrainingEffect extends WhatInfoBase {
   hidden var trainingEffect = 0;
   hidden var targetEffect = 4.8f;
 
-  function initialize() { WhatBase.initialize(); }
+  function initialize() { WhatInfoBase.initialize(); }
 
   function updateInfo(info as Activity.Info) {
     available = false;
     if (info has : trainingEffect) {
-      if (info.trainingEffect) {
+      if (info.trainingEffect != null) {
         trainingEffect = info.trainingEffect;
       } else {
         trainingEffect = 0.0f;
       }
       // Training effect needs HR data
       if (info has : currentHeartRate) {
-        if (info.currentHeartRate) {
+        if (info.currentHeartRate != null) {
           available = true;
         } 
       }
@@ -45,7 +45,7 @@ class WhatTrainingEffect extends WhatBase {
                           Graphics.COLOR_BLACK, 0, null);
     }
 
-    var percOfTarget = percentageOf(effect, targetEffect);
+    var percOfTarget = Utils.percentageOf(effect, targetEffect);
 
     if (effect < 1) {
       return new ZoneInfo(1, "No effect", WhatColor.COLOR_WHITE_BLUE_3,

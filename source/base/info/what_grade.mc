@@ -2,19 +2,19 @@ module WhatAppBase {import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
 
-class WhatGrade extends WhatBase {
+class WhatGrade extends WhatInfoBase {
   hidden var previousAltitude = 0;
   hidden var currentAltitude = 0;
   hidden var previousElapsedDistance = 0;
   hidden var elapsedDistance = 0;
   hidden var grade = 0.0f;  // %
 
-  function initialize() { WhatBase.initialize(); }
+  function initialize() { WhatInfoBase.initialize(); }
 
   function updateInfo(info as Activity.Info) {
     if (info has : altitude) {
       previousAltitude = currentAltitude;
-      if (info.altitude) {
+      if (info.altitude != null) {
         currentAltitude = info.altitude;
       } else {
         currentAltitude = 0.0f;
@@ -22,7 +22,7 @@ class WhatGrade extends WhatBase {
     }
     if (info has : elapsedDistance) {
       previousElapsedDistance = elapsedDistance;
-      if (info.elapsedDistance) {
+      if (info.elapsedDistance != null) {
         elapsedDistance = info.elapsedDistance;
       } else {
         elapsedDistance = 0.0f;
@@ -69,10 +69,10 @@ class WhatGrade extends WhatBase {
 
   function getFormatString(fieldType) as String {
     switch (fieldType) {
-      case OneField:
-      case WideField:
+      case Types.OneField:
+      case Types.WideField:
         return "%.2f";
-      case SmallField:
+      case Types.SmallField:
       default:
         return "%.1f";
     }

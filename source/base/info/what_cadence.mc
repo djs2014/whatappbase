@@ -3,13 +3,13 @@ module WhatAppBase {
 import Toybox.System;
 import Toybox.Activity;
 
-class WhatCadence extends WhatBase {
+class WhatCadence extends WhatInfoBase {
   hidden var currentCadence = 0;
   hidden var avarageCadence = 0;
   hidden var maxCadence = 0;
   hidden var targetCadence = 30;
 
-  function initialize() { WhatBase.initialize(); }
+  function initialize() { WhatInfoBase.initialize(); }
 
   function setTargetCadence(targetCadence) {
     self.targetCadence = targetCadence;
@@ -77,7 +77,7 @@ class WhatCadence extends WhatBase {
       return new ZoneInfo(0, "Cadence", Graphics.COLOR_WHITE,
                           Graphics.COLOR_BLACK, 0, null);
     }
-    var percOfTarget = percentageOf(rpm, targetCadence);
+    var percOfTarget = Utils.percentageOf(rpm, targetCadence);
     var color = percentageToColor(percOfTarget);
     var color100perc = null;
     if (percOfTarget > 100) {

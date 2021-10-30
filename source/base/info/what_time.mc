@@ -3,10 +3,10 @@ import Toybox.Lang;
 import Toybox.System;
 using Toybox.Time.Gregorian as Calendar;
 
-class WhatTime extends WhatBase {
+class WhatTime extends WhatInfoBase {
   hidden var now;
   function initialize() {
-    WhatBase.initialize();  
+    WhatInfoBase.initialize();  
     now = Calendar.info(Time.now(), Time.FORMAT_SHORT);
   }
 

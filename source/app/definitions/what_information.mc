@@ -20,7 +20,8 @@ import Toybox.Activity;
     ShowInfoTotalDescent = 13,  // @@ TODO combine ascent/descent
     ShowInfoTrainingEffect = 14,
     ShowInfoTemperature = 15,  // @@ not working yet
-    ShowInfoEnergyExpenditure = 16
+    ShowInfoEnergyExpenditure = 16,
+    ShowInfoPowerPerBodyWeight = 17 // @@ TODO
   }
 
   // function
@@ -108,7 +109,7 @@ import Toybox.Activity;
     var methodGetUnits;
     var methodConvertToDisplayFormat;
 
-    function initialize(value, average, max, objInstance as WhatBase) {
+    function initialize(value, average, max, objInstance as WhatInfoBase) {
       self.value = value;
       self.average = average;
       self.max = max;

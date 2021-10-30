@@ -4,19 +4,19 @@ import Toybox.Lang;
 import Toybox.System;
  
 
-  class WhatDistance extends WhatBase {
+  class WhatDistance extends WhatInfoBase {
     // in km
-    hidden var elapsedDistance = 0.0f;
-    hidden var targetDistance = 150.0f;
+    hidden var elapsedDistance = 0.0f as Lang.Float;
+    hidden var targetDistance = 150.0f as Lang.Float;
 
-    function initialize() { WhatBase.initialize(); }
-    function setTargetDistance(targetDistance) {
+    function initialize() { WhatInfoBase.initialize(); }
+    function setTargetDistance(targetDistance as Lang.Float) {
       self.targetDistance = targetDistance;
     }
 
     function updateInfo(info as Activity.Info) {
       if (info has : elapsedDistance) {
-        if (info.elapsedDistance) {
+        if (info.elapsedDistance != null) {
           self.elapsedDistance = info.elapsedDistance / 1000.0;
         } else {
           self.elapsedDistance = 0.0f;
@@ -24,21 +24,21 @@ import Toybox.System;
       }
     }
 
-    function getElapsedDistance() {
+    function getElapsedDistance() as Lang.Float {
       if (elapsedDistance == null) {
-        return 0;
+        return 0.0f;
       }
       return elapsedDistance;
     }
 
     // returns distance in m or km
-    function getElapsedDistanceMorKm() {
+    function getElapsedDistanceMorKm() as Lang.Float {
       if (elapsedDistance == null) {
-        return 0;
+        return 0.0f;
       }
       // System.println(elapsedDistance);
       if (elapsedDistance < 1) {
-        return elapsedDistance * 1000.0;
+        return elapsedDistance * 1000.0f;
       }
       return elapsedDistance;
     }
@@ -61,22 +61,17 @@ import Toybox.System;
           return "m";
         }
         return "km";
-      }
-
-      if (elapsedDistance < 1) {
-        return "m";
-      }
-      return "km";
+      }      
     }
 
-    function convertToMetricOrStatute(value) {
+    function convertToMetricOrStatute(value) as Lang.Float {
       if (elapsedDistance < 1) {
         if (devSettings.distanceUnits == System.UNIT_STATUTE) {
-          value = meterToFeet(value);
+          value = Utils.meterToFeet(value);
         }
       } else {
         if (devSettings.distanceUnits == System.UNIT_STATUTE) {
-          value = kilometerToMile(value);
+          value = Utils.kilometerToMile(value);
         }
       }
       return value;
@@ -84,13 +79,13 @@ import Toybox.System;
 
     function getFormatString(fieldType) as String {
       switch (fieldType) {
-        case OneField:
-        case WideField:
+        case Types.OneField:
+        case Types.WideField:
           if (elapsedDistance < 1) {
             return "%.0f";
           }
           return "%.2f";
-        case SmallField:
+        case Types.SmallField:
         default:
           if (elapsedDistance < 1) {
             return "%.0f";
@@ -103,14 +98,14 @@ import Toybox.System;
     }
 
     //  160 = century 100 = metric century @@ TODO
-    function getZoneInfo(dummy) {
+    function getZoneInfo(dummy) as ZoneInfo {
       var label = "Distance";
       var distance = elapsedDistance;  // km
       if (distance == null || distance == 0) {
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }
-      var percOfTarget = percentageOf(distance, targetDistance);
+      var percOfTarget = Utils.percentageOf(distance, targetDistance);
 
       var color = percentageToColor(percOfTarget);
       var color100perc = null;

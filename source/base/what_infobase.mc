@@ -1,10 +1,11 @@
-module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
+using WhatAppBase.Types;
+module WhatAppBase {
 
-  class WhatBase {
-    var fieldType = SmallField;
+  class WhatInfoBase {
+    var fieldType = Types.SmallField;
     hidden var devSettings;
     hidden var available = true;
     hidden var activityPaused = false;
@@ -36,9 +37,9 @@ import Toybox.Activity;
 
     function getFormatString(fieldType) as String {
       switch (fieldType) {
-        case OneField:
-        case WideField:
-        case SmallField:
+        case Types.OneField:
+        case Types.WideField:
+        case Types.SmallField:
         default:
           return "%.0f";
       }

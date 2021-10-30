@@ -2,13 +2,13 @@ module WhatAppBase {import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
 
-class WhatSpeed extends WhatBase {
+class WhatSpeed extends WhatInfoBase {
   hidden var currentSpeed = 0;
   hidden var avarageSpeed = 0;
   hidden var maxSpeed = 0;
   hidden var targetSpeed = 30;
 
-  function initialize() { WhatBase.initialize(); }
+  function initialize() { WhatInfoBase.initialize(); }
 
   function setTargetSpeed(targetSpeed) { self.targetSpeed = targetSpeed; }
   function getAverageSpeed() {
@@ -30,24 +30,24 @@ class WhatSpeed extends WhatBase {
     activityPaused = activityIsPaused(info);
     if (info has : currentSpeed) {
       available = true;
-      if (info.currentSpeed) {
+      if (info.currentSpeed != null) {
         // speed is in meters per second
-        currentSpeed = mpsToKmPerHour(info.currentSpeed);
+        currentSpeed = Utils.mpsToKmPerHour(info.currentSpeed);
       } else {
         currentSpeed = 0.0f;
       }
     }
 
     if (info has : averageSpeed) {
-      if (info.averageSpeed) {
-        avarageSpeed = mpsToKmPerHour(info.averageSpeed);
+      if (info.averageSpeed != null) {
+        avarageSpeed = Utils.mpsToKmPerHour(info.averageSpeed);
       } else {
         avarageSpeed = 0.0f;
       }
     }
     if (info has : maxSpeed) {
-      if (info.maxSpeed) {
-        maxSpeed = mpsToKmPerHour(info.maxSpeed);
+      if (info.maxSpeed != null) {
+        maxSpeed = Utils.mpsToKmPerHour(info.maxSpeed);
       } else {
         maxSpeed = 0.0f;
       }
@@ -83,7 +83,7 @@ class WhatSpeed extends WhatBase {
 
   function convertToMetricOrStatute(value) {
     if (devSettings.distanceUnits == System.UNIT_STATUTE) {
-      value = kilometerToMile(value);
+      value = Utils.kilometerToMile(value);
     }
     return value;
   }
@@ -98,7 +98,7 @@ class WhatSpeed extends WhatBase {
       return new ZoneInfo(0, "Speed", Graphics.COLOR_WHITE,
                           Graphics.COLOR_BLACK, 0, null);
     }
-    var percOfTarget = percentageOf(speed, targetSpeed);
+    var percOfTarget = Utils.percentageOf(speed, targetSpeed);
     var label = "Speed";  //(" + percOfTarget.format("%.0f") + "%)";
     var color = percentageToColor(percOfTarget);
     var color100perc = null;
