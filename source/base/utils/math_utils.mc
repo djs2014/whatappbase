@@ -37,6 +37,11 @@ module WhatAppBase {
       return value / (max / 100.0);
     }
 
+    function valueOfPercentage(percentage, maxValue) {
+      if (percentage == 0.0) { return maxValue;}
+      return (maxValue * (percentage / 100.0));
+    }
+
     // straight line formula y = slope * x + b;
     function slopeOfLine(x1, y1, x2, y2) {
       var rise_deltaY = y2 - y1;

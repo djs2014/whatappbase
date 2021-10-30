@@ -1,10 +1,12 @@
 TESTv - heading: ignore when value is 0.0 or null + check min elapseddistance
 
--drawPercentageText
+-drawPercentageText max arguments <10!
 - units position + size - larger on wide fields?
 - have unitfonts and labelfonts
 - no middle -> left/right bigger?
 - use font for icons heartrate/power etc.
+
+- show app name when paused / not started
 
 info fields:
 - watt/kg info field

@@ -2,7 +2,6 @@ import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
 module WhatAppBase {
-
   class WhatDisplay {
     hidden var dc;
     hidden var margin = 1;  // y @@ -> convert to marginTop/marginBottom
@@ -34,6 +33,8 @@ module WhatAppBase {
       Graphics.FONT_NUMBER_HOT
     ] as Lang.Array<Lang.Number>;
     hidden var _widthAdditionalInfo = 15;
+
+    hidden var COLOR_MAX_PERCENTAGE = WhatColor.COLOR_WHITE_DK_PURPLE_4;
 
     var width = 0;
     var height = 0;
@@ -80,7 +81,8 @@ module WhatAppBase {
       // 3 fields: w[246] h[106]
 
       // @@ function to set fonts + some dimensions
-      _widthAdditionalInfo = Utils.min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
+      _widthAdditionalInfo =
+          Utils.min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
       mFontValueAdditionalStartIndex = 4;
       if (isSmallField()) {
         _widthAdditionalInfo = 29.0f;
@@ -158,24 +160,46 @@ module WhatAppBase {
       }
       return [];
     }
-    // @@TODO drawPercentageText
-    function drawPercentageText(x, y, text, percentage, color, percentageColor,
-                                backColor) {}
-    
 
-    
-    
+    // x, y center of text
+    function drawPercentageText(x, y, font, text, percentage, initialTextColor,
+                                percentageColor, backColor) {
+      var textDimensions =
+          dc.getTextDimensions(text, font) as Lang.Array<Lang.Number>;  // [w,h]
+      var width = textDimensions[0];
+      var height = textDimensions[1];
+
+      // Calculate upper corner of Rectangle
+      var xRect = x - (width / 2.0);
+      var yRect = y - (height / 2.0);
+
+      // NB: filling is from top to bottom
+      // draw percentage part (100%): 0% -> all white      
+      dc.setColor(percentageColor, Graphics.COLOR_TRANSPARENT);
+      dc.fillRectangle(xRect, yRect + 1, width, height);
+
+      // And fill what is not reached with the initial color
+      var heightPerc =
+          Utils.min(height, Utils.valueOfPercentage(100 - percentage, height));
+      // System.println("percentage: " + percentage + " text: " + textDimensions +
+      //                " x: " + x + "y: " + y + " heightPerc: " + heightPerc);
+      
+      dc.setColor(initialTextColor, Graphics.COLOR_TRANSPARENT);
+      dc.fillRectangle(xRect, yRect + 1, width, heightPerc);
+
+      // draw text
+      dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
+      dc.drawText(xRect, yRect, font, text, Graphics.TEXT_JUSTIFY_LEFT);
+                  // Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+    }
+
     function leftAndRightCircleFillWholeScreen() {
       return dc.getWidth() - 40 <
              (4 * _widthAdditionalInfo) + (marginLeft + marginRight);
     }
 
-    hidden function getHeigthInfoBottom() {
-      // @@
-    }
-    
     function drawBottomInfo(color, value, backColor, units, outlineColor,
-                          percentage, color100perc, label) {
+                            percentage, color100perc, label) {
       var hv = dc.getFontHeight(mFontBottomValue);
       var widthLabel = dc.getTextWidthInPixels(label, mFontBottomLabel);
       var widthValue = dc.getTextWidthInPixels(value, mFontBottomValue);
@@ -242,7 +266,7 @@ module WhatAppBase {
                          percentage, color100perc, label) {
       if (middleLayout == LayoutMiddleTriangle) {
         drawTopInfoTriangle(color, value, backColor, units, outlineColor,
-                         percentage, color100perc, label);
+                            percentage, color100perc, label);
         return;
       }
       var barX = dc.getWidth() / 2;
@@ -251,10 +275,12 @@ module WhatAppBase {
       drawAdditonalInfoBG(barX, _widthAdditionalInfo, backColor, percentage,
                           color100perc);
       if (!leftAndRightCircleFillWholeScreen()) {
-        var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value, mFontValueAdditionalStartIndex-1);
-        drawAdditonalInfoFG(barX, _widthAdditionalInfo, color, value, fontValue,
-                            units, mFontLabelAdditional, label,
-                            mFontLabelAdditional);
+        var fontValue =
+            getFontAdditionalInfo(_widthAdditionalInfo * 2, value,
+                                  mFontValueAdditionalStartIndex - 1);
+        drawAdditonalInfoFG(barX, color, value, fontValue, units,
+                            mFontLabelAdditional, label, mFontLabelAdditional,
+                            percentage);
 
         // @@ label not needed here?
         // var yLabel = dc.getFontHeight(mFontBottomLabel) / 2;
@@ -268,7 +294,7 @@ module WhatAppBase {
     }
 
     function drawTopInfoTriangle(color, value, backColor, units, outlineColor,
-                         percentage, color100perc, label) {
+                                 percentage, color100perc, label) {
       var heightBottomBar = 0;
       if (showBottomInfo) {
         if (leftAndRightCircleFillWholeScreen()) {
@@ -312,7 +338,9 @@ module WhatAppBase {
       if (!leftAndRightCircleFillWholeScreen()) {
         var maxwidth = (right.x - left.x);
         var x = left.x + maxwidth / 2.0;
-        var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value, mFontValueAdditionalStartIndex -1);
+        var fontValue =
+            getFontAdditionalInfo(_widthAdditionalInfo * 2, value,
+                                  mFontValueAdditionalStartIndex - 1);
         // var y = (left.y - top.y) / 2;
         var y = getCenterYcoordCircleAdditionalInfo();
         var ha = dc.getFontHeight(fontValue);
@@ -347,11 +375,12 @@ module WhatAppBase {
       drawAdditonalInfoBG(barX, _widthAdditionalInfo, backColor, percentage,
                           color100perc);
 
-      var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value, mFontValueAdditionalStartIndex);
+      var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value,
+                                            mFontValueAdditionalStartIndex);
       // @@ determine labelFont??//
-      drawAdditonalInfoFG(barX, _widthAdditionalInfo, color, value, fontValue,
-                          units, mFontLabelAdditional, label,
-                          mFontLabelAdditional);
+      drawAdditonalInfoFG(barX, color, value, fontValue, units,
+                          mFontLabelAdditional, label, mFontLabelAdditional,
+                          percentage);
 
       // outline
       drawAdditonalInfoOutline(barX, _widthAdditionalInfo, outlineColor);
@@ -368,11 +397,12 @@ module WhatAppBase {
       drawAdditonalInfoOutline(barX, _widthAdditionalInfo, outlineColor);
 
       // units + value
-      var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value, mFontValueAdditionalStartIndex);
+      var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value,
+                                            mFontValueAdditionalStartIndex);
 
-      drawAdditonalInfoFG(barX, _widthAdditionalInfo, color, value, fontValue,
-                          units, mFontLabelAdditional, label,
-                          mFontLabelAdditional);
+      drawAdditonalInfoFG(barX, color, value, fontValue, units,
+                          mFontLabelAdditional, label, mFontLabelAdditional,
+                          percentage);
     }
 
     hidden function getCenterYcoordCircleAdditionalInfo() {
@@ -399,7 +429,7 @@ module WhatAppBase {
     }
 
     hidden function getFontAdditionalInfo(maxwidth, value, startIndex) {
-      var index = startIndex; 
+      var index = startIndex;
       var fontList = mFontValueAdditional as Lang.Array<Lang.Number>;
       var font = fontList[index];
       var widthValue = dc.getTextWidthInPixels(value, font);
@@ -408,28 +438,42 @@ module WhatAppBase {
         index = index - 1;
         font = fontList[index];
         widthValue = dc.getTextWidthInPixels(value, font);
-      }      
+      }
       // System.println("font index: " + index);
       return font;
     }
 
-    hidden function drawAdditonalInfoFG(x, width, color, value, fontValue,
-                                        units, fontUnits, label, fontLabel) {
+    hidden function drawAdditonalInfoFG(x, color, value, fontValue, units,
+                                        fontUnits, label, fontLabel,
+                                        percentage) {
+      // Too many arguments used by a method, which are currently limited to 10
+      // arguments
+      var width = _widthAdditionalInfo;
       var y = getCenterYcoordCircleAdditionalInfo();
 
       // label
-      if (!isSmallField() &&  label != null && label.length() > 0) {
+      if (!isSmallField() && label != null && label.length() > 0) {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        var yLabel = y - (dc.getFontHeight(fontValue) / 2) - (dc.getFontHeight(fontLabel) / 2) + marginTop;
+        var yLabel = y - (dc.getFontHeight(fontValue) / 2) -
+                     (dc.getFontHeight(fontLabel) / 2) + marginTop;
         dc.drawText(
             x, yLabel, fontLabel, label,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);        
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
 
       // value
-      dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-      dc.drawText(x, y, fontValue, value,
-                  Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+      if (percentage < 200) {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            x, y, fontValue, value,
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+      } else {
+        drawPercentageText(x, y, fontValue, value, percentage - 200,
+                           Graphics.COLOR_WHITE, Graphics.COLOR_RED,
+                           COLOR_MAX_PERCENTAGE);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+      }
+
       // units
       var ha = dc.getFontHeight(fontValue);
       if (units != null && units.length() != 0) {
@@ -452,7 +496,6 @@ module WhatAppBase {
     }
   }
 
-  
   enum {
     LayoutMiddleCircle = 0,
     LayoutMiddleTriangle = 1,
