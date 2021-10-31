@@ -13,15 +13,24 @@ module WhatAppBase {
     hidden var previousLocation = null as Position.Location;
     hidden var currentLocation = null as Position.Location;
     hidden var currentLocationAccuracy = 0 as Lang.Number;
-    hidden var minimalLocationAccuracy = 1 as Lang.Number;
+    hidden var minimalLocationAccuracy = 1 as Lang.Number; // @@ make setting
+
+    hidden var previousElapsedDistance = 0.0f;
+    hidden var elapsedDistance = 0.0f;
+    hidden var currentElapsedDistanceInMeters = 0.0f;
+    hidden var minimalElapsedDistanceInMeters = 1.0f; // @@ make setting
 
     function initialize() {
       WhatInfoBase.initialize();
-      labelHidden = true;
+      labelHidden = true;      
     }
 
     function setMinimalLocationAccuracy(minimalLocationAccuracy) {
       self.minimalLocationAccuracy = minimalLocationAccuracy;
+    }
+
+    function setMinimalElapsedDistanceInMeters(minimalElapsedDistanceInMeters) {
+      self.minimalElapsedDistanceInMeters = minimalElapsedDistanceInMeters;
     }
 
     function updateInfo(info as Activity.Info) as Void {
@@ -58,16 +67,43 @@ module WhatAppBase {
         // System.println("currentLocationAccuracy: " +
         // currentLocationAccuracy);
       }
+
+      if (info has : elapsedDistance) {
+        previousElapsedDistance = elapsedDistance;
+        if (info.elapsedDistance != null) {
+          elapsedDistance = info.elapsedDistance;
+        } else {
+          elapsedDistance = 0.0f;
+        }
+        // Distance between the two gps locations
+        currentElapsedDistanceInMeters =
+            elapsedDistance - previousElapsedDistance;
+      }
     }
 
     function getUnitsLong() as Lang.String { return ""; }
 
     function getUnits() as String {
-      if (!currentLocationAccuracy) {
-        return currentLocationAccuracy.format(
-            "%0.0f");  // @@ TEST show GPS bars ..
+      var info = "";
+      if (debug) {
+        if (currentLocationAccuracy != null) {
+          info = info + "gps[" + currentLocationAccuracy.format("%0.0f") + "]";
+        }
+        if (currentElapsedDistanceInMeters > 0) {
+          info = info + "m[" + currentElapsedDistanceInMeters.format("%0.1f") +
+                 "]";
+        }
+        if (track != null) {
+          // ?? always 0 on edge 830?
+          info = info + "\ntrk[" + Utils.rad2deg(track).format("%0.0f") + "]";
+        }
+
+        if (currentHeading != null) {
+          info = info + " hdg[" +
+                 Utils.rad2deg(currentHeading).format("%0.0f") + "]";
+        }
       }
-      return "";
+      return info;
     }
 
     function getFormatString(fieldType) as Lang.String {
@@ -82,7 +118,8 @@ module WhatAppBase {
     }
 
     function validGPS() as Lang.Boolean {
-      return (currentLocationAccuracy >= minimalLocationAccuracy);
+      return (currentLocationAccuracy >= minimalLocationAccuracy &&
+              currentElapsedDistanceInMeters > minimalElapsedDistanceInMeters);
     }
 
     function getCurrentHeadingInDegrees() as Lang.Number {

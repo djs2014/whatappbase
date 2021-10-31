@@ -1,4 +1,9 @@
 TESTv - heading: ignore when value is 0.0 or null + check min elapseddistance
+-> whatpower sync settings -> speed 
+
+- wide field: units te laag
+- training effect -> verkeerde code? staat als energie exp
+- energie exp -> geen label of ee
 
 -drawPercentageText max arguments <10!
 - units position + size - larger on wide fields?

@@ -5,6 +5,7 @@ using WhatAppBase.Utils;
 
 module WhatAppBase {
   class WhatApp {
+    var appName = "";
     var _wiTop = null as WhatInformation;
     var _wiLeft = null as WhatInformation;
     var _wiRight = null as WhatInformation;
@@ -33,7 +34,8 @@ module WhatAppBase {
     var _showInfoLayout = LayoutMiddleCircle;
     var _showSealevelPressure = true;
 
-    function initialize() {
+    function initialize(appName as Lang.String) {
+      self.appName = appName;
       // AppBase.initialize();
 
       _wPower = new WhatPower();
@@ -81,6 +83,10 @@ module WhatAppBase {
         _showInfoTrainingEffectFallback = Utils.getNumberProperty(
             "showInfoTrainingEffectFallback", ShowInfoEnergyExpenditure);
 
+        var debug = Utils.getBooleanProperty("debug", false);
+        // @@ TODO factory getting only the instances shown
+        _wHeading.setDebug(debug);
+
         _showInfoLayout =
             Utils.getNumberProperty("showInfoLayout", LayoutMiddleCircle);
 
@@ -105,11 +111,23 @@ module WhatAppBase {
             Utils.getNumberProperty("targetEnergyExpenditure", 15));
         _wHeading.setMinimalLocationAccuracy(
             Utils.getNumberProperty("minimalLocationAccuracy", 2));
+        _wHeading.setMinimalElapsedDistanceInMeters(
+            Utils.getNumberProperty("minimalElapsedDistanceInMeters", 1)); // @@ TODO in settings
 
         System.println("Settings loaded");
+        infoSettings();
       } catch (ex) {
         ex.printStackTrace();
       }
+    }
+
+    function infoSettings() as Void {
+      System.println("_showInfoTop[" + _showInfoTop + "] _showInfoLeft[" +
+                     _showInfoLeft + "] _showInfoRight[" + _showInfoRight +
+                     "] _showInfoBottom[" + _showInfoBottom +
+                     "] _showInfoHrFallback[" + _showInfoHrFallback +
+                     "] _showInfoTrainingEffectFallback[" +
+                     _showInfoTrainingEffectFallback + "]");
     }
   }
 

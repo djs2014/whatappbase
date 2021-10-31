@@ -3,22 +3,25 @@ import Toybox.System;
 import Toybox.Activity;
 using WhatAppBase.Types;
 module WhatAppBase {
-
   class WhatInfoBase {
     var fieldType = Types.SmallField;
     hidden var devSettings;
     hidden var available = true as Lang.Boolean;
     hidden var labelHidden = false as Lang.Boolean;
     hidden var activityPaused = false as Lang.Boolean;
+    hidden var debug = false as Lang.Boolean;
 
     function initialize() { devSettings = System.getDeviceSettings(); }
 
     function isAvailable() as Lang.Boolean { return available; }
     function isLabelHidden() as Lang.Boolean { return labelHidden; }
-    
+
     function setFieldType(fieldType) as Void { self.fieldType = fieldType; }
 
-    function updateInfo(info as Activity.Info) as Void{}
+    function setDebug(debug) as Void { self.debug = debug; }
+    function isDebug() as Boolean { return self.debug; }
+
+    function updateInfo(info as Activity.Info) as Void {}
 
     function activityIsPaused(info as Activity.Info) as Lang.Boolean {
       if (info has : timerState) {

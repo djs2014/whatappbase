@@ -9,12 +9,13 @@ module WhatAppBase {
   class WhatAppView extends WatchUi.DataField {
     hidden var mWD;
     hidden var mNoInfo = null as Activity.Info;
-    hidden var mWhatApp = null as WhatApp;
+    hidden var mApp = null as WhatApp;
+    hidden var mShowAppName = false as Lang.Boolean;
 
     function initialize(whatApp as WhatApp) {
       DataField.initialize();
       mWD = new WhatDisplay();
-      mWhatApp = whatApp;
+      mApp = whatApp;
     }
 
     // Set your layout here. Anytime the size of obscurity of
@@ -26,30 +27,35 @@ module WhatAppBase {
     // Note that compute() and onUpdate() are asynchronous, and there is no
     // guarantee that compute() will be called before onUpdate().
     function compute(info as Activity.Info) as Void {
-      mWhatApp._wiTop = getShowInformation(
-          mWhatApp._showInfoTop, mWhatApp._showInfoHrFallback,
-          mWhatApp._showInfoTrainingEffectFallback, info);
-      mWhatApp._wiBottom = getShowInformation(
-          mWhatApp._showInfoBottom, mWhatApp._showInfoHrFallback,
-          mWhatApp._showInfoTrainingEffectFallback, info);
-      mWhatApp._wiLeft = getShowInformation(
-          mWhatApp._showInfoLeft, mWhatApp._showInfoHrFallback,
-          mWhatApp._showInfoTrainingEffectFallback, info);
-      mWhatApp._wiRight = getShowInformation(
-          mWhatApp._showInfoRight, mWhatApp._showInfoHrFallback,
-          mWhatApp._showInfoTrainingEffectFallback, info);
+      mApp._wiTop =
+          getShowInformation(mApp._showInfoTop, mApp._showInfoHrFallback,
+                             mApp._showInfoTrainingEffectFallback, info);
+      mApp._wiBottom =
+          getShowInformation(mApp._showInfoBottom, mApp._showInfoHrFallback,
+                             mApp._showInfoTrainingEffectFallback, info);
+      mApp._wiLeft =
+          getShowInformation(mApp._showInfoLeft, mApp._showInfoHrFallback,
+                             mApp._showInfoTrainingEffectFallback, info);
+      mApp._wiRight =
+          getShowInformation(mApp._showInfoRight, mApp._showInfoHrFallback,
+                             mApp._showInfoTrainingEffectFallback, info);
 
-      if (mWhatApp._wiTop != null) {
-        mWhatApp._wiTop.updateInfo(info);
+      if (mApp._wiTop != null) {
+        mApp._wiTop.updateInfo(info);
       }
-      if (mWhatApp._wiBottom != null) {
-        mWhatApp._wiBottom.updateInfo(info);
+      if (mApp._wiBottom != null) {
+        mApp._wiBottom.updateInfo(info);
       }
-      if (mWhatApp._wiLeft != null) {
-        mWhatApp._wiLeft.updateInfo(info);
+      if (mApp._wiLeft != null) {
+        mApp._wiLeft.updateInfo(info);
       }
-      if (mWhatApp._wiRight != null) {
-        mWhatApp._wiRight.updateInfo(info);
+      if (mApp._wiRight != null) {
+        mApp._wiRight.updateInfo(info);
+      }
+
+      mShowAppName = true;
+      if (info has : timerState) {
+        mShowAppName = (info.timerState != Activity.TIMER_STATE_ON);
       }
     }
 
@@ -68,96 +74,100 @@ module WhatAppBase {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
       }
 
-      mWhatApp._wiTop = getShowInformation(
-          mWhatApp._showInfoTop, mWhatApp._showInfoHrFallback,
-          mWhatApp._showInfoTrainingEffectFallback, mNoInfo);
-      mWhatApp._wiBottom = getShowInformation(
-          mWhatApp._showInfoBottom, mWhatApp._showInfoHrFallback,
-          mWhatApp._showInfoTrainingEffectFallback, mNoInfo);
-      mWhatApp._wiLeft = getShowInformation(
-          mWhatApp._showInfoLeft, mWhatApp._showInfoHrFallback,
-          mWhatApp._showInfoTrainingEffectFallback, mNoInfo);
-      mWhatApp._wiRight = getShowInformation(
-          mWhatApp._showInfoRight, mWhatApp._showInfoHrFallback,
-          mWhatApp._showInfoTrainingEffectFallback, mNoInfo);
+      mApp._wiTop =
+          getShowInformation(mApp._showInfoTop, mApp._showInfoHrFallback,
+                             mApp._showInfoTrainingEffectFallback, mNoInfo);
+      mApp._wiBottom =
+          getShowInformation(mApp._showInfoBottom, mApp._showInfoHrFallback,
+                             mApp._showInfoTrainingEffectFallback, mNoInfo);
+      mApp._wiLeft =
+          getShowInformation(mApp._showInfoLeft, mApp._showInfoHrFallback,
+                             mApp._showInfoTrainingEffectFallback, mNoInfo);
+      mApp._wiRight =
+          getShowInformation(mApp._showInfoRight, mApp._showInfoHrFallback,
+                             mApp._showInfoTrainingEffectFallback, mNoInfo);
 
-      var showTop = mWhatApp._wiTop != null;
-      var showLeft = mWhatApp._wiLeft != null;
-      var showRight = mWhatApp._wiRight != null;
-      var showBottom = mWhatApp._wiBottom != null;
+      var showTop = mApp._wiTop != null;
+      var showLeft = mApp._wiLeft != null;
+      var showRight = mApp._wiRight != null;
+      var showBottom = mApp._wiBottom != null;
 
       mWD.setShowTopInfo(showTop);
       mWD.setShowLeftInfo(showLeft);
       mWD.setShowRightInfo(showRight);
       mWD.setShowBottomInfo(showBottom);
-      mWD.setMiddleLayout(mWhatApp._showInfoLayout);
+      mWD.setMiddleLayout(mApp._showInfoLayout);
+
 
       drawTopInfo(dc);
       drawLeftInfo(dc);
       drawRightInfo(dc);
       drawBottomInfo(dc);
+
+      if (mShowAppName && mApp.appName != null && mApp.appName.length()>0) {
+        dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_BLACK);
+        dc.drawText(0, 0, Graphics.FONT_XTINY, mApp.appName, Graphics.TEXT_JUSTIFY_LEFT);
+      }
     }
 
     function drawLeftInfo(dc) {
-      if (mWhatApp._wiLeft == null) {
+      if (mApp._wiLeft == null) {
         return;
       }
-      var value = mWhatApp._wiLeft.formattedValue(Types.SmallField);
-      var zone = mWhatApp._wiLeft.zoneInfoValue();
-      var avgZone = mWhatApp._wiLeft.zoneInfoAverage();
+      var value = mApp._wiLeft.formattedValue(Types.SmallField);
+      var zone = mApp._wiLeft.zoneInfoValue();
+      var avgZone = mApp._wiLeft.zoneInfoAverage();
       var label = zone.name;
-      if (mWhatApp._wiLeft.isLabelHidden()) {
+      if (mApp._wiLeft.isLabelHidden()) {
         label = "";
       }
-      mWD.drawLeftInfo(zone.fontColor, value, zone.color,
-                       mWhatApp._wiLeft.units(), avgZone.color, zone.perc,
-                       zone.color100perc, label);
+      mWD.drawLeftInfo(zone.fontColor, value, zone.color, mApp._wiLeft.units(),
+                       avgZone.color, zone.perc, zone.color100perc, label);
     }
     function drawTopInfo(dc) {
-      if (mWhatApp._wiTop == null) {
+      if (mApp._wiTop == null) {
         return;
       }
-      var value = mWhatApp._wiTop.formattedValue(Types.SmallField);
-      var zone = mWhatApp._wiTop.zoneInfoValue();
-      var avgZone = mWhatApp._wiTop.zoneInfoAverage();
+      var value = mApp._wiTop.formattedValue(Types.SmallField);
+      var zone = mApp._wiTop.zoneInfoValue();
+      var avgZone = mApp._wiTop.zoneInfoAverage();
       var label = zone.name;
-      if (mWhatApp._wiTop.isLabelHidden()) {
+      if (mApp._wiTop.isLabelHidden()) {
         label = "";
       }
-      mWD.drawTopInfo(zone.fontColor, value, zone.color,
-                      mWhatApp._wiTop.units(), avgZone.color, zone.perc,
-                      zone.color100perc, label);
+      mWD.drawTopInfo(zone.fontColor, value, zone.color, mApp._wiTop.units(),
+                      avgZone.color, zone.perc, zone.color100perc, label);
     }
 
     function drawRightInfo(dc) {
-      if (mWhatApp._wiRight == null) {
+      if (mApp._wiRight == null) {
         return;
       }
-      var value = mWhatApp._wiRight.formattedValue(Types.SmallField);
-      var zone = mWhatApp._wiRight.zoneInfoValue();
-      var avgZone = mWhatApp._wiRight.zoneInfoAverage();
+      var value = mApp._wiRight.formattedValue(Types.SmallField);
+      var zone = mApp._wiRight.zoneInfoValue();
+      var avgZone = mApp._wiRight.zoneInfoAverage();
       var label = zone.name;
-      if (mWhatApp._wiRight.isLabelHidden()) {
+      if (mApp._wiRight.isLabelHidden()) {
         label = "";
       }
       mWD.drawRightInfo(zone.fontColor, value, zone.color,
-                        mWhatApp._wiRight.units(), avgZone.color, zone.perc,
+                        mApp._wiRight.units(), avgZone.color, zone.perc,
                         zone.color100perc, label);
     }
 
     function drawBottomInfo(dc) {
-      if (mWhatApp._wiBottom == null) {
+      if (mApp._wiBottom == null) {
         return;
       }
-      var value = mWhatApp._wiBottom.formattedValue(mWD.fieldType);
-      var zone = mWhatApp._wiBottom.zoneInfoValue();
-      var avgZone = mWhatApp._wiBottom.zoneInfoAverage();
+      var value = mApp._wiBottom.formattedValue(mWD.fieldType);
+      var zone = mApp._wiBottom.zoneInfoValue();
+      var avgZone = mApp._wiBottom.zoneInfoAverage();
       var label = zone.name;
-      if (mWhatApp._wiBottom.isLabelHidden()) {
+      if (mApp._wiBottom.isLabelHidden()) {
         label = "";
       }
       mWD.drawBottomInfo(zone.fontColor, value, zone.color,
-                         mWhatApp._wiBottom.units(), avgZone.color, zone.perc,
+                         mApp._wiBottom.units(), avgZone.color, zone.perc,
                          zone.color100perc, label);
     }
 
@@ -167,78 +177,74 @@ module WhatAppBase {
       // System.println("showInfo: " + showInfo);
       switch (showInfo) {
         case ShowInfoPower:
-          return new WhatInformation(
-              mWhatApp._wPower.powerPerX(), mWhatApp._wPower.getAveragePower(),
-              mWhatApp._wPower.getMaxPower(), mWhatApp._wPower);
+          return new WhatInformation(mApp._wPower.powerPerX(),
+                                     mApp._wPower.getAveragePower(),
+                                     mApp._wPower.getMaxPower(), mApp._wPower);
         case ShowInfoHeartrate:
           if (info != null) {
-            mWhatApp._wHeartrate.updateInfo(info);
+            mApp._wHeartrate.updateInfo(info);
           }
-          if (!mWhatApp._wHeartrate.isAvailable() &&
+          if (!mApp._wHeartrate.isAvailable() &&
               showInfoHrFallback != ShowInfoNothing) {
             return getShowInformation(showInfoHrFallback, ShowInfoNothing,
                                       ShowInfoNothing, mNoInfo);
           }
-          return new WhatInformation(mWhatApp._wHeartrate.getCurrentHeartrate(),
-                                     mWhatApp._wHeartrate.getAverageHeartrate(),
-                                     mWhatApp._wHeartrate.getMaxHeartrate(),
-                                     mWhatApp._wHeartrate);
+          return new WhatInformation(mApp._wHeartrate.getCurrentHeartrate(),
+                                     mApp._wHeartrate.getAverageHeartrate(),
+                                     mApp._wHeartrate.getMaxHeartrate(),
+                                     mApp._wHeartrate);
         case ShowInfoSpeed:
-          return new WhatInformation(mWhatApp._wSpeed.getCurrentSpeed(),
-                                     mWhatApp._wSpeed.getAverageSpeed(),
-                                     mWhatApp._wSpeed.getMaxSpeed(),
-                                     mWhatApp._wSpeed);
+          return new WhatInformation(mApp._wSpeed.getCurrentSpeed(),
+                                     mApp._wSpeed.getAverageSpeed(),
+                                     mApp._wSpeed.getMaxSpeed(), mApp._wSpeed);
         case ShowInfoCadence:
-          return new WhatInformation(mWhatApp._wCadence.getCurrentCadence(),
-                                     mWhatApp._wCadence.getAverageCadence(),
-                                     mWhatApp._wCadence.getMaxCadence(),
-                                     mWhatApp._wCadence);
+          return new WhatInformation(mApp._wCadence.getCurrentCadence(),
+                                     mApp._wCadence.getAverageCadence(),
+                                     mApp._wCadence.getMaxCadence(),
+                                     mApp._wCadence);
         case ShowInfoAltitude:
-          return new WhatInformation(mWhatApp._wAltitude.getCurrentAltitude(),
-                                     0, 0, mWhatApp._wAltitude);
+          return new WhatInformation(mApp._wAltitude.getCurrentAltitude(), 0, 0,
+                                     mApp._wAltitude);
         case ShowInfoGrade:
-          return new WhatInformation(mWhatApp._wGrade.getGrade(), 0, 0,
-                                     mWhatApp._wGrade);
+          return new WhatInformation(mApp._wGrade.getGrade(), 0, 0,
+                                     mApp._wGrade);
         case ShowInfoHeading:
           return new WhatInformation(
-              mWhatApp._wHeading.getCurrentHeadingInDegrees(), 0, 0,
-              mWhatApp._wHeading);
+              mApp._wHeading.getCurrentHeadingInDegrees(), 0, 0,
+              mApp._wHeading);
         case ShowInfoDistance:
-          return new WhatInformation(
-              mWhatApp._wDistance.getElapsedDistanceMorKm(), 0, 0,
-              mWhatApp._wDistance);
+          return new WhatInformation(mApp._wDistance.getElapsedDistanceMorKm(),
+                                     0, 0, mApp._wDistance);
         case ShowInfoAmbientPressure:
-          return new WhatInformation(mWhatApp._wPressure.getPressure(), 0, 0,
-                                     mWhatApp._wPressure);
+          return new WhatInformation(mApp._wPressure.getPressure(), 0, 0,
+                                     mApp._wPressure);
         case ShowInfoTimeOfDay:
-          return new WhatInformation(mWhatApp._wTime.getTime(), 0, 0,
-                                     mWhatApp._wTime);
+          return new WhatInformation(mApp._wTime.getTime(), 0, 0, mApp._wTime);
         case ShowInfoCalories:
-          return new WhatInformation(mWhatApp._wCalories.getCalories(), 0, 0,
-                                     mWhatApp._wCalories);
+          return new WhatInformation(mApp._wCalories.getCalories(), 0, 0,
+                                     mApp._wCalories);
         case ShowInfoTotalAscent:
-          return new WhatInformation(mWhatApp._wAltitude.getTotalAscent(), 0, 0,
-                                     mWhatApp._wAltitude);
+          return new WhatInformation(mApp._wAltitude.getTotalAscent(), 0, 0,
+                                     mApp._wAltitude);
         case ShowInfoTotalDescent:
-          return new WhatInformation(mWhatApp._wAltitude.getTotalDescent(), 0,
-                                     0, mWhatApp._wAltitude);
+          return new WhatInformation(mApp._wAltitude.getTotalDescent(), 0, 0,
+                                     mApp._wAltitude);
         case ShowInfoTrainingEffect:
           if (info != null) {
-            mWhatApp._wTrainingEffect.updateInfo(info);
+            mApp._wTrainingEffect.updateInfo(info);
           }
-          if (!mWhatApp._wTrainingEffect.isAvailable() &&
+          if (!mApp._wTrainingEffect.isAvailable() &&
               showInfoTrainingEffectFallback != ShowInfoNothing) {
             return getShowInformation(showInfoTrainingEffectFallback,
                                       ShowInfoNothing, ShowInfoNothing,
                                       mNoInfo);
           }
-          return new WhatInformation(
-              mWhatApp._wTrainingEffect.getTrainingEffect(), 0, 0,
-              mWhatApp._wTrainingEffect);
+          return new WhatInformation(mApp._wTrainingEffect.getTrainingEffect(),
+                                     0, 0, mApp._wTrainingEffect);
         case ShowInfoEnergyExpenditure:
           return new WhatInformation(
-              mWhatApp._wEngergyExpenditure.getEnergyExpenditure(), 0, 0,
-              mWhatApp._wEngergyExpenditure);
+              mApp._wEngergyExpenditure.getEnergyExpenditure(), 0, 0,
+              mApp._wEngergyExpenditure);
         case ShowInfoNothing:
         default:
           var nope = null as WhatInformation;
