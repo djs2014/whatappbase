@@ -1,6 +1,12 @@
+fix font size issue rpm in wide field ..
+-> set LIFE
+what power / what speed
+docu screen shots
+new what distance -> use as test app 
+show version nr in name -> how to get
+
 TESTv - heading: ignore when value is 0.0 or null + check min elapseddistance
 -> whatpower sync settings -> speed 
-
 - wide field: units te laag
 - training effect -> verkeerde code? staat als energie exp
 - energie exp -> geen label of ee

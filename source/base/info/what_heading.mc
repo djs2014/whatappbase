@@ -13,22 +13,23 @@ module WhatAppBase {
     hidden var previousLocation = null as Position.Location;
     hidden var currentLocation = null as Position.Location;
     hidden var currentLocationAccuracy = 0 as Lang.Number;
-    hidden var minimalLocationAccuracy = 1 as Lang.Number; // @@ make setting
+    hidden var minimalLocationAccuracy = 0 as Lang.Number;
 
     hidden var previousElapsedDistance = 0.0f;
     hidden var elapsedDistance = 0.0f;
     hidden var currentElapsedDistanceInMeters = 0.0f;
-    hidden var minimalElapsedDistanceInMeters = 1.0f; // @@ make setting
+    hidden var minimalElapsedDistanceInMeters = 1.0f;  // @@ make setting
 
     function initialize() {
       WhatInfoBase.initialize();
-      labelHidden = true;      
+      labelHidden = true;
     }
 
+    // Set to 0 to disable custom GPS calculation
     function setMinimalLocationAccuracy(minimalLocationAccuracy) {
       self.minimalLocationAccuracy = minimalLocationAccuracy;
     }
-
+    // Set to 0 to disable custom GPS calculation
     function setMinimalElapsedDistanceInMeters(minimalElapsedDistanceInMeters) {
       self.minimalElapsedDistanceInMeters = minimalElapsedDistanceInMeters;
     }
@@ -52,7 +53,6 @@ module WhatAppBase {
 
       if (info has : currentLocation) {
         if (info.currentLocation != null) {
-          // @@ TODO: only when distance is large enough?
           previousLocation = currentLocation;
           currentLocation = info.currentLocation;
           System.println("currentLocation: " + currentLocation.toDegrees());
@@ -94,7 +94,7 @@ module WhatAppBase {
                  "]";
         }
         if (track != null) {
-          // ?? always 0 on edge 830?
+          // ?? always 0 on simulator?
           info = info + "\ntrk[" + Utils.rad2deg(track).format("%0.0f") + "]";
         }
 
@@ -118,16 +118,18 @@ module WhatAppBase {
     }
 
     function validGPS() as Lang.Boolean {
-      return (currentLocationAccuracy >= minimalLocationAccuracy &&
+      return (minimalLocationAccuracy > 0 &&
+              minimalElapsedDistanceInMeters > 0 &&
+              currentLocationAccuracy >= minimalLocationAccuracy &&
               currentElapsedDistanceInMeters > minimalElapsedDistanceInMeters);
     }
 
     function getCurrentHeadingInDegrees() as Lang.Number {
       var degrees = null;
-      if (track != null && track != 0.0f) {
-        degrees = Utils.rad2deg(track);
-      } else if (validGPS()) {
+      if (validGPS()) {
         degrees = getCalculatedHeading();
+      } else if (track != null && track != 0.0f) {
+        degrees = Utils.rad2deg(track);
       } else if (currentHeading != null && currentHeading != 0.0f) {
         degrees = Utils.rad2deg(currentHeading);
       }

@@ -110,9 +110,9 @@ module WhatAppBase {
         _wEngergyExpenditure.setTargetEngergyExpenditure(
             Utils.getNumberProperty("targetEnergyExpenditure", 15));
         _wHeading.setMinimalLocationAccuracy(
-            Utils.getNumberProperty("minimalLocationAccuracy", 2));
+            Utils.getNumberProperty("minimalLocationAccuracy", 0));
         _wHeading.setMinimalElapsedDistanceInMeters(
-            Utils.getNumberProperty("minimalElapsedDistanceInMeters", 1)); // @@ TODO in settings
+            Utils.getNumberProperty("minimalElapsedDistanceInMeters", 0));
 
         System.println("Settings loaded");
         infoSettings();
