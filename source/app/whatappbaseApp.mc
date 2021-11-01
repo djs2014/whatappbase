@@ -24,6 +24,7 @@ module WhatAppBase {
     var _wTime = null as WhatTime;
     var _wHeading = null as WhatHeading;
     var _wEngergyExpenditure = null as WhatEngergyExpenditure;
+    var _wTestField = null as WhatTestField;
 
     var _showInfoTop = ShowInfoPower;
     var _showInfoLeft = ShowInfoNothing;
@@ -51,6 +52,7 @@ module WhatAppBase {
       _wTime = new WhatTime();
       _wHeading = new WhatHeading();
       _wEngergyExpenditure = new WhatEngergyExpenditure();
+      _wTestField = new WhatTestField();
     }
 
     // onStart() is called on application start up
@@ -113,6 +115,9 @@ module WhatAppBase {
             Utils.getNumberProperty("minimalLocationAccuracy", 0));
         _wHeading.setMinimalElapsedDistanceInMeters(
             Utils.getNumberProperty("minimalElapsedDistanceInMeters", 0));
+
+        _wTestField.setTargetValue(Utils.getNumberProperty("targetTestValue", 100));
+        _wTestField.setValue(Utils.getNumberProperty("testValue", 250));
 
         System.println("Settings loaded");
         infoSettings();

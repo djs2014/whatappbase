@@ -174,23 +174,27 @@ module WhatAppBase {
       var yRect = y - (height / 2.0);
 
       // NB: filling is from top to bottom
-      // draw percentage part (100%): 0% -> all white      
-      dc.setColor(percentageColor, Graphics.COLOR_TRANSPARENT);
-      dc.fillRectangle(xRect, yRect + 1, width, height);
+      // draw percentage part (100%): 0% -> all white
+      dc.setColor(percentageColor, Graphics.COLOR_BLACK);
+      dc.fillRectangle(xRect + 1, yRect + 1, width - 1, height - 1);
 
       // And fill what is not reached with the initial color
       var heightPerc =
           Utils.min(height, Utils.valueOfPercentage(100 - percentage, height));
-      // System.println("percentage: " + percentage + " text: " + textDimensions +
+      // System.println("percentage: " + percentage + " text: " + textDimensions
+      // +
       //                " x: " + x + "y: " + y + " heightPerc: " + heightPerc);
-      
-      dc.setColor(initialTextColor, Graphics.COLOR_TRANSPARENT);
-      dc.fillRectangle(xRect, yRect + 1, width, heightPerc);
 
-      // draw text
+      dc.setColor(initialTextColor, Graphics.COLOR_BLACK);
+      dc.fillRectangle(xRect + 1, yRect + 1, width - 1, heightPerc);
+      
+      // draw text, but only the outline 
+      // @@ on edge 830 frontcolor is white, not transparent - BUG
       dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
+      // dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
       dc.drawText(xRect, yRect, font, text, Graphics.TEXT_JUSTIFY_LEFT);
-                  // Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+      // @@ for now draw line under text
+      drawPercentageLine(xRect, yRect, width, percentage, 2, initialTextColor);    
     }
 
     function leftAndRightCircleFillWholeScreen() {

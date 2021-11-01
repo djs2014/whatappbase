@@ -245,6 +245,10 @@ module WhatAppBase {
           return new WhatInformation(
               mApp._wEngergyExpenditure.getEnergyExpenditure(), 0, 0,
               mApp._wEngergyExpenditure);
+        case ShowInfoTestField:
+          return new WhatInformation(
+              mApp._wTestField.getValue(), 0, 0,
+              mApp._wTestField);
         case ShowInfoNothing:
         default:
           var nope = null as WhatInformation;
