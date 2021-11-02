@@ -1,9 +1,8 @@
-module WhatAppBase {
 import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
-  using Toybox.SensorHistory;
-
+using Toybox.SensorHistory;
+module WhatAppBase {
   class WhatPressure extends WhatInfoBase {
     hidden var perMin = 30;
     hidden var dataOneMin = [] as Lang.Array<Lang.Number>;
@@ -23,12 +22,11 @@ import Toybox.System;
     function setShowSeaLevelPressure(showSeaLevelPressure as Boolean) {
       self.showSeaLevelPressure = showSeaLevelPressure;
     }
-
     function isSeaLevelPressure() { return showSeaLevelPressure; }
 
     function updateInfo(info as Activity.Info) {
       if (info has : ambientPressure) {
-        available = true;
+        mAvailable = true;
         if (info.ambientPressure != null) {
           self.ambientPressure = Utils.pascalToMilliBar(info.ambientPressure);
         } else {
@@ -48,6 +46,20 @@ import Toybox.System;
       }
     }
 
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getPressure()); }
+    function getValue() { return getPressure(); }
+    function getFormattedValue() as Lang.String {
+      return getPressure().format(getFormatString());
+    }
+    function getUnits() as String { return "hPa"; }
+    function getLabel() as Lang.String {
+      if (showSeaLevelPressure) {
+        return "Sealevel";
+      }
+      return "Location";
+    }
+
+    // --
     hidden function addPressurePerSec(pressure) {
       if (pressure == 0.0f) {
         return;
@@ -70,7 +82,7 @@ import Toybox.System;
       dataPerMin.add(avgPressurePerMin);
     }
 
-    function getAvgPressureOneMin() {
+    hidden function getAvgPressureOneMin() {
       if (dataOneMin.size() == 0) {
         return 0.0f;
       }
@@ -83,7 +95,7 @@ import Toybox.System;
       return ppx / oneMin.size();
     }
 
-    function pressurePerMinX() {
+    hidden function pressurePerMinX() {
       if (dataPerMin.size() == 0) {
         return 0.0f;
       }
@@ -97,7 +109,7 @@ import Toybox.System;
     }
 
     // on location or at sea level
-    function getPressure() {
+    hidden function getPressure() {
       if (showSeaLevelPressure) {
         return getSeaLevelPressure();
       } else {
@@ -106,7 +118,7 @@ import Toybox.System;
     }
 
     // on location
-    function getAmbientPressure() {
+    hidden function getAmbientPressure() {
       if (ambientPressure == null) {
         return 0;
       }
@@ -114,19 +126,15 @@ import Toybox.System;
     }
 
     // at sealevel
-    function getSeaLevelPressure() {
+    hidden function getSeaLevelPressure() {
       if (meanSeaLevelPressure == null) {
         return 0;
       }
       return meanSeaLevelPressure;
     }
 
-    function getUnitsLong() as String { return "hPa"; }
-
-    function getUnits() as String { return "hPa"; }
-
-    function getFormatString(fieldType) as String {
-      switch (fieldType) {
+    hidden function getFormatString() as String {
+      switch (mFieldType) {
         case Types.OneField:
         case Types.WideField:
           return "%.2f";
@@ -137,7 +145,7 @@ import Toybox.System;
     }
 
     // Create a method to get the SensorHistoryIterator object
-    function getIterator() {
+    hidden function getIterator() {
       // var oneHour = new Time.Duration(3600);
 
       // Check device for SensorHistory compatibility
@@ -181,7 +189,7 @@ import Toybox.System;
     //  steady.
     // 1Hg = 33.86389 mBar
     // ~ 33.8 / 60 / 3 == 0.1877 per minute avg
-    function getTrendLevel(diffInMbar) {
+    hidden function getTrendLevel(diffInMbar) {
       // @@ ?? convert to avg measure period
       // System.println("Diff in mBar: " + diffInMbar);
 
@@ -200,7 +208,7 @@ import Toybox.System;
       return "++";
     }
 
-    function getZoneInfo(pressure) as ZoneInfo {
+    hidden function _getZoneInfo(pressure) as ZoneInfo {
       var label = "Pressure";
       if (showSeaLevelPressure) {
         label = "Sea level";

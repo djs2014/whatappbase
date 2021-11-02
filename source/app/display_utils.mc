@@ -32,7 +32,7 @@ module WhatAppBase {
       Graphics.FONT_SYSTEM_LARGE, Graphics.FONT_NUMBER_MILD,
       Graphics.FONT_NUMBER_HOT
     ] as Lang.Array<Lang.Number>;
-    hidden var _widthAdditionalInfo = 15;
+    hidden var mRadiusInfoField = 15;
 
     hidden var COLOR_MAX_PERCENTAGE = WhatColor.COLOR_WHITE_DK_PURPLE_4;
 
@@ -59,6 +59,7 @@ module WhatAppBase {
     }
 
     function onLayout(dc as Dc) {
+      System.println("onLayout");
       self.dc = dc;
 
       self.width = dc.getWidth();
@@ -81,12 +82,16 @@ module WhatAppBase {
       // 3 fields: w[246] h[106]
 
       // @@ function to set fonts + some dimensions
-      _widthAdditionalInfo =
-          Utils.min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
+      mRadiusInfoField = Utils.min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
       mFontValueAdditionalStartIndex = 4;
       if (isSmallField()) {
-        _widthAdditionalInfo = 29.0f;
+        mRadiusInfoField = 29.0f;
         mFontValueAdditionalStartIndex = 1;
+      } else if (isWideField()) { 
+        if (!showBottomInfo && !showTopInfo) {
+          mRadiusInfoField = dc.getWidth() / 4;
+        }
+        mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
       } else {
         mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
       }
@@ -187,19 +192,20 @@ module WhatAppBase {
 
       dc.setColor(initialTextColor, Graphics.COLOR_BLACK);
       dc.fillRectangle(xRect + 1, yRect + 1, width - 1, heightPerc);
-      
-      // draw text, but only the outline 
+
+      // draw text, but only the outline
       // @@ on edge 830 frontcolor is white, not transparent - BUG
       dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
       // dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
       dc.drawText(xRect, yRect, font, text, Graphics.TEXT_JUSTIFY_LEFT);
       // @@ for now draw line under text
-      drawPercentageLine(xRect, yRect, width, percentage, 2, initialTextColor);    
+      drawPercentageLine(xRect, yRect + height, width, percentage, 2,
+                         initialTextColor);
     }
 
     function leftAndRightCircleFillWholeScreen() {
       return dc.getWidth() - 40 <
-             (4 * _widthAdditionalInfo) + (marginLeft + marginRight);
+             (4 * mRadiusInfoField) + (marginLeft + marginRight);
     }
 
     function drawBottomInfo(color, value, backColor, units, outlineColor,
@@ -276,25 +282,17 @@ module WhatAppBase {
       var barX = dc.getWidth() / 2;
 
       // circle back color
-      drawAdditonalInfoBG(barX, _widthAdditionalInfo, backColor, percentage,
+      drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc);
       if (!leftAndRightCircleFillWholeScreen()) {
-        var fontValue =
-            getFontAdditionalInfo(_widthAdditionalInfo * 2, value,
-                                  mFontValueAdditionalStartIndex - 1);
+        var fontValue = getFontAdditionalInfo(
+            mRadiusInfoField * 2, value, mFontValueAdditionalStartIndex - 1);
         drawAdditonalInfoFG(barX, color, value, fontValue, units,
                             mFontLabelAdditional, label, mFontLabelAdditional,
-                            percentage);
-
-        // @@ label not needed here?
-        // var yLabel = dc.getFontHeight(mFontBottomLabel) / 2;
-        // dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        // dc.drawText(
-        //     barX, yLabel, mFontBottomLabel, label,
-        //     Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+                            percentage);        
       }
       // outline
-      drawAdditonalInfoOutline(barX, _widthAdditionalInfo, outlineColor);
+      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
     }
 
     function drawTopInfoTriangle(color, value, backColor, units, outlineColor,
@@ -307,7 +305,7 @@ module WhatAppBase {
           heightBottomBar = dc.getFontHeight(mFontBottomValue);
         }
       }
-      var wBottomBar = 2 * _widthAdditionalInfo;
+      var wBottomBar = 2 * mRadiusInfoField;
       var top = new Point(dc.getWidth() / 2, margin);
       var left = new Point(dc.getWidth() / 2 - wBottomBar / 2,
                            dc.getHeight() - margin - heightBottomBar);
@@ -342,9 +340,8 @@ module WhatAppBase {
       if (!leftAndRightCircleFillWholeScreen()) {
         var maxwidth = (right.x - left.x);
         var x = left.x + maxwidth / 2.0;
-        var fontValue =
-            getFontAdditionalInfo(_widthAdditionalInfo * 2, value,
-                                  mFontValueAdditionalStartIndex - 1);
+        var fontValue = getFontAdditionalInfo(
+            mRadiusInfoField * 2, value, mFontValueAdditionalStartIndex - 1);
         // var y = (left.y - top.y) / 2;
         var y = getCenterYcoordCircleAdditionalInfo();
         var ha = dc.getFontHeight(fontValue);
@@ -373,13 +370,13 @@ module WhatAppBase {
 
     function drawLeftInfo(color, value, backColor, units, outlineColor,
                           percentage, color100perc, label) {
-      var barX = _widthAdditionalInfo + marginLeft;
+      var barX = mRadiusInfoField + marginLeft;
 
       // circle back color
-      drawAdditonalInfoBG(barX, _widthAdditionalInfo, backColor, percentage,
+      drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc);
 
-      var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value,
+      var fontValue = getFontAdditionalInfo(mRadiusInfoField * 2, value,
                                             mFontValueAdditionalStartIndex);
       // @@ determine labelFont??//
       drawAdditonalInfoFG(barX, color, value, fontValue, units,
@@ -387,21 +384,21 @@ module WhatAppBase {
                           percentage);
 
       // outline
-      drawAdditonalInfoOutline(barX, _widthAdditionalInfo, outlineColor);
+      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
     }
 
     function drawRightInfo(color, value, backColor, units, outlineColor,
                            percentage, color100perc, label) {
-      var barX = dc.getWidth() - _widthAdditionalInfo - marginRight;
+      var barX = dc.getWidth() - mRadiusInfoField - marginRight;
       // circle
-      drawAdditonalInfoBG(barX, _widthAdditionalInfo, backColor, percentage,
+      drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc);
 
       // outline
-      drawAdditonalInfoOutline(barX, _widthAdditionalInfo, outlineColor);
+      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
 
       // units + value
-      var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value,
+      var fontValue = getFontAdditionalInfo(mRadiusInfoField * 2, value,
                                             mFontValueAdditionalStartIndex);
 
       drawAdditonalInfoFG(barX, color, value, fontValue, units,
@@ -452,7 +449,7 @@ module WhatAppBase {
                                         percentage) {
       // Too many arguments used by a method, which are currently limited to 10
       // arguments
-      var width = _widthAdditionalInfo;
+      var width = mRadiusInfoField;
       var y = getCenterYcoordCircleAdditionalInfo();
 
       // label

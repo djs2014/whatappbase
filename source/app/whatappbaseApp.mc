@@ -94,7 +94,8 @@ module WhatAppBase {
 
         _wPower.setFtp(Utils.getNumberProperty("ftpValue", 200));
         _wPower.setPerSec(Utils.getNumberProperty("powerPerSecond", 3));
-
+        _wPower.initWeight();
+        
         _wPressure.setShowSeaLevelPressure(
             Utils.getBooleanProperty("showSeaLevelPressure", true));
         _wPressure.setPerMin(

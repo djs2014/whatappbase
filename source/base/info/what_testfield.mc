@@ -1,8 +1,7 @@
-module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
-
+module WhatAppBase {
   class WhatTestField extends WhatInfoBase {
     hidden var value = 250;
     hidden var targetValue = 100;
@@ -23,23 +22,23 @@ import Toybox.Activity;
     //   }
     // }
 
-    function getValue() {
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getTestValue()); }
+    function getValue() { return convertToMetricOrStatute(getTestValue()); }
+    function getFormattedValue() as Lang.String {
+      return convertToMetricOrStatute(getTestValue()).format("%.0f");
+    }
+    function getUnits() as String { return "test"; }
+    function getLabel() as Lang.String { return "Test field"; }
+
+    // --
+    hidden function getTestValue() {
       if (value == null) {
         return 0;
       }
       return self.value;
     }
 
-    function getUnitsLong() as String { return "test"; }
-
-    function getUnits() as String {
-      var percOfTarget = Utils.percentageOf(value, targetValue);
-      return percOfTarget.format("%.0f") + "%";
-    }
-
-    function getFormatString(fieldType) as String { return "%.0f"; }
-
-    function getZoneInfo(val) {
+    hidden function _getZoneInfo(val) {
       var label = "test value";
       if (val == null || val == 0) {
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,

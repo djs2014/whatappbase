@@ -1,12 +1,12 @@
-module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
- 
-
+module WhatAppBase {
   class WhatCalories extends WhatInfoBase {
     hidden var calories = 0.0f;           // kcal
     hidden var targetCalories = 2000.0f;  // kcal
+
+    hidden var elapsedTime = 0.0f;  // msec
 
     function initialize() { WhatInfoBase.initialize(); }
 
@@ -16,14 +16,38 @@ import Toybox.Activity;
 
     function updateInfo(info as Activity.Info) {
       if (info has : calories) {
-        if (info.calories) {
-          // speed is in meters per second
+        if (info.calories != null) {
           calories = info.calories;
         } else {
           calories = 0.0f;
         }
       }
+      if (info has : elapsedTime) {
+        if (info.elapsedTime != null) {
+          elapsedTime = info.elapsedTime;
+        } else {
+          elapsedTime = 0.0f;
+        }
+      }
     }
+
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getCalories()); }
+    function getValue() { return getCalories(); }
+    function getFormattedValue() as Lang.String {
+      return getCalories().format("%.0f");
+    }
+    function getUnits() as String { return "kcal"; }
+    function getLabel() as Lang.String { return "Calories"; }
+
+    function getAltZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getAvgCaloriesPerMin());
+    }
+    function getAltValue() { return getAvgCaloriesPerMin(); }
+    function getAltFormattedValue() as Lang.String {
+      return getAvgCaloriesPerMin().format("%.0f");
+    }
+    function getAltUnits() as String { return "kcal/min"; }
+    function getAltLabel() as Lang.String { return "Calories"; }
 
     function getCalories() {
       if (calories == null) {
@@ -32,11 +56,13 @@ import Toybox.Activity;
       return self.calories;
     }
 
-    function getUnitsLong() as String { return "kcal"; }
-
-    function getUnits() as String { return "kcal"; }
-
-    function getFormatString(fieldType) as String { return "%.0f"; }
+    // @@ TODO see getAltZoneInfo colors/target
+    function getAvgCaloriesPerMin() {
+      if (elapsedTime == null || elapsedTime == 0) {
+        return 0;
+      }
+      return calories / (elapsedTime * 1000.0 * 60.0);
+    }
 
     // @@TODO ->
     // https://www.verywellfit.com/metabolism-facts-101-3495605
@@ -46,7 +72,7 @@ import Toybox.Activity;
     // (3.098 x height in cm) - (4.330 x age in years) Women: Average BMR 1,400
     // calories per day Men: Average BMR just over 1,600 calories per day
     // --> percof chart
-    function getZoneInfo(cal) {
+    function _getZoneInfo(cal) {
       var label = "Calories";
       if (cal == null || cal == 0) {
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,

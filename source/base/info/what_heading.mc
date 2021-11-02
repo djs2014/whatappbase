@@ -18,11 +18,11 @@ module WhatAppBase {
     hidden var previousElapsedDistance = 0.0f;
     hidden var elapsedDistance = 0.0f;
     hidden var currentElapsedDistanceInMeters = 0.0f;
-    hidden var minimalElapsedDistanceInMeters = 1.0f;  // @@ make setting
+    hidden var minimalElapsedDistanceInMeters = 0.0f;
 
     function initialize() {
       WhatInfoBase.initialize();
-      labelHidden = true;
+      mLabelHidden = true;
     }
 
     // Set to 0 to disable custom GPS calculation
@@ -81,50 +81,55 @@ module WhatAppBase {
       }
     }
 
-    function getUnitsLong() as Lang.String { return ""; }
-
-    function getUnits() as String {
-      var info = "";
-      if (debug) {
-        if (currentLocationAccuracy != null) {
-          info = info + "gps[" + currentLocationAccuracy.format("%0.0f") + "]";
-        }
-        if (currentElapsedDistanceInMeters > 0) {
-          info = info + "m[" + currentElapsedDistanceInMeters.format("%0.1f") +
-                 "]";
-        }
-        if (track != null) {
-          // ?? always 0 on simulator?
-          info = info + "\ntrk[" + Utils.rad2deg(track).format("%0.0f") + "]";
-        }
-
-        if (currentHeading != null) {
-          info = info + " hdg[" +
-                 Utils.rad2deg(currentHeading).format("%0.0f") + "]";
-        }
-      }
-      return info;
+    function getZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getCurrentHeadingInDegrees());
     }
-
-    function getFormatString(fieldType) as Lang.String {
-      switch (fieldType) {
-        case Types.OneField:
-        case Types.WideField:
-          return "%.2f";
-        case Types.SmallField:
-        default:
-          return "%.1f";
+    function getValue() { return getCurrentHeadingInDegrees(); }
+    function getFormattedValue() as Lang.String {
+      var degrees = getCurrentHeadingInDegrees();
+      if (degrees == null) {
+        return "";
       }
+      return Utils.getCompassDirection(degrees);
     }
+    function getUnits() as String { return ""; }
+    function getLabel() as Lang.String { return "Heading"; }
 
-    function validGPS() as Lang.Boolean {
+    // --
+    // function getUnits() as String {
+    //   var info = "";
+    //   if (mDebug) {
+    //     if (currentLocationAccuracy != null) {
+    //       info = info + "gps[" + currentLocationAccuracy.format("%0.0f") +
+    //       "]";
+    //     }
+    //     if (currentElapsedDistanceInMeters > 0) {
+    //       info = info + "m[" + currentElapsedDistanceInMeters.format("%0.1f")
+    //       +
+    //              "]";
+    //     }
+    //     if (track != null) {
+    //       // ?? always 0 on simulator?
+    //       info = info + "\ntrk[" + Utils.rad2deg(track).format("%0.0f") +
+    //       "]";
+    //     }
+
+    //     if (currentHeading != null) {
+    //       info = info + " hdg[" +
+    //              Utils.rad2deg(currentHeading).format("%0.0f") + "]";
+    //     }
+    //   }
+    //   return info;
+    // }
+
+    hidden function validGPS() as Lang.Boolean {
       return (minimalLocationAccuracy > 0 &&
               minimalElapsedDistanceInMeters > 0 &&
               currentLocationAccuracy >= minimalLocationAccuracy &&
               currentElapsedDistanceInMeters > minimalElapsedDistanceInMeters);
     }
 
-    function getCurrentHeadingInDegrees() as Lang.Number {
+    hidden function getCurrentHeadingInDegrees() as Lang.Number {
       var degrees = null;
       if (validGPS()) {
         degrees = getCalculatedHeading();
@@ -140,7 +145,7 @@ module WhatAppBase {
       return degrees;
     }
 
-    function convertToDisplayFormat(value, fieldType) as Lang.String {
+    hidden function convertToDisplayFormat(value, fieldType) as Lang.String {
       var degrees = value;
 
       if (degrees == null) {
@@ -165,7 +170,8 @@ module WhatAppBase {
       return Utils.getRhumbLineBearing(lat1, lon1, lat2, lon2);
     }
 
-    function getZoneInfo(rpm) as ZoneInfo {
+    // @@ TODO
+    function _getZoneInfo(degrees) as ZoneInfo {
       return new ZoneInfo(0, "Heading", Graphics.COLOR_WHITE,
                           Graphics.COLOR_BLACK, 0, null);
     }

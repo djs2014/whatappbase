@@ -21,60 +21,86 @@ import Toybox.Activity;
     ShowInfoTrainingEffect = 14,
     ShowInfoTemperature = 15,  // @@ not working yet
     ShowInfoEnergyExpenditure = 16,
-    ShowInfoPowerPerBodyWeight = 17, // @@ TODO
-    ShowInfoTestField = 18  
+    ShowInfoPowerPerBodyWeight = 17,  // @@ TODO
+    ShowInfoTestField = 18
   }
 
   class WhatInformation {
-    var value = 0.0f;
-    var average = 0.0f;
-    var max = 0.0f;
     var objInstance = null;
 
-    var methodUpdateInfo;
-    var methodGetZoneInfo;
-    var methodGetUnits;
-    var methodConvertToDisplayFormat;
-    var methodIsLabelHidden;
+    // Update instance with latest activity data
+    var methodUpdateInfo = null;
 
-    function initialize(value, average, max, objInstance as WhatInfoBase) {
-      self.value = value;
-      self.average = average;
-      self.max = max;
+    // Get current zone info for value
+    var methodGetZoneInfo = null;
+    var methodGetValue = null;
+    var methodGetFormattedValue = null;
+    var methodGetUnits = null;
+    var methodGetLabel = null;
+
+    // Get current zone info for alternative value (ex. for average value)
+    var methodGetAltZoneInfo = null;
+    var methodGetAltValue = null;
+    var methodGetAltFormattedValue = null;
+    var methodGetAltUnits = null;
+    var methodGetAltLabel = null;
+
+    var methodIsLabelHidden = null;           // @@ via methodGetLabel?
+    
+    function initialize(objInstance as WhatInfoBase) {
       self.objInstance = objInstance;
-      if (objInstance != null) {
-        methodUpdateInfo = new Lang.Method(self.objInstance, : updateInfo);
-        methodGetZoneInfo = new Lang.Method(self.objInstance, : getZoneInfo);
-        methodGetUnits = new Lang.Method(self.objInstance, : getUnits);
-        methodConvertToDisplayFormat =
-            new Lang.Method(self.objInstance,
-                            : convertToDisplayFormat);
-        methodIsLabelHidden = new Lang.Method(self.objInstance, : isLabelHidden);
-      }
+      // defaults
+
+      methodUpdateInfo = new Lang.Method(self.objInstance, : updateInfo);
+
+      methodGetZoneInfo = new Lang.Method(self.objInstance, : getZoneInfo);
+      methodGetValue = new Lang.Method(self.objInstance, : getValue);
+      methodGetFormattedValue = new Lang.Method(self.objInstance,
+                                                : getFormattedValue);
+      methodGetUnits = new Lang.Method(self.objInstance, : getUnits);
+      methodGetLabel = new Lang.Method(self.objInstance, : getLabel);
+
+      methodGetAltZoneInfo = new Lang.Method(self.objInstance,
+                                             : getAltZoneInfo);
+      methodGetAltValue = new Lang.Method(self.objInstance, : getAltValue);
+      methodGetAltFormattedValue = new Lang.Method(self.objInstance,
+                                                   : getAltFormattedValue);
+      methodGetAltUnits = new Lang.Method(self.objInstance, : getAltUnits);
+      methodGetAltLabel = new Lang.Method(self.objInstance, : getAltLabel);
+      // @@
+      methodIsLabelHidden = new Lang.Method(self.objInstance, : isLabelHidden);
     }
 
     function updateInfo(info as Activity.Info) {
       return methodUpdateInfo.invoke(info);
     }
 
+    // @@
     function isLabelHidden() as Lang.Boolean {
       return methodIsLabelHidden.invoke();
     }
 
-    function zoneInfoValue() as ZoneInfo {
-      return methodGetZoneInfo.invoke(value);
+    function getZoneInfo() as ZoneInfo { return methodGetZoneInfo.invoke(); }
+    function getValue() { return methodGetValue.invoke(); }
+    function getFormattedValue() as Lang.String {
+      return methodGetFormattedValue.invoke();
     }
+    function getUnits() as String { return methodGetUnits.invoke(); }
+    function getLabel() as String { return methodGetLabel.invoke(); }
 
-    function zoneInfoAverage() as ZoneInfo {
-      return methodGetZoneInfo.invoke(average);
+    function getAltZoneInfo() as ZoneInfo {
+      return methodGetAltZoneInfo.invoke();
     }
-    function zoneInfoMax() as ZoneInfo { return methodGetZoneInfo.invoke(max); }
-
-    function units() as String { return methodGetUnits.invoke(); }
-
-    function formattedValue(fieldType) as String {
-      // Convert value to correct unit
-      return methodConvertToDisplayFormat.invoke(value, fieldType);
+    function getAltValue() { return methodGetAltValue.invoke(); }
+    function getAltFormattedValue() as Lang.String {
+      return methodGetAltFormattedValue.invoke();
     }
+    function getAltUnits() as String { return methodGetAltUnits.invoke(); }
+    function getAltLabel() as String { return methodGetAltLabel.invoke(); }
+
+    // function formattedValue(fieldType) as String {
+    //   // Convert value to correct unit
+    //   return methodConvertToDisplayFormat.invoke(value, fieldType);
+    // }
   }
 }

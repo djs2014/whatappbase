@@ -11,26 +11,19 @@ module WhatAppBase {
 
     function initialize() { WhatInfoBase.initialize(); }
 
-    function getAverageHeartrate() {
-      if (avarageHeartrate == null) {
-        return 0;
-      }
-      return self.avarageHeartrate;
+    function initZones() {
+      heartRateZones =
+          UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_BIKING);
+      // for (var i = 0; i < hrZones.size(); i++) {
+      //   System.println(hrZones[i]);
+      // }
     }
-
-    function getMaxHeartrate() {
-      if (maxHeartRate == null) {
-        return 0;
-      }
-      return maxHeartRate;
-    }
-
     function updateInfo(info as Activity.Info) {
-      available = false;
+      mAvailable = false;
       if (info has : currentHeartRate) {
         if (info.currentHeartRate) {
           currentHeartRate = info.currentHeartRate;
-          available = true;
+          mAvailable = true;
         } else {
           currentHeartRate = 0.0f;
         }
@@ -53,27 +46,49 @@ module WhatAppBase {
       }
     }
 
-    function getCurrentHeartrate() {
+    function getZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getCurrentHeartrate());
+    }
+    function getValue() { return getCurrentHeartrate(); }
+    function getFormattedValue() as Lang.String {
+      return getCurrentHeartrate().format("%.0f");
+    }
+    function getUnits() as String { return "bpm"; }
+    function getLabel() as Lang.String { return "Heartrate"; }
+
+    function getAltZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getAverageHeartrate());
+    }
+    function getAltValue() { return getAverageHeartrate(); }
+    function getAltFormattedValue() as Lang.String {
+      return getAverageHeartrate().format("%.0f");
+    }
+    function getAltUnits() as String { return "bpm"; }
+    function getAltLabel() as Lang.String { return "Avg heartrate"; }
+
+    // --
+    hidden function getAverageHeartrate() {
+      if (avarageHeartrate == null) {
+        return 0;
+      }
+      return self.avarageHeartrate;
+    }
+ 
+    hidden function getMaxHeartrate() {
+      if (maxHeartRate == null) {
+        return 0;
+      }
+      return maxHeartRate;
+    }
+
+    hidden function getCurrentHeartrate() {
       if (currentHeartRate == null) {
         return 0.0f;
       }
       return currentHeartRate;
     }
 
-    function initZones() {
-      heartRateZones =
-          UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_BIKING);
-      // for (var i = 0; i < hrZones.size(); i++) {
-      //   System.println(hrZones[i]);
-      // }
-    }
-
-    function getUnitsLong() as String { return "bpm"; }
-
-    function getUnits() as String { return "bpm"; }
-
-    // -> get user profile hr zones
-    function getZoneInfo(hr) as ZoneInfo {
+    function _getZoneInfo(hr) as ZoneInfo {
       var hrZones = heartRateZones as Lang.Array<Lang.Number>;
 
       if (hrZones == null || hrZones.size() == 0 || hr == 0 ||

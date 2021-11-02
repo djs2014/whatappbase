@@ -4,24 +4,23 @@ import Toybox.Activity;
 using WhatAppBase.Types;
 module WhatAppBase {
   class WhatInfoBase {
-    var fieldType = Types.SmallField;
-    hidden var devSettings;
-    hidden var available = true as Lang.Boolean;
-    hidden var labelHidden = false as Lang.Boolean;
-    hidden var activityPaused = false as Lang.Boolean;
-    hidden var debug = false as Lang.Boolean;
+    hidden var mFieldType = Types.SmallField;
+    hidden var mDevSettings;
+    hidden var mAvailable = true as Lang.Boolean;
+    hidden var mLabelHidden = false as Lang.Boolean;
+    hidden var mActivityPaused = false as Lang.Boolean;
+    hidden var mDebug = false as Lang.Boolean;
 
-    function initialize() { devSettings = System.getDeviceSettings(); }
+    function initialize() { mDevSettings = System.getDeviceSettings(); }
 
-    function isAvailable() as Lang.Boolean { return available; }
-    function isLabelHidden() as Lang.Boolean { return labelHidden; }
+    function isAvailable() as Lang.Boolean { return mAvailable; }
+    function isLabelHidden() as Lang.Boolean { return mLabelHidden; }
 
-    function setFieldType(fieldType) as Void { self.fieldType = fieldType; }
+    function setFieldType(fieldType as Types) as Void { mFieldType = fieldType; }
+    function getFieldType() { return mFieldType; }
 
-    function setDebug(debug) as Void { self.debug = debug; }
-    function isDebug() as Boolean { return self.debug; }
-
-    function updateInfo(info as Activity.Info) as Void {}
+    function setDebug(debug) as Void { mDebug = debug; }
+    function isDebug() as Boolean { return mDebug; }
 
     function activityIsPaused(info as Activity.Info) as Lang.Boolean {
       if (info has : timerState) {
@@ -30,40 +29,54 @@ module WhatAppBase {
       return false;
     }
     // function showAverageWhenPaused() {
-    //   return showAverageWhenActivityPaused && activityPaused;
+    //   return showAverageWhenmActivityPaused && mActivityPaused;
     // }
 
-    function getZoneInfo(value) as ZoneInfo {
+    // ---
+    function updateInfo(info as Activity.Info) as Void {}
+
+    function getZoneInfo() as ZoneInfo {
       return new ZoneInfo(0, "", Graphics.COLOR_WHITE, Graphics.COLOR_BLACK, 0,
                           null);
     }
-
+    function getValue() { return 0.0f; }
+    function getFormattedValue() as Lang.String { return ""; }
     function getUnits() as Lang.String { return ""; }
+    function getLabel() as Lang.String { return ""; }
 
-    function getUnitsLong() as Lang.String { return ""; }
-
-    function getFormatString(fieldType) as Lang.String {
-      switch (fieldType) {
-        case Types.OneField:
-        case Types.WideField:
-        case Types.SmallField:
-        default:
-          return "%.0f";
-      }
+    function getAltZoneInfo() as ZoneInfo {
+      return new ZoneInfo(0, "", Graphics.COLOR_WHITE, Graphics.COLOR_BLACK, 0,
+                          null);
     }
+    function getAltValue() { return 0.0f; }
+    function getAltFormattedValue() as Lang.String { return ""; }
+    function getAltUnits() as Lang.String { return getUnits(); }
+    function getAltLabel() as Lang.String { return ""; }
+
+    // function convertToDisplayFormat ->
+    //  function getFormattedValue(value, fieldType) as Lang.String {
+    //   if (value == null) {
+    //     return "";
+    //   }
+    //   value = convertToMetricOrStatute(value);
+    //   return value.format(getFormatString(fieldType));
+    // }
+    // function getUnitsLong() as Lang.String { return ""; } @@ depricated
+
+    // function getFormatString(fieldType) as Lang.String {
+    //   switch (fieldType) {
+    //     case Types.OneField:
+    //     case Types.WideField:
+    //     case Types.SmallField:
+    //     default:
+    //       return "%.0f";
+    //   }
+    // }
 
     // "Statute" gives distance in miles, elevation in feet, temperature in
     // Fahrenheit. "Metric" gives distance in km, elevation in metres,
     // temperature in Celsius.
     function convertToMetricOrStatute(value) { return value; }
-
-    function convertToDisplayFormat(value, fieldType) as Lang.String {
-      if (value == null) {
-        return "";
-      }
-      value = convertToMetricOrStatute(value);
-      return value.format(getFormatString(fieldType));
-    }
 
     function percentageToColor(percentage) {
       if (percentage == null || percentage == 0) {

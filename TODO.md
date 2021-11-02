@@ -8,6 +8,8 @@ fix perc text -> + background rect 1 smaller red not visible
 ??  setClip(x as Lang.Numeric, y as Lang.Numeric, width as Lang.Numeric, height as Lang.Numeric) as Void 
 
 fix font size issue rpm in wide field ..
+- wide field: units te laag
+- energie exp -> geen label of ee
 -> set LIFE
 what power / what speed
 
@@ -15,11 +17,9 @@ docu screen shots
 new what distance -> use as test app 
 show version nr in name -> how to get
 
-TESTv - heading: ignore when value is 0.0 or null + check min elapseddistance
+x TESTv - heading: ignore when value is 0.0 or null + check min elapseddistance
 -> whatpower sync settings -> speed 
-- wide field: units te laag
-- training effect -> verkeerde code? staat als energie exp
-- energie exp -> geen label of ee
+x- training effect -> verkeerde code? staat als energie exp
 
 -drawPercentageText max arguments <10!
 - units position + size - larger on wide fields?
@@ -27,7 +27,13 @@ TESTv - heading: ignore when value is 0.0 or null + check min elapseddistance
 - no middle -> left/right bigger?
 - use font for icons heartrate/power etc.
 
-- show app name when paused / not started
+- big/wide field: show bottom as square (vertical only "N" etc), top idem. 
+    - show big field -> bottom and top small info if possible / like Heading (sep callback)
+- show app name when paused / not started custom callback
+- wide fields left/right only then larger
+- refactor class callback names etc / getValue needed? -> because 1 class for 1 value
+    - callback for: label, value, unit, color, percentage, average etc..
+    - base has the default callbacks: 
 
 info fields:
 - watt/kg info field

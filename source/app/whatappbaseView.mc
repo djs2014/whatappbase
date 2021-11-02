@@ -98,15 +98,16 @@ module WhatAppBase {
       mWD.setShowBottomInfo(showBottom);
       mWD.setMiddleLayout(mApp._showInfoLayout);
 
-
       drawTopInfo(dc);
       drawLeftInfo(dc);
       drawRightInfo(dc);
       drawBottomInfo(dc);
 
-      if (mShowAppName && mApp.appName != null && mApp.appName.length()>0) {
+      // @@ callback?
+      if (mShowAppName && mApp.appName != null && mApp.appName.length() > 0) {
         dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_BLACK);
-        dc.drawText(0, 0, Graphics.FONT_XTINY, mApp.appName, Graphics.TEXT_JUSTIFY_LEFT);
+        dc.drawText(0, 0, Graphics.FONT_XTINY, mApp.appName,
+                    Graphics.TEXT_JUSTIFY_LEFT);
       }
     }
 
@@ -114,72 +115,79 @@ module WhatAppBase {
       if (mApp._wiLeft == null) {
         return;
       }
-      var value = mApp._wiLeft.formattedValue(Types.SmallField);
-      var zone = mApp._wiLeft.zoneInfoValue();
-      var avgZone = mApp._wiLeft.zoneInfoAverage();
+      var value = mApp._wiLeft.getFormattedValue();
+      var zone = mApp._wiLeft.getZoneInfo();
+      var units = mApp._wiLeft.getUnits();
+
       var label = zone.name;
-      if (mApp._wiLeft.isLabelHidden()) {
+      if (mApp._wiLeft.isLabelHidden()) {  // @@
         label = "";
       }
-      mWD.drawLeftInfo(zone.fontColor, value, zone.color, mApp._wiLeft.units(),
-                       avgZone.color, zone.perc, zone.color100perc, label);
+      var altZone = mApp._wiLeft.getAltZoneInfo();
+      mWD.drawLeftInfo(zone.fontColor, value, zone.color, units, altZone.color,
+                       zone.perc, zone.color100perc, label);
     }
     function drawTopInfo(dc) {
       if (mApp._wiTop == null) {
         return;
       }
-      var value = mApp._wiTop.formattedValue(Types.SmallField);
-      var zone = mApp._wiTop.zoneInfoValue();
-      var avgZone = mApp._wiTop.zoneInfoAverage();
+      var value = mApp._wiTop.getFormattedValue();
+      var zone = mApp._wiTop.getZoneInfo();
+      var units = mApp._wiTop.getUnits();
+
       var label = zone.name;
-      if (mApp._wiTop.isLabelHidden()) {
+      if (mApp._wiTop.isLabelHidden()) {  // @@
         label = "";
       }
-      mWD.drawTopInfo(zone.fontColor, value, zone.color, mApp._wiTop.units(),
-                      avgZone.color, zone.perc, zone.color100perc, label);
+      var altZone = mApp._wiTop.getAltZoneInfo();
+      mWD.drawTopInfo(zone.fontColor, value, zone.color, units, altZone.color,
+                      zone.perc, zone.color100perc, label);
     }
 
     function drawRightInfo(dc) {
       if (mApp._wiRight == null) {
         return;
       }
-      var value = mApp._wiRight.formattedValue(Types.SmallField);
-      var zone = mApp._wiRight.zoneInfoValue();
-      var avgZone = mApp._wiRight.zoneInfoAverage();
+      var value = mApp._wiRight.getFormattedValue();
+      var zone = mApp._wiRight.getZoneInfo();
+      var units = mApp._wiRight.getUnits();
+
       var label = zone.name;
-      if (mApp._wiRight.isLabelHidden()) {
+      if (mApp._wiRight.isLabelHidden()) {  // @@
         label = "";
       }
-      mWD.drawRightInfo(zone.fontColor, value, zone.color,
-                        mApp._wiRight.units(), avgZone.color, zone.perc,
-                        zone.color100perc, label);
+      var altZone = mApp._wiRight.getAltZoneInfo();
+      mWD.drawRightInfo(zone.fontColor, value, zone.color, units, altZone.color,
+                        zone.perc, zone.color100perc, label);
     }
 
     function drawBottomInfo(dc) {
       if (mApp._wiBottom == null) {
         return;
       }
-      var value = mApp._wiBottom.formattedValue(mWD.fieldType);
-      var zone = mApp._wiBottom.zoneInfoValue();
-      var avgZone = mApp._wiBottom.zoneInfoAverage();
+      var value = mApp._wiBottom.getFormattedValue();
+      var zone = mApp._wiBottom.getZoneInfo();
+      var units = mApp._wiBottom.getUnits();
+
       var label = zone.name;
-      if (mApp._wiBottom.isLabelHidden()) {
+      if (mApp._wiBottom.isLabelHidden()) {  // @@
         label = "";
       }
-      mWD.drawBottomInfo(zone.fontColor, value, zone.color,
-                         mApp._wiBottom.units(), avgZone.color, zone.perc,
-                         zone.color100perc, label);
+      var altZone = mApp._wiBottom.getAltZoneInfo();
+      mWD.drawBottomInfo(zone.fontColor, value, zone.color, units,
+                         altZone.color, zone.perc, zone.color100perc, label);
     }
 
+// @@ create factory method
     function getShowInformation(showInfo, showInfoHrFallback,
                                 showInfoTrainingEffectFallback,
                                 info as Activity.Info) as WhatInformation {
       // System.println("showInfo: " + showInfo);
       switch (showInfo) {
         case ShowInfoPower:
-          return new WhatInformation(mApp._wPower.powerPerX(),
-                                     mApp._wPower.getAveragePower(),
-                                     mApp._wPower.getMaxPower(), mApp._wPower);
+          var wi = new WhatInformation(mApp._wPower);
+          // @@ wi.setCallbackAvgValue( : getAveragePower);
+          return wi;
         case ShowInfoHeartrate:
           if (info != null) {
             mApp._wHeartrate.updateInfo(info);
@@ -189,46 +197,29 @@ module WhatAppBase {
             return getShowInformation(showInfoHrFallback, ShowInfoNothing,
                                       ShowInfoNothing, mNoInfo);
           }
-          return new WhatInformation(mApp._wHeartrate.getCurrentHeartrate(),
-                                     mApp._wHeartrate.getAverageHeartrate(),
-                                     mApp._wHeartrate.getMaxHeartrate(),
-                                     mApp._wHeartrate);
+          return new WhatInformation(mApp._wHeartrate);
         case ShowInfoSpeed:
-          return new WhatInformation(mApp._wSpeed.getCurrentSpeed(),
-                                     mApp._wSpeed.getAverageSpeed(),
-                                     mApp._wSpeed.getMaxSpeed(), mApp._wSpeed);
+          return new WhatInformation(mApp._wSpeed);
         case ShowInfoCadence:
-          return new WhatInformation(mApp._wCadence.getCurrentCadence(),
-                                     mApp._wCadence.getAverageCadence(),
-                                     mApp._wCadence.getMaxCadence(),
-                                     mApp._wCadence);
+          return new WhatInformation(mApp._wCadence);
         case ShowInfoAltitude:
-          return new WhatInformation(mApp._wAltitude.getCurrentAltitude(), 0, 0,
-                                     mApp._wAltitude);
+          return new WhatInformation(mApp._wAltitude);
         case ShowInfoGrade:
-          return new WhatInformation(mApp._wGrade.getGrade(), 0, 0,
-                                     mApp._wGrade);
+          return new WhatInformation(mApp._wGrade);
         case ShowInfoHeading:
-          return new WhatInformation(
-              mApp._wHeading.getCurrentHeadingInDegrees(), 0, 0,
-              mApp._wHeading);
+          return new WhatInformation(mApp._wHeading);
         case ShowInfoDistance:
-          return new WhatInformation(mApp._wDistance.getElapsedDistanceMorKm(),
-                                     0, 0, mApp._wDistance);
+          return new WhatInformation(mApp._wDistance);
         case ShowInfoAmbientPressure:
-          return new WhatInformation(mApp._wPressure.getPressure(), 0, 0,
-                                     mApp._wPressure);
+          return new WhatInformation(mApp._wPressure);
         case ShowInfoTimeOfDay:
-          return new WhatInformation(mApp._wTime.getTime(), 0, 0, mApp._wTime);
+          return new WhatInformation(mApp._wTime);
         case ShowInfoCalories:
-          return new WhatInformation(mApp._wCalories.getCalories(), 0, 0,
-                                     mApp._wCalories);
+          return new WhatInformation(mApp._wCalories);
         case ShowInfoTotalAscent:
-          return new WhatInformation(mApp._wAltitude.getTotalAscent(), 0, 0,
-                                     mApp._wAltitude);
+          return new WhatInformation(mApp._wAltitude);
         case ShowInfoTotalDescent:
-          return new WhatInformation(mApp._wAltitude.getTotalDescent(), 0, 0,
-                                     mApp._wAltitude);
+          return new WhatInformation(mApp._wAltitude);
         case ShowInfoTrainingEffect:
           if (info != null) {
             mApp._wTrainingEffect.updateInfo(info);
@@ -239,16 +230,11 @@ module WhatAppBase {
                                       ShowInfoNothing, ShowInfoNothing,
                                       mNoInfo);
           }
-          return new WhatInformation(mApp._wTrainingEffect.getTrainingEffect(),
-                                     0, 0, mApp._wTrainingEffect);
+          return new WhatInformation(mApp._wTrainingEffect);
         case ShowInfoEnergyExpenditure:
-          return new WhatInformation(
-              mApp._wEngergyExpenditure.getEnergyExpenditure(), 0, 0,
-              mApp._wEngergyExpenditure);
+          return new WhatInformation(mApp._wEngergyExpenditure);
         case ShowInfoTestField:
-          return new WhatInformation(
-              mApp._wTestField.getValue(), 0, 0,
-              mApp._wTestField);
+          return new WhatInformation(mApp._wTestField);
         case ShowInfoNothing:
         default:
           var nope = null as WhatInformation;
