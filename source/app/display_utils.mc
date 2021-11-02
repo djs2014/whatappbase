@@ -17,14 +17,15 @@ module WhatAppBase {
     hidden var showBottomInfo = true;
     hidden var middleLayout = LayoutMiddleTriangle;
 
-    hidden var mFontLabel = Graphics.FONT_TINY;
-    hidden var mFontValue = Graphics.FONT_LARGE;
-    hidden var mFontValueSmall = Graphics.FONT_MEDIUM;
-    hidden var mFontValueWideField = Graphics.FONT_NUMBER_MILD;
+    // hidden var mFontLabel = Graphics.FONT_TINY;
+    // hidden var mFontValue = Graphics.FONT_LARGE;
+    // hidden var mFontValueSmall = Graphics.FONT_MEDIUM;
+    // hidden var mFontValueWideField = Graphics.FONT_NUMBER_MILD;
     hidden var mFontBottomLabel = Graphics.FONT_TINY;
     hidden var mFontBottomValue = Graphics.FONT_TINY;
     hidden var mFontUnits = Graphics.FONT_XTINY;
 
+    // @@ rename mFontValueAdditional to --mFontValue
     hidden var mFontLabelAdditional = Graphics.FONT_XTINY;
     hidden var mFontValueAdditionalStartIndex = 1;
     hidden var mFontValueAdditional = [
@@ -44,6 +45,7 @@ module WhatAppBase {
 
     function isSmallField() { return fieldType == Types.SmallField; }
     function isWideField() { return fieldType == Types.WideField; }
+    function isLargeField() { return fieldType == Types.LargeField; }
     function isOneField() { return fieldType == Types.OneField; }
     function isNightMode() { return nightMode; }
     function setNightMode(nightMode) { self.nightMode = nightMode; }
@@ -68,11 +70,15 @@ module WhatAppBase {
 
       if (self.width >= 246) {
         self.fieldType = Types.WideField;
-        if (self.height >= 322) {
+        if (self.height >= 100) {
+          self.fieldType = Types.LargeField;
+        } else if (self.height >= 322) {
           self.fieldType = Types.OneField;
         }
       }
 
+      // System.println("w[" + self.width + "] h[" + self.height + "] type[" +
+      //                self.fieldType + "]");
       // if (self.height < 80) {
       //   self.fieldType= SmallField;
       // }
@@ -87,7 +93,13 @@ module WhatAppBase {
       if (isSmallField()) {
         mRadiusInfoField = 29.0f;
         mFontValueAdditionalStartIndex = 1;
-      } else if (isWideField()) { 
+      } else if (isWideField()) {
+        if (!showBottomInfo && !showTopInfo) {
+          mRadiusInfoField = dc.getWidth() / 4;
+        }
+        mFontValueAdditionalStartIndex = 3;
+        mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
+      } else if (isLargeField()) {
         if (!showBottomInfo && !showTopInfo) {
           mRadiusInfoField = dc.getWidth() / 4;
         }
@@ -289,7 +301,7 @@ module WhatAppBase {
             mRadiusInfoField * 2, value, mFontValueAdditionalStartIndex - 1);
         drawAdditonalInfoFG(barX, color, value, fontValue, units,
                             mFontLabelAdditional, label, mFontLabelAdditional,
-                            percentage);        
+                            percentage);
       }
       // outline
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
