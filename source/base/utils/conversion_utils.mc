@@ -4,6 +4,7 @@ module WhatAppBase {
   ( : Utils) module Utils {
     const MILE = 1.609344;
     const FEET = 3.281;
+    const POUND = 2.20462262;
 
     function windSpeedToBeaufort(metersPerSecond) {
       if (metersPerSecond == null || metersPerSecond <= 0.2) {
@@ -79,6 +80,14 @@ module WhatAppBase {
         return 0;
       }
       return km / MILE;
+    }
+
+    // kilogram to pounds
+    function kilogramToLbs(kg) {
+      if (kg == null) {
+        return 0;
+      }
+      return kg * POUND;
     }
 
     function removeLeadingZero(value as Lang.String) {

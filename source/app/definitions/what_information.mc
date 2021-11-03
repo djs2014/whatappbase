@@ -45,8 +45,8 @@ import Toybox.Activity;
     var methodGetAltUnits = null;
     var methodGetAltLabel = null;
 
-    var methodIsLabelHidden = null;           // @@ via methodGetLabel?
-    
+    var methodIsLabelHidden = null;  // @@ via methodGetLabel?
+
     function initialize(objInstance as WhatInfoBase) {
       self.objInstance = objInstance;
       // defaults
@@ -71,6 +71,7 @@ import Toybox.Activity;
       methodIsLabelHidden = new Lang.Method(self.objInstance, : isLabelHidden);
     }
 
+    function getObject() as WhatInfoBase { return objInstance; }
     function updateInfo(info as Activity.Info) {
       return methodUpdateInfo.invoke(info);
     }
@@ -98,9 +99,54 @@ import Toybox.Activity;
     function getAltUnits() as String { return methodGetAltUnits.invoke(); }
     function getAltLabel() as String { return methodGetAltLabel.invoke(); }
 
-    // function formattedValue(fieldType) as String {
-    //   // Convert value to correct unit
-    //   return methodConvertToDisplayFormat.invoke(value, fieldType);
-    // }
+    function setCallback(callbackMethod, callback) as Void {
+      switch (callbackMethod) {
+        case cbZoneInfo:
+          methodGetZoneInfo = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbValue:
+          methodGetValue = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbFormattedValue:
+          methodGetFormattedValue = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbUnits:
+          methodGetUnits = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbLabel:
+          methodGetLabel = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbAltZoneInfo:
+          methodGetAltZoneInfo = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbAltValue:
+          methodGetAltValue = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbAltFormattedValue:
+          methodGetAltFormattedValue = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbAltUnits:
+          methodGetAltUnits = new Lang.Method(self.objInstance, callback);
+          break;
+        case cbAltLabel:
+          methodGetAltLabel = new Lang.Method(self.objInstance, callback);
+          break;
+        default:
+          System.println("Callback not defined: " + callbackMethod);
+      }
+    }  
   }
+}
+
+enum {
+  cbZoneInfo,
+  cbValue,
+  cbFormattedValue,
+  cbUnits,
+  cbLabel,
+  cbAltZoneInfo,
+  cbAltValue,
+  cbAltFormattedValue,
+  cbAltUnits,
+  cbAltLabel
 }

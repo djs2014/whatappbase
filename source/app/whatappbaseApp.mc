@@ -12,6 +12,7 @@ module WhatAppBase {
     var _wiBottom = null as WhatInformation;
 
     var _wPower = null as WhatPower;
+    var _wPowerPerWeight = null as WhatPower;  // @@
     var _wHeartrate = null as WhateHeartrate;
     var _wCadence = null as WhatCadence;
     var _wGrade = null as WhatGrade;
@@ -40,6 +41,7 @@ module WhatAppBase {
       // AppBase.initialize();
 
       _wPower = new WhatPower();
+      _wPowerPerWeight = new WhatPower();
       _wHeartrate = new WhateHeartrate();
       _wCadence = new WhatCadence();
       _wDistance = new WhatDistance();
@@ -92,10 +94,16 @@ module WhatAppBase {
         _showInfoLayout =
             Utils.getNumberProperty("showInfoLayout", LayoutMiddleCircle);
 
+        // @@ can this be generic? parameter is field in object??
         _wPower.setFtp(Utils.getNumberProperty("ftpValue", 200));
         _wPower.setPerSec(Utils.getNumberProperty("powerPerSecond", 3));
         _wPower.initWeight();
-        
+
+        _wPowerPerWeight.setFtp(Utils.getNumberProperty("ftpValue", 200)); // @@ because of updateinfo called only once per sec.
+        _wPowerPerWeight.setPerSec(
+            Utils.getNumberProperty("powerPerSecond", 3));
+        _wPowerPerWeight.initWeight();
+
         _wPressure.setShowSeaLevelPressure(
             Utils.getBooleanProperty("showSeaLevelPressure", true));
         _wPressure.setPerMin(
@@ -117,7 +125,8 @@ module WhatAppBase {
         _wHeading.setMinimalElapsedDistanceInMeters(
             Utils.getNumberProperty("minimalElapsedDistanceInMeters", 0));
 
-        _wTestField.setTargetValue(Utils.getNumberProperty("targetTestValue", 100));
+        _wTestField.setTargetValue(
+            Utils.getNumberProperty("targetTestValue", 100));
         _wTestField.setValue(Utils.getNumberProperty("testValue", 250));
 
         System.println("Settings loaded");

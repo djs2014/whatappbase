@@ -21,7 +21,11 @@ module WhatAppBase {
       var profile = UserProfile.getProfile();
       userWeightKg = profile.weight / 1000.0;
     }
-    // called once per second
+
+    function setFtp(ftp as Lang.Number) { self.ftp = ftp; }
+    function setPerSec(perSec as Lang.Number) { self.perSec = perSec; }
+
+    // Must be called once per second
     function updateInfo(info as Activity.Info) {
       mAvailable = false;
       mActivityPaused = activityIsPaused(info);
@@ -51,7 +55,7 @@ module WhatAppBase {
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(powerPerX()); }
-    function getValue()  { return powerPerX(); }
+    function getValue() { return powerPerX(); }
     function getFormattedValue() as Lang.String {
       return powerPerX().format("%.0f");
     }
@@ -61,18 +65,46 @@ module WhatAppBase {
     function getAltZoneInfo() as ZoneInfo {
       return _getZoneInfo(getAveragePower());
     }
-    function getAltValue()  { return getAveragePower(); }
+    function getAltValue() { return getAveragePower(); }
     function getAltFormattedValue() as Lang.String {
       return getAveragePower().format("%.0f");
     }
     function getAltUnits() as String { return "w"; }
     function getAltLabel() as Lang.String { return "Avg power"; }
 
-    function setFtp(ftp as Lang.Number) { self.ftp = ftp; }
-    function setPerSec(perSec as Lang.Number) { self.perSec = perSec; }
-
+    // Power per weight
+    // function getPPWZoneInfo() as ZoneInfo {
+    //   return _getZoneInfo(powerPerX());
+    // }
+    function getPPWValue() {
+      return convertToMetricOrStatute(powerPerWeight());
+    }
+    function getPPWFormattedValue() as Lang.String {
+      return convertToMetricOrStatute(powerPerWeight()).format("%.1f");
+    }
+    function getPPWUnits() as String {
+      if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
+        return "w/lbs";  // watt per pounds
+      } else {
+        return "w/kg";
+      }
+    }
+    function getPPWLabel() as Lang.String {
+      if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
+        return "Avg power/lbs";
+      } else {
+        return "Avg power/kg";
+      }
+    }
 
     // --
+
+    hidden function convertToMetricOrStatute(value) {
+      if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
+        value = Utils.kilogramToLbs(value);
+      }
+      return value;
+    }
     hidden function getAveragePower() as Lang.Number {
       if (averagePower == null) {
         return 0;
@@ -113,11 +145,21 @@ module WhatAppBase {
       return ppx / perSec.size();
     }
 
-    hidden function powerPerWeight() as Lang.Number {
-      if (userWeightKg == 0) {
-        return 0;
+    hidden function powerPerWeight() as Lang.Float {
+      if (mActivityPaused) {
+        return averagePowerPerWeight();
       }
-      return powerPerX() / userWeightKg;
+      if (userWeightKg == 0) {
+        return 0.0f;
+      }
+      return powerPerX() / userWeightKg.toFloat();
+    }
+
+    hidden function averagePowerPerWeight() as Lang.Float {
+      if (userWeightKg == 0) {
+        return 0.0f;
+      }
+      return getAveragePower() / userWeightKg.toFloat();
     }
 
     // https://www.trainerroad.com/blog/cycling-power-zones-training-zones-explained/

@@ -40,6 +40,7 @@ module WhatAppBase {
           getShowInformation(mApp._showInfoRight, mApp._showInfoHrFallback,
                              mApp._showInfoTrainingEffectFallback, info);
 
+      // @@ TODO check same obj instance call updateInfo twice
       if (mApp._wiTop != null) {
         mApp._wiTop.updateInfo(info);
       }
@@ -178,16 +179,14 @@ module WhatAppBase {
                          altZone.color, zone.perc, zone.color100perc, label);
     }
 
-// @@ create factory method
+// @@ create factory object method
     function getShowInformation(showInfo, showInfoHrFallback,
                                 showInfoTrainingEffectFallback,
                                 info as Activity.Info) as WhatInformation {
       // System.println("showInfo: " + showInfo);
       switch (showInfo) {
         case ShowInfoPower:
-          var wi = new WhatInformation(mApp._wPower);
-          // @@ wi.setCallbackAvgValue( : getAveragePower);
-          return wi;
+          return new WhatInformation(mApp._wPower);
         case ShowInfoHeartrate:
           if (info != null) {
             mApp._wHeartrate.updateInfo(info);
@@ -233,6 +232,16 @@ module WhatAppBase {
           return new WhatInformation(mApp._wTrainingEffect);
         case ShowInfoEnergyExpenditure:
           return new WhatInformation(mApp._wEngergyExpenditure);
+        case ShowInfoPowerPerBodyWeight:
+          var wi = new WhatInformation(mApp._wPowerPerWeight);
+          // @@ _wPower . updateinfo should be called 1 per second ,
+          // !! if power + power/kg shown -> call it only 1 time @@@@@@@@@@@@@@@@@@@@@
+          
+          // zone info is the same
+          wi.setCallback(cbFormattedValue, :getPPWFormattedValue);
+          wi.setCallback(cbUnits, :getPPWUnits);
+          wi.setCallback(cbLabel, :getPPWLabel);
+          return wi;
         case ShowInfoTestField:
           return new WhatInformation(mApp._wTestField);
         case ShowInfoNothing:
