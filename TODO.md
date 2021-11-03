@@ -6,6 +6,7 @@ fix perc text -> + background rect 1 smaller red not visible
       // dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
       dc.drawText(xRect, yRect, font, "test", Graphics.TEXT_JUSTIFY_LEFT);
 ??  setClip(x as Lang.Numeric, y as Lang.Numeric, width as Lang.Numeric, height as Lang.Numeric) as Void 
+reorder settings
 
 fix font size issue rpm in wide field ..
 - wide field: units te laag

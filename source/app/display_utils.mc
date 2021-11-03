@@ -265,7 +265,21 @@ module WhatAppBase {
       drawPercentageLine(xb, yPercentage, wBottomBar, percentage, 2,
                          colorPercentageLine);
 
+      if (isSmallField()) {
+        return;
+      }
       if (leftAndRightCircleFillWholeScreen()) {
+        // @@ Only display value, ex heading
+        if (color != null) {
+          dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        }
+        dc.drawText(
+            dc.getWidth() / 2, y, mFontBottomValue, value,
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(dc.getWidth() / 2 + widthValue / 2 + marginleft2, y,
+                    mFontUnits, units,
+                    Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+
         return;
       }
 
