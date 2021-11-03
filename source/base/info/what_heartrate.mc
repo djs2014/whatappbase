@@ -3,7 +3,7 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
 module WhatAppBase {
-  class WhateHeartrate extends WhatInfoBase {
+  class WhatHeartrate extends WhatInfoBase {
     hidden var currentHeartRate = 0;
     hidden var avarageHeartrate = 0;
     hidden var maxHeartRate = 0;

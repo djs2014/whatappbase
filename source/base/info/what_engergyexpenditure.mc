@@ -2,7 +2,7 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
 module WhatAppBase {
-  class WhatEngergyExpenditure extends WhatInfoBase {
+  class WhatEnergyExpenditure extends WhatInfoBase {
     hidden var energyExpenditure = 0.0f;          // kcal/min
     hidden var targetEngergyExpenditure = 10.0f;  // kcal / min
 

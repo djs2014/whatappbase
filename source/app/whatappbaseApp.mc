@@ -6,56 +6,12 @@ using WhatAppBase.Utils;
 module WhatAppBase {
   class WhatApp {
     var appName = "";
-    var _wiTop = null as WhatInformation;
-    var _wiLeft = null as WhatInformation;
-    var _wiRight = null as WhatInformation;
-    var _wiBottom = null as WhatInformation;
+    var mFactory = new BaseFactory();
+    var mDebug = false;
 
-    var _wPower = null as WhatPower;
-    var _wPowerPerWeight = null as WhatPower;  // @@
-    var _wHeartrate = null as WhateHeartrate;
-    var _wCadence = null as WhatCadence;
-    var _wGrade = null as WhatGrade;
-    var _wDistance = null as WhatDistance;
-    var _wAltitude = null as WhatAltitude;
-    var _wSpeed = null as WhatSpeed;
-    var _wPressure = null as WhatPressure;
-    var _wCalories = null as WhatCalories;
-    var _wTrainingEffect = null as WhatTrainingEffect;
-    var _wTime = null as WhatTime;
-    var _wHeading = null as WhatHeading;
-    var _wEngergyExpenditure = null as WhatEngergyExpenditure;
-    var _wTestField = null as WhatTestField;
-
-    var _showInfoTop = ShowInfoPower;
-    var _showInfoLeft = ShowInfoNothing;
-    var _showInfoRight = ShowInfoNothing;
-    var _showInfoBottom = ShowInfoNothing;
-    var _showInfoHrFallback = ShowInfoNothing;
-    var _showInfoTrainingEffectFallback = ShowInfoNothing;
     var _showInfoLayout = LayoutMiddleCircle;
-    var _showSealevelPressure = true;
 
-    function initialize(appName as Lang.String) {
-      self.appName = appName;
-      // AppBase.initialize();
-
-      _wPower = new WhatPower();
-      _wPowerPerWeight = new WhatPower();
-      _wHeartrate = new WhateHeartrate();
-      _wCadence = new WhatCadence();
-      _wDistance = new WhatDistance();
-      _wAltitude = new WhatAltitude();
-      _wGrade = new WhatGrade();
-      _wSpeed = new WhatSpeed();
-      _wPressure = new WhatPressure();
-      _wCalories = new WhatCalories();
-      _wTrainingEffect = new WhatTrainingEffect();
-      _wTime = new WhatTime();
-      _wHeading = new WhatHeading();
-      _wEngergyExpenditure = new WhatEngergyExpenditure();
-      _wTestField = new WhatTestField();
-    }
+    function initialize(appName as Lang.String) { self.appName = appName; }
 
     // onStart() is called on application start up
     function onStart(state as Dictionary?) as Void {
@@ -75,74 +31,82 @@ module WhatAppBase {
 
     function loadUserSettings() {
       try {
-        _showInfoTop =
+        var showInfoTop =
             Utils.getNumberProperty("showInfoTop", ShowInfoTrainingEffect);
-        _showInfoLeft = Utils.getNumberProperty("showInfoLeft", ShowInfoPower);
-        _showInfoRight =
+        var showInfoLeft =
+            Utils.getNumberProperty("showInfoLeft", ShowInfoPower);
+        var showInfoRight =
             Utils.getNumberProperty("showInfoRight", ShowInfoHeartrate);
-        _showInfoBottom =
+        var showInfoBottom =
             Utils.getNumberProperty("showInfoBottom", ShowInfoCalories);
-        _showInfoHrFallback =
+        var showInfoHrFallback =
             Utils.getNumberProperty("showInfoHrFallback", ShowInfoCadence);
-        _showInfoTrainingEffectFallback = Utils.getNumberProperty(
+        var showInfoTrainingEffectFallback = Utils.getNumberProperty(
             "showInfoTrainingEffectFallback", ShowInfoEnergyExpenditure);
 
-        var debug = Utils.getBooleanProperty("debug", false);
-        // @@ TODO factory getting only the instances shown
-        _wHeading.setDebug(debug);
+        mFactory.setFields(showInfoTop, showInfoLeft, showInfoRight,
+                           showInfoBottom);
+        mFactory.setHrFallback(showInfoHrFallback);
+        mFactory.setTrainingEffectFallback(showInfoTrainingEffectFallback);
+
+        setProperties(mFactory.getInstance(showInfoTop));
+        setProperties(mFactory.getInstance(showInfoLeft));
+        setProperties(mFactory.getInstance(showInfoRight));
+        setProperties(mFactory.getInstance(showInfoBottom));
+        setProperties(mFactory.getInstance(showInfoHrFallback));
+        setProperties(mFactory.getInstance(showInfoTrainingEffectFallback));
 
         _showInfoLayout =
             Utils.getNumberProperty("showInfoLayout", LayoutMiddleCircle);
 
-        // @@ can this be generic? parameter is field in object??
-        _wPower.setFtp(Utils.getNumberProperty("ftpValue", 200));
-        _wPower.setPerSec(Utils.getNumberProperty("powerPerSecond", 3));
-        _wPower.initWeight();
-
-        _wPowerPerWeight.setFtp(Utils.getNumberProperty("ftpValue", 200)); // @@ because of updateinfo called only once per sec.
-        _wPowerPerWeight.setPerSec(
-            Utils.getNumberProperty("powerPerSecond", 3));
-        _wPowerPerWeight.initWeight();
-
-        _wPressure.setShowSeaLevelPressure(
-            Utils.getBooleanProperty("showSeaLevelPressure", true));
-        _wPressure.setPerMin(
-            Utils.getNumberProperty("calcAvgPressurePerMinute", 30));
-        _wPressure.reset();  //@@ QnD start activity
-
-        _wHeartrate.initZones();
-        _wSpeed.setTargetSpeed(Utils.getNumberProperty("targetSpeed", 30));
-        _wCadence.setTargetCadence(
-            Utils.getNumberProperty("targetCadence", 95));
-        _wDistance.setTargetDistance(
-            Utils.getNumberProperty("targetDistance", 150));
-        _wCalories.setTargetCalories(
-            Utils.getNumberProperty("targetCalories", 2000));
-        _wEngergyExpenditure.setTargetEngergyExpenditure(
-            Utils.getNumberProperty("targetEnergyExpenditure", 15));
-        _wHeading.setMinimalLocationAccuracy(
-            Utils.getNumberProperty("minimalLocationAccuracy", 0));
-        _wHeading.setMinimalElapsedDistanceInMeters(
-            Utils.getNumberProperty("minimalElapsedDistanceInMeters", 0));
-
-        _wTestField.setTargetValue(
-            Utils.getNumberProperty("targetTestValue", 100));
-        _wTestField.setValue(Utils.getNumberProperty("testValue", 250));
-
         System.println("Settings loaded");
-        infoSettings();
+        if (mFactory.isDebug()) {
+          mFactory.infoSettings();
+        }
       } catch (ex) {
         ex.printStackTrace();
       }
     }
 
-    function infoSettings() as Void {
-      System.println("_showInfoTop[" + _showInfoTop + "] _showInfoLeft[" +
-                     _showInfoLeft + "] _showInfoRight[" + _showInfoRight +
-                     "] _showInfoBottom[" + _showInfoBottom +
-                     "] _showInfoHrFallback[" + _showInfoHrFallback +
-                     "] _showInfoTrainingEffectFallback[" +
-                     _showInfoTrainingEffectFallback + "]");
+    function setProperties(obj as WhatInfoBase) as Void {
+      mDebug = Utils.getBooleanProperty("debug", false);
+      mFactory.setDebug(mDebug);
+      if (obj == null) {
+        return;
+      }
+      obj.setDebug(mDebug);
+
+      if (obj instanceof WhatPower) {
+        obj.setFtp(Utils.getNumberProperty("ftpValue", 200));
+        obj.setPerSec(Utils.getNumberProperty("powerPerSecond", 3));
+        obj.initWeight();
+      } else if (obj instanceof WhatPressure) {
+        obj.setShowSeaLevelPressure(
+            Utils.getBooleanProperty("showSeaLevelPressure", true));
+        obj.setPerMin(Utils.getNumberProperty("calcAvgPressurePerMinute", 30));
+        obj.reset();
+      } else if (obj instanceof WhatHeartrate) {
+        obj.initZones();
+      } else if (obj instanceof WhatSpeed) {
+        obj.setTargetSpeed(Utils.getNumberProperty("targetSpeed", 30));
+      } else if (obj instanceof WhatCadence) {
+        obj.setTargetCadence(Utils.getNumberProperty("targetCadence", 95));
+      } else if (obj instanceof WhatDistance) {
+        obj.setTargetDistance(Utils.getNumberProperty("targetDistance", 150));
+      } else if (obj instanceof WhatCalories) {
+        obj.setTargetCalories(Utils.getNumberProperty("targetCalories", 2000));
+      } else if (obj instanceof WhatEnergyExpenditure) {
+        obj.setTargetEngergyExpenditure(
+            Utils.getNumberProperty("targetEnergyExpenditure", 15));
+      } else if (obj instanceof WhatHeading) {
+        obj.setMinimalLocationAccuracy(
+            Utils.getNumberProperty("minimalLocationAccuracy", 0));
+        obj.setMinimalElapsedDistanceInMeters(
+            Utils.getNumberProperty("minimalElapsedDistanceInMeters", 0));
+      } else if (obj instanceof WhatTestField) {
+        obj.setTargetValue(Utils.getNumberProperty("targetTestValue", 100));
+        obj.setValue(Utils.getNumberProperty("testValue", 250));
+      }
     }
   }
 

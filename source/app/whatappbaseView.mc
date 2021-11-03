@@ -7,19 +7,27 @@ using WhatAppBase.Types;
 
 module WhatAppBase {
   class WhatAppView extends WatchUi.DataField {
-    hidden var mWD;
-    hidden var mNoInfo = null as Activity.Info;
     hidden var mApp = null as WhatApp;
+    hidden var mNoInfo = null as Activity.Info;
+    hidden var mWD;
+    hidden var mFactory = null as BaseFactory;
     hidden var mShowAppName = false as Lang.Boolean;
+
+    hidden var mWiTop = null;
+    hidden var mWiLeft = null;
+    hidden var mWiRight = null;
+    hidden var mWiBottom = null;
 
     function initialize(whatApp as WhatApp) {
       DataField.initialize();
       mWD = new WhatDisplay();
       mApp = whatApp;
+      mFactory = mApp.mFactory;
     }
 
     // Set your layout here. Anytime the size of obscurity of
     // the draw context is changed this will be called.
+    // @@ Detect radar icon in right upper corner
     function onLayout(dc as Dc) as Void { mWD.onLayout(dc); }
 
     // The given info object contains all the current workout information.
@@ -27,31 +35,25 @@ module WhatAppBase {
     // Note that compute() and onUpdate() are asynchronous, and there is no
     // guarantee that compute() will be called before onUpdate().
     function compute(info as Activity.Info) as Void {
-      mApp._wiTop =
-          getShowInformation(mApp._showInfoTop, mApp._showInfoHrFallback,
-                             mApp._showInfoTrainingEffectFallback, info);
-      mApp._wiBottom =
-          getShowInformation(mApp._showInfoBottom, mApp._showInfoHrFallback,
-                             mApp._showInfoTrainingEffectFallback, info);
-      mApp._wiLeft =
-          getShowInformation(mApp._showInfoLeft, mApp._showInfoHrFallback,
-                             mApp._showInfoTrainingEffectFallback, info);
-      mApp._wiRight =
-          getShowInformation(mApp._showInfoRight, mApp._showInfoHrFallback,
-                             mApp._showInfoTrainingEffectFallback, info);
+      mFactory.setInfo(info);
+
+      mWiTop = mFactory.getWI_Top();
+      mWiLeft = mFactory.getWI_Left();
+      mWiRight = mFactory.getWI_Right();
+      mWiBottom = mFactory.getWI_Bottom();
 
       // @@ TODO check same obj instance call updateInfo twice
-      if (mApp._wiTop != null) {
-        mApp._wiTop.updateInfo(info);
+      if (mWiTop != null) {
+        mWiTop.updateInfo(info);
       }
-      if (mApp._wiBottom != null) {
-        mApp._wiBottom.updateInfo(info);
+      if (mWiLeft != null) {
+        mWiLeft.updateInfo(info);
       }
-      if (mApp._wiLeft != null) {
-        mApp._wiLeft.updateInfo(info);
+      if (mWiRight != null) {
+        mWiRight.updateInfo(info);
       }
-      if (mApp._wiRight != null) {
-        mApp._wiRight.updateInfo(info);
+      if (mWiBottom != null) {
+        mWiBottom.updateInfo(info);
       }
 
       mShowAppName = true;
@@ -75,28 +77,16 @@ module WhatAppBase {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
       }
 
-      mApp._wiTop =
-          getShowInformation(mApp._showInfoTop, mApp._showInfoHrFallback,
-                             mApp._showInfoTrainingEffectFallback, mNoInfo);
-      mApp._wiBottom =
-          getShowInformation(mApp._showInfoBottom, mApp._showInfoHrFallback,
-                             mApp._showInfoTrainingEffectFallback, mNoInfo);
-      mApp._wiLeft =
-          getShowInformation(mApp._showInfoLeft, mApp._showInfoHrFallback,
-                             mApp._showInfoTrainingEffectFallback, mNoInfo);
-      mApp._wiRight =
-          getShowInformation(mApp._showInfoRight, mApp._showInfoHrFallback,
-                             mApp._showInfoTrainingEffectFallback, mNoInfo);
+      mWiTop = mFactory.getWI_Top();
+      mWiLeft = mFactory.getWI_Left();
+      mWiRight = mFactory.getWI_Right();
+      mWiBottom = mFactory.getWI_Bottom();
 
-      var showTop = mApp._wiTop != null;
-      var showLeft = mApp._wiLeft != null;
-      var showRight = mApp._wiRight != null;
-      var showBottom = mApp._wiBottom != null;
+      mWD.setShowTopInfo(mWiTop != null);
+      mWD.setShowLeftInfo(mWiLeft != null);
+      mWD.setShowRightInfo(mWiRight != null);
+      mWD.setShowBottomInfo(mWiBottom != null);
 
-      mWD.setShowTopInfo(showTop);
-      mWD.setShowLeftInfo(showLeft);
-      mWD.setShowRightInfo(showRight);
-      mWD.setShowBottomInfo(showBottom);
       mWD.setMiddleLayout(mApp._showInfoLayout);
 
       drawTopInfo(dc);
@@ -104,7 +94,7 @@ module WhatAppBase {
       drawRightInfo(dc);
       drawBottomInfo(dc);
 
-      // @@ callback?
+      // @@ callback option?
       if (mShowAppName && mApp.appName != null && mApp.appName.length() > 0) {
         dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_BLACK);
         dc.drawText(0, 0, Graphics.FONT_XTINY, mApp.appName,
@@ -113,142 +103,70 @@ module WhatAppBase {
     }
 
     function drawLeftInfo(dc) {
-      if (mApp._wiLeft == null) {
+      if (mWiLeft == null) {
         return;
       }
-      var value = mApp._wiLeft.getFormattedValue();
-      var zone = mApp._wiLeft.getZoneInfo();
-      var units = mApp._wiLeft.getUnits();
+      var value = mWiLeft.getFormattedValue();
+      var zone = mWiLeft.getZoneInfo();
+      var units = mWiLeft.getUnits();
 
       var label = zone.name;
-      if (mApp._wiLeft.isLabelHidden()) {  // @@
+      if (mWiLeft.isLabelHidden()) {  // @@
         label = "";
       }
-      var altZone = mApp._wiLeft.getAltZoneInfo();
+      var altZone = mWiLeft.getAltZoneInfo();
       mWD.drawLeftInfo(zone.fontColor, value, zone.color, units, altZone.color,
                        zone.perc, zone.color100perc, label);
     }
     function drawTopInfo(dc) {
-      if (mApp._wiTop == null) {
+      if (mWiTop == null) {
         return;
       }
-      var value = mApp._wiTop.getFormattedValue();
-      var zone = mApp._wiTop.getZoneInfo();
-      var units = mApp._wiTop.getUnits();
+      var value = mWiTop.getFormattedValue();
+      var zone = mWiTop.getZoneInfo();
+      var units = mWiTop.getUnits();
 
       var label = zone.name;
-      if (mApp._wiTop.isLabelHidden()) {  // @@
+      if (mWiTop.isLabelHidden()) {  // @@
         label = "";
       }
-      var altZone = mApp._wiTop.getAltZoneInfo();
+      var altZone = mWiTop.getAltZoneInfo();
       mWD.drawTopInfo(zone.fontColor, value, zone.color, units, altZone.color,
                       zone.perc, zone.color100perc, label);
     }
 
     function drawRightInfo(dc) {
-      if (mApp._wiRight == null) {
+      if (mWiRight == null) {
         return;
       }
-      var value = mApp._wiRight.getFormattedValue();
-      var zone = mApp._wiRight.getZoneInfo();
-      var units = mApp._wiRight.getUnits();
+      var value = mWiRight.getFormattedValue();
+      var zone = mWiRight.getZoneInfo();
+      var units = mWiRight.getUnits();
 
       var label = zone.name;
-      if (mApp._wiRight.isLabelHidden()) {  // @@
+      if (mWiRight.isLabelHidden()) {  // @@
         label = "";
       }
-      var altZone = mApp._wiRight.getAltZoneInfo();
+      var altZone = mWiRight.getAltZoneInfo();
       mWD.drawRightInfo(zone.fontColor, value, zone.color, units, altZone.color,
                         zone.perc, zone.color100perc, label);
     }
 
     function drawBottomInfo(dc) {
-      if (mApp._wiBottom == null) {
+      if (mWiBottom == null) {
         return;
       }
-      var value = mApp._wiBottom.getFormattedValue();
-      var zone = mApp._wiBottom.getZoneInfo();
-      var units = mApp._wiBottom.getUnits();
+      var value = mWiBottom.getFormattedValue();
+      var zone = mWiBottom.getZoneInfo();
+      var units = mWiBottom.getUnits();
 
       var label = zone.name;
-      if (mApp._wiBottom.isLabelHidden()) {  // @@
+      if (mWiBottom.isLabelHidden()) {  // @@
         label = "";
       }
-      var altZone = mApp._wiBottom.getAltZoneInfo();
+      var altZone = mWiBottom.getAltZoneInfo();
       mWD.drawBottomInfo(zone.fontColor, value, zone.color, units,
                          altZone.color, zone.perc, zone.color100perc, label);
-    }
-
-// @@ create factory object method
-    function getShowInformation(showInfo, showInfoHrFallback,
-                                showInfoTrainingEffectFallback,
-                                info as Activity.Info) as WhatInformation {
-      // System.println("showInfo: " + showInfo);
-      switch (showInfo) {
-        case ShowInfoPower:
-          return new WhatInformation(mApp._wPower);
-        case ShowInfoHeartrate:
-          if (info != null) {
-            mApp._wHeartrate.updateInfo(info);
-          }
-          if (!mApp._wHeartrate.isAvailable() &&
-              showInfoHrFallback != ShowInfoNothing) {
-            return getShowInformation(showInfoHrFallback, ShowInfoNothing,
-                                      ShowInfoNothing, mNoInfo);
-          }
-          return new WhatInformation(mApp._wHeartrate);
-        case ShowInfoSpeed:
-          return new WhatInformation(mApp._wSpeed);
-        case ShowInfoCadence:
-          return new WhatInformation(mApp._wCadence);
-        case ShowInfoAltitude:
-          return new WhatInformation(mApp._wAltitude);
-        case ShowInfoGrade:
-          return new WhatInformation(mApp._wGrade);
-        case ShowInfoHeading:
-          return new WhatInformation(mApp._wHeading);
-        case ShowInfoDistance:
-          return new WhatInformation(mApp._wDistance);
-        case ShowInfoAmbientPressure:
-          return new WhatInformation(mApp._wPressure);
-        case ShowInfoTimeOfDay:
-          return new WhatInformation(mApp._wTime);
-        case ShowInfoCalories:
-          return new WhatInformation(mApp._wCalories);
-        case ShowInfoTotalAscent:
-          return new WhatInformation(mApp._wAltitude);
-        case ShowInfoTotalDescent:
-          return new WhatInformation(mApp._wAltitude);
-        case ShowInfoTrainingEffect:
-          if (info != null) {
-            mApp._wTrainingEffect.updateInfo(info);
-          }
-          if (!mApp._wTrainingEffect.isAvailable() &&
-              showInfoTrainingEffectFallback != ShowInfoNothing) {
-            return getShowInformation(showInfoTrainingEffectFallback,
-                                      ShowInfoNothing, ShowInfoNothing,
-                                      mNoInfo);
-          }
-          return new WhatInformation(mApp._wTrainingEffect);
-        case ShowInfoEnergyExpenditure:
-          return new WhatInformation(mApp._wEngergyExpenditure);
-        case ShowInfoPowerPerBodyWeight:
-          var wi = new WhatInformation(mApp._wPowerPerWeight);
-          // @@ _wPower . updateinfo should be called 1 per second ,
-          // !! if power + power/kg shown -> call it only 1 time @@@@@@@@@@@@@@@@@@@@@
-          
-          // zone info is the same
-          wi.setCallback(cbFormattedValue, :getPPWFormattedValue);
-          wi.setCallback(cbUnits, :getPPWUnits);
-          wi.setCallback(cbLabel, :getPPWLabel);
-          return wi;
-        case ShowInfoTestField:
-          return new WhatInformation(mApp._wTestField);
-        case ShowInfoNothing:
-        default:
-          var nope = null as WhatInformation;
-          return nope;
-      }
     }
   }
 }
