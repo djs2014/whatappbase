@@ -3,27 +3,7 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
 
-  enum {
-    ShowInfoNothing = 0,
-    ShowInfoPower = 1,
-    ShowInfoHeartrate = 2,
-    ShowInfoSpeed = 3,
-    ShowInfoCadence = 4,
-    ShowInfoAltitude = 5,
-    ShowInfoGrade = 6,
-    ShowInfoHeading = 7,
-    ShowInfoDistance = 8,
-    ShowInfoAmbientPressure = 9,
-    ShowInfoTimeOfDay = 10,
-    ShowInfoCalories = 11,
-    ShowInfoTotalAscent = 12,   // @@ TODO combine ascent/descent
-    ShowInfoTotalDescent = 13,  // @@ TODO combine ascent/descent
-    ShowInfoTrainingEffect = 14,
-    ShowInfoTemperature = 15,  // @@ not working yet
-    ShowInfoEnergyExpenditure = 16,
-    ShowInfoPowerPerBodyWeight = 17,  // @@ TODO
-    ShowInfoTestField = 18
-  }
+  
 
   class WhatInformation {
     var objInstance = null;

@@ -39,12 +39,12 @@ module WhatAppBase {
       return getTypedProperty(key, dflt, Lang.Double);
     }
 
-    function getTypedProperty(key, dflt, valueType) {
+    function getTypedProperty(key, dflt, keyType as PropertyKeyType ) {
       // Test.assert(dflt instanceof type);
 
       try {
         var val = Application.Properties.getValue(key);
-        // if (val != null && val instanceof valueType) {
+        //if (val != null && val instanceof keyType) {
         if (val != null) {  // because of strict
           return val;
         }

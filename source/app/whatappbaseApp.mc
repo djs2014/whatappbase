@@ -8,11 +8,13 @@ module WhatAppBase {
     var appName = "";
     var mFactory = new BaseFactory();
     var mDebug = false;
+    // const FIVE_MINUTES = new Time.Duration(5 * 60);
 
     var _showInfoLayout = LayoutMiddleCircle;
 
-    function initialize(appName as Lang.String) { self.appName = appName; }
+    function initialize() {}
 
+    function setAppName(appName as Lang.String) { self.appName = appName; }
     // onStart() is called on application start up
     function onStart(state as Dictionary?) as Void {
     }
@@ -106,12 +108,13 @@ module WhatAppBase {
       } else if (obj instanceof WhatTestField) {
         obj.setTargetValue(Utils.getNumberProperty("targetTestValue", 100));
         obj.setValue(Utils.getNumberProperty("testValue", 250));
+      // } else if (obj instanceof WhatTemperature) {
+      //   if (System has : ServiceDelegate) {
+      //     Background.registerForTemporalEvent(FIVE_MINUTES);
+      //   } else {
+      //     System.println("**** background not available on this device ****");
+      //   }
       }
     }
   }
-
-  //   function
-  //   getApp() as whatpowerApp {
-  //     return Application.getApp() as whatpowerApp;
-  //   }
 }

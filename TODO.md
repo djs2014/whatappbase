@@ -1,3 +1,6 @@
+1: what distance
+2: temperature @@??@@
+
 fix perc text -> + background rect 1 smaller red not visible
     - werkt niet op edge, wel op simulator?
 

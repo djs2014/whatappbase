@@ -1,7 +1,8 @@
 import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
-using Toybox.SensorHistory;
+import Toybox.Time;
+// using Toybox.SensorHistory;
 module WhatAppBase {
   class WhatPressure extends WhatInfoBase {
     hidden var perMin = 30;
@@ -12,8 +13,9 @@ module WhatAppBase {
     // in km
     hidden var ambientPressure = 0.0f;
     hidden var meanSeaLevelPressure = 0.0f;
-
     hidden var showSeaLevelPressure = false;
+
+    hidden var lastCheck = 0 as Lang.Number;
 
     function initialize() { WhatInfoBase.initialize(); }
 
@@ -42,7 +44,11 @@ module WhatAppBase {
           self.meanSeaLevelPressure = 0.0f;
         }
 
-        addPressurePerSec(meanSeaLevelPressure);
+        if (ensureXSecondsPassed(lastCheck, 1)) {
+          lastCheck = Time.now().value();
+          System.println("addPressurePerSec: " + lastCheck);
+          addPressurePerSec(meanSeaLevelPressure);
+        }
       }
     }
 
@@ -145,20 +151,20 @@ module WhatAppBase {
     }
 
     // Create a method to get the SensorHistoryIterator object
-    hidden function getIterator() {
-      // var oneHour = new Time.Duration(3600);
+    // hidden function getIterator() {
+    //   // var oneHour = new Time.Duration(3600);
 
-      // Check device for SensorHistory compatibility
-      if ((Toybox has
-           : SensorHistory) &&
-          (Toybox.SensorHistory has
-           : getPressureHistory)) {
-        return Toybox.SensorHistory.getPressureHistory(
-            {});  // {"period" => oneHour, "order" => null}
-      }
-      // System.println("no SensorHistory");
-      return null;
-    }
+    //   // Check device for SensorHistory compatibility
+    //   if ((Toybox has
+    //        : SensorHistory) &&
+    //       (Toybox.SensorHistory has
+    //        : getPressureHistory)) {
+    //     return Toybox.SensorHistory.getPressureHistory(
+    //         {});  // {"period" => oneHour, "order" => null}
+    //   }
+    //   // System.println("no SensorHistory");
+    //   return null;
+    // }
 
     //  https://www.thoughtco.com/how-to-read-a-barometer-3444043 (sealevel)
     // High > 1022.689
@@ -214,31 +220,27 @@ module WhatAppBase {
         label = "Sea level";
       }
       var trend = "";
-      // Store the iterator info in a variable. The options are 'null' in
-      // this case so the entire available history is returned with the
-      // newest samples returned first.
-      var sensorIter = getIterator();
+      // var sensorIter = getIterator();
+      // if (sensorIter != null) {
+      //   trend = "H " + sensorIter.next().data;
+      //   System.println("History: " + sensorIter.next().data);
+      // } else {
+      // }
 
-      // Print out the next entry in the iterator
-      if (sensorIter != null) {
-        trend = "H " + sensorIter.next().data;
-        System.println("History: " + sensorIter.next().data);
-      } else {
-        // calc trend
-        var avg = pressurePerMinX();
+      // calc trend
+      var avg = pressurePerMinX();
+      if (avg == 0) {
+        avg = getAvgPressureOneMin();
         if (avg == 0) {
-          avg = getAvgPressureOneMin();
-          if (avg == 0) {
-            avg = meanSeaLevelPressure;
-          }
+          avg = meanSeaLevelPressure;
         }
+      }
 
-        var diff = meanSeaLevelPressure - avg;
-        // System.println("Avg pressure: " + avg + " diff: " + diff);
-        if (diff) {
-          // trend = " (" + diff.format("%.2f") + ")";  // trend
-          trend = " " + getTrendLevel(diff);
-        }
+      var diff = meanSeaLevelPressure - avg;
+      // System.println("Avg pressure: " + avg + " diff: " + diff);
+      if (diff) {
+        // trend = " (" + diff.format("%.2f") + ")";  // trend
+        trend = " " + getTrendLevel(diff);
       }
 
       if (pressure == null || pressure == 0) {

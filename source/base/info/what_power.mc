@@ -15,6 +15,8 @@ module WhatAppBase {
     hidden var maxPower = 0 as Lang.Number;
     hidden var userWeightKg = 0.0f;
 
+    hidden var lastCheck = 0 as Lang.Number;
+
     function initialize() { WhatInfoBase.initialize(); }
 
     function initWeight() as Void {
@@ -36,7 +38,11 @@ module WhatAppBase {
         if (info.currentPower) {
           power = info.currentPower;
         }
-        addPower(power);
+        if (ensureXSecondsPassed(lastCheck, 1)) {
+          lastCheck = Time.now().value();
+          System.println("Add power: " + lastCheck);
+          addPower(power);
+        }
       }
 
       if (info has : averagePower) {
