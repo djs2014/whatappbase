@@ -1,6 +1,14 @@
-1: what distance -> beta
-layout: bottom / top on large screen 
-NOPE 2: temperature @@??@@
+x 1: what distance -> beta
+x 2 avg circle wider
+    - show when activity paused
+3 smart layout: bottom / top on large screen  
+4 example html page with color perc circle
+5 1 field layout -> big circle etc.
+
+
+Not working:
+ - temperature
+ - transparent font on edge 830 drawn on 2 color background
 
 fix perc text -> + background rect 1 smaller red not visible
     - werkt niet op edge, wel op simulator?

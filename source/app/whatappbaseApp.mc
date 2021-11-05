@@ -107,7 +107,8 @@ module WhatAppBase {
             Utils.getNumberProperty("minimalElapsedDistanceInMeters", 0));
       } else if (obj instanceof WhatTestField) {
         obj.setTargetValue(Utils.getNumberProperty("targetTestValue", 100));
-        obj.setValue(Utils.getNumberProperty("testValue", 250));
+        obj.setValue(Utils.getNumberProperty("testValue", 145));
+        obj.setAltValue(Utils.getNumberProperty("testAltValue", 80));
       // } else if (obj instanceof WhatTemperature) {
       //   if (System has : ServiceDelegate) {
       //     Background.registerForTemporalEvent(FIVE_MINUTES);

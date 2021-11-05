@@ -115,8 +115,7 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiLeft.getAltZoneInfo();
-      mWD.drawLeftInfo(zone.fontColor, value, zone.color, units, altZone.color,
-                       zone.perc, zone.color100perc, label);
+      mWD.drawLeftInfo(label, value, units, zone, altZone);
     }
     function drawTopInfo(dc) {
       if (mWiTop == null) {
@@ -131,8 +130,7 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiTop.getAltZoneInfo();
-      mWD.drawTopInfo(zone.fontColor, value, zone.color, units, altZone.color,
-                      zone.perc, zone.color100perc, label);
+      mWD.drawTopInfo(label, value, units, zone, altZone);
     }
 
     function drawRightInfo(dc) {
@@ -148,8 +146,7 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiRight.getAltZoneInfo();
-      mWD.drawRightInfo(zone.fontColor, value, zone.color, units, altZone.color,
-                        zone.perc, zone.color100perc, label);
+      mWD.drawRightInfo(label, value, units, zone, altZone);
     }
 
     function drawBottomInfo(dc) {
@@ -165,8 +162,7 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiBottom.getAltZoneInfo();
-      mWD.drawBottomInfo(zone.fontColor, value, zone.color, units,
-                         altZone.color, zone.perc, zone.color100perc, label);
+      mWD.drawBottomInfo(label, value, units, zone, altZone);
     }
   }
 }
