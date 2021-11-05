@@ -22,7 +22,7 @@ module WhatAppBase {
     ShowInfoTrainingEffect = 14,
     ShowInfoTemperature = 15,  // @@ not working yet
     ShowInfoEnergyExpenditure = 16,
-    ShowInfoPowerPerBodyWeight = 17,  // @@ TODO
+    ShowInfoPowerPerBodyWeight = 17,  
     ShowInfoTestField = 18
   }
 
