@@ -1,59 +1,51 @@
-module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
- 
+module WhatAppBase {
+  class WhatTestField extends WhatInfoBase {
+    hidden var value = 250;
+    hidden var targetValue = 100;
 
-  class WhatCalories extends WhatBase {
-    hidden var calories = 0.0f;           // kcal
-    hidden var targetCalories = 2000.0f;  // kcal
+    function initialize() { WhatInfoBase.initialize(); }
 
-    function initialize() { WhatBase.initialize(); }
+    function setValue(value) { self.value = value; }
 
-    function setTargetCalories(targetCalories) {
-      self.targetCalories = targetCalories;
+    function setTargetValue(targetValue) { self.targetValue = targetValue; }
+
+    // function updateInfo(info as Activity.Info) {
+    //   if (info has : value) {
+    //     if (info.value) {
+    //       value = info.value;
+    //     } else {
+    //       value = 0.0f;
+    //     }
+    //   }
+    // }
+
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getTestValue()); }
+    function getValue() { return convertToMetricOrStatute(getTestValue()); }
+    function getFormattedValue() as Lang.String {
+      return convertToMetricOrStatute(getTestValue()).format("%.0f");
     }
+    function getUnits() as String { return "test"; }
+    function getLabel() as Lang.String { return "Test field"; }
 
-    function updateInfo(info as Activity.Info) {
-      if (info has : calories) {
-        if (info.calories) {
-          // speed is in meters per second
-          calories = info.calories;
-        } else {
-          calories = 0.0f;
-        }
-      }
-    }
-
-    function getCalories() {
-      if (calories == null) {
+    // --
+    hidden function getTestValue() {
+      if (value == null) {
         return 0;
       }
-      return self.calories;
+      return self.value;
     }
 
-    function getUnitsLong() as String { return "kcal"; }
-
-    function getUnits() as String { return "kcal"; }
-
-    function getFormatString(fieldType) as String { return "%.0f"; }
-
-    // @@TODO ->
-    // https://www.verywellfit.com/metabolism-facts-101-3495605
-    // Harris-Benedict Equation for BMR:
-    // Men:  BMR = 88.362 + (13.397 x weight in kg) + (4.799 x height in cm) -
-    // (5.677 x age in years) Women: BMR = 447.593 + (9.247 x weight in kg) +
-    // (3.098 x height in cm) - (4.330 x age in years) Women: Average BMR 1,400
-    // calories per day Men: Average BMR just over 1,600 calories per day
-    // --> percof chart
-    function getZoneInfo(cal) {
-      var label = "Calories";
-      if (cal == null || cal == 0) {
+    hidden function _getZoneInfo(val) {
+      var label = "test value";
+      if (val == null || val == 0) {
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }
 
-      var percOfTarget = percentageOf(cal, targetCalories);
+      var percOfTarget = Utils.percentageOf(val, targetValue);
       var color = percentageToColor(percOfTarget);
       var color100perc = null;
       if (percOfTarget > 100) {

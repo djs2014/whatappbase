@@ -1,8 +1,7 @@
-module WhatAppBase {
 import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
-
+module WhatAppBase {
   class WhatDisplay {
     hidden var dc;
     hidden var margin = 1;  // y @@ -> convert to marginTop/marginBottom
@@ -18,32 +17,36 @@ import Toybox.Lang;
     hidden var showBottomInfo = true;
     hidden var middleLayout = LayoutMiddleTriangle;
 
-    hidden var mFontLabel = Graphics.FONT_TINY;
-    hidden var mFontValue = Graphics.FONT_LARGE;
-    hidden var mFontValueSmall = Graphics.FONT_MEDIUM;
-    hidden var mFontValueWideField = Graphics.FONT_NUMBER_MILD;
+    // hidden var mFontLabel = Graphics.FONT_TINY;
+    // hidden var mFontValue = Graphics.FONT_LARGE;
+    // hidden var mFontValueSmall = Graphics.FONT_MEDIUM;
+    // hidden var mFontValueWideField = Graphics.FONT_NUMBER_MILD;
     hidden var mFontBottomLabel = Graphics.FONT_TINY;
     hidden var mFontBottomValue = Graphics.FONT_TINY;
     hidden var mFontUnits = Graphics.FONT_XTINY;
 
+    // @@ rename mFontValueAdditional to --mFontValue
     hidden var mFontLabelAdditional = Graphics.FONT_XTINY;
-    hidden var mFontValueAdditionalIndex = 1;
+    hidden var mFontValueAdditionalStartIndex = 1;
     hidden var mFontValueAdditional = [
       Graphics.FONT_SYSTEM_SMALL, Graphics.FONT_SYSTEM_MEDIUM,
       Graphics.FONT_SYSTEM_LARGE, Graphics.FONT_NUMBER_MILD,
       Graphics.FONT_NUMBER_HOT
-    ];
-    hidden var _widthAdditionalInfo = 15;
+    ] as Lang.Array<Lang.Number>;
+    hidden var mRadiusInfoField = 15;
+
+    hidden var COLOR_MAX_PERCENTAGE = WhatColor.COLOR_WHITE_DK_PURPLE_4;
 
     var width = 0;
     var height = 0;
-    var fieldType = SmallField;
+    var fieldType = Types.SmallField;
 
     function initialize() {}
 
-    function isSmallField() { return fieldType == SmallField; }
-    function isWideField() { return fieldType == WideField; }
-    function isOneField() { return fieldType == OneField; }
+    function isSmallField() { return fieldType == Types.SmallField; }
+    function isWideField() { return fieldType == Types.WideField; }
+    function isLargeField() { return fieldType == Types.LargeField; }
+    function isOneField() { return fieldType == Types.OneField; }
     function isNightMode() { return nightMode; }
     function setNightMode(nightMode) { self.nightMode = nightMode; }
     function setMiddleLayout(middleLayout) { self.middleLayout = middleLayout; }
@@ -58,19 +61,24 @@ import Toybox.Lang;
     }
 
     function onLayout(dc as Dc) {
+      System.println("onLayout");
       self.dc = dc;
 
       self.width = dc.getWidth();
       self.height = dc.getHeight();
-      self.fieldType = SmallField;
+      self.fieldType = Types.SmallField;
 
       if (self.width >= 246) {
-        self.fieldType = WideField;
-        if (self.height >= 322) {
-          self.fieldType = OneField;
+        self.fieldType = Types.WideField;
+        if (self.height >= 100) {
+          self.fieldType = Types.LargeField;
+        } else if (self.height >= 322) {
+          self.fieldType = Types.OneField;
         }
       }
 
+      // System.println("w[" + self.width + "] h[" + self.height + "] type[" +
+      //                self.fieldType + "]");
       // if (self.height < 80) {
       //   self.fieldType= SmallField;
       // }
@@ -80,11 +88,22 @@ import Toybox.Lang;
       // 3 fields: w[246] h[106]
 
       // @@ function to set fonts + some dimensions
-      _widthAdditionalInfo = min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
-      mFontValueAdditionalIndex = 4;
+      mRadiusInfoField = Utils.min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
+      mFontValueAdditionalStartIndex = 4;
       if (isSmallField()) {
-        _widthAdditionalInfo = 29.0f;
-        mFontValueAdditionalIndex = 1;
+        mRadiusInfoField = 29.0f;
+        mFontValueAdditionalStartIndex = 1;
+      } else if (isWideField()) {
+        if (!showBottomInfo && !showTopInfo) {
+          mRadiusInfoField = dc.getWidth() / 4;
+        }
+        mFontValueAdditionalStartIndex = 3;
+        mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
+      } else if (isLargeField()) {
+        if (!showBottomInfo && !showTopInfo) {
+          mRadiusInfoField = dc.getWidth() / 4;
+        }
+        mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
       } else {
         mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
       }
@@ -138,8 +157,8 @@ import Toybox.Lang;
       var columnHeight = left.y - top.y;
       var y = percentageToYpostion(percentage, top.y, columnHeight);
 
-      var slopeLeft = slopeOfLine(left.x, left.y, top.x, top.y);
-      var slopeRight = slopeOfLine(right.x, right.y, top.x, top.y);
+      var slopeLeft = Utils.slopeOfLine(left.x, left.y, top.x, top.y);
+      var slopeRight = Utils.slopeOfLine(right.x, right.y, top.x, top.y);
 
       // System.println("top" + top + "left" + left + " right" + right +
       //                " slopeLeft:" + slopeLeft + " slopeRight:" +
@@ -158,166 +177,51 @@ import Toybox.Lang;
       }
       return [];
     }
-    // @@TODO drawPercentageText
-    function drawPercentageText(x, y, text, percentage, color, percentageColor,
-                                backColor) {}
-    // function drawTopInfoCircle(radius, outlineColor, inlineColor, percentage,
-    //                            color100perc) {
-    //   var x = dc.getWidth() / 2;
-    //   var y = dc.getHeight() / 2;
 
-    //   dc.setColor(outlineColor, Graphics.COLOR_TRANSPARENT);
-    //   dc.fillCircle(x, y, radius + 2);
+    // x, y center of text
+    function drawPercentageText(x, y, font, text, percentage, initialTextColor,
+                                percentageColor, backColor) {
+      var textDimensions =
+          dc.getTextDimensions(text, font) as Lang.Array<Lang.Number>;  // [w,h]
+      var width = textDimensions[0];
+      var height = textDimensions[1];
 
-    //   dc.setColor(inlineColor, Graphics.COLOR_TRANSPARENT);
-    //   dc.fillCircle(x, y, radius);
+      // Calculate upper corner of Rectangle
+      var xRect = x - (width / 2.0);
+      var yRect = y - (height / 2.0);
 
-    //   dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+      // NB: filling is from top to bottom
+      // draw percentage part (100%): 0% -> all white
+      dc.setColor(percentageColor, Graphics.COLOR_BLACK);
+      dc.fillRectangle(xRect + 1, yRect + 1, width - 1, height - 1);
 
-    //   dc.fillCircle(x, y, radius - 4);
+      // And fill what is not reached with the initial color
+      var heightPerc =
+          Utils.min(height, Utils.valueOfPercentage(100 - percentage, height));
+      // System.println("percentage: " + percentage + " text: " + textDimensions
+      // +
+      //                " x: " + x + "y: " + y + " heightPerc: " + heightPerc);
 
-    //   dc.setColor(WhatColor.COLOR_WHITE_GRAY_2, Graphics.COLOR_TRANSPARENT);
-    //   drawPercentageCircle(x, y, radius - 4, percentage);
-    // }
+      dc.setColor(initialTextColor, Graphics.COLOR_BLACK);
+      dc.fillRectangle(xRect + 1, yRect + 1, width - 1, heightPerc);
 
-    // function drawTopInfoXXX(color, label, value, units) {
-    //   dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-
-    //   var fontValue = mFontValueWideField;
-    //   if (isSmallField()) {
-    //     fontValue = mFontValue;
-    //   }
-    //   var widthValue = dc.getTextWidthInPixels(value, fontValue);
-    //   if (widthValue >= (dc.getWidth() - (4 * _widthAdditionalInfo))) {
-    //     fontValue = mFontValueSmall;
-    //     widthValue = dc.getTextWidthInPixels(value, fontValue);
-    //   }
-
-    //   var hl = dc.getFontHeight(mFontLabel);
-    //   var hv = dc.getFontHeight(fontValue);
-    //   var yl = dc.getHeight() / 2 - hv + margin;
-    //   var widthUnits = dc.getTextWidthInPixels(units, mFontUnits);
-    //   var xv =
-    //       dc.getWidth() / 2 -
-    //       (widthValue) / 2;  // dc.getWidth() / 2 - (widthValue + widthUnits)
-    //       / 2;
-
-    //   if (isSmallField()) {
-    //     // label
-    //     yl = dc.getHeight() / 2 - hl - 2;
-    //     dc.drawText(dc.getWidth() / 2, yl, mFontLabel, label,
-    //                 Graphics.TEXT_JUSTIFY_CENTER |
-    //                 Graphics.TEXT_JUSTIFY_VCENTER);
-    //     // value
-    //     dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, fontValue, value,
-    //                 Graphics.TEXT_JUSTIFY_CENTER |
-    //                 Graphics.TEXT_JUSTIFY_VCENTER);
-    //     // units
-    //     dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2 + (hv / 2),
-    //     mFontUnits,
-    //                 units,
-    //                 Graphics.TEXT_JUSTIFY_CENTER |
-    //                 Graphics.TEXT_JUSTIFY_VCENTER);
-    //   } else {
-    //     // label
-    //     // var widthLabel = dc.getTextWidthInPixels(label, mFontLabel);
-    //     // drawPercentageCircle(dc.getWidth() / 2 - widthLabel / 2 - 7, yl +
-    //     hl/2,
-    //     // 5, perc);
-
-    //     dc.drawText(dc.getWidth() / 2, yl, mFontLabel, label,
-    //                 Graphics.TEXT_JUSTIFY_CENTER);
-    //     // value
-    //     dc.drawText(xv, dc.getHeight() / 2, fontValue, value,
-    //                 Graphics.TEXT_JUSTIFY_LEFT |
-    //                 Graphics.TEXT_JUSTIFY_VCENTER);
-
-    //     dc.drawText(xv + widthValue + 1, dc.getHeight() / 2, mFontUnits,
-    //     units,
-    //                 Graphics.TEXT_JUSTIFY_LEFT);
-    //   }
-    // }
-
-    function drawInfoTriangleThingy(color, label, value, units, backColor,
-                                    percentage, color100perc) {
-      // polygon
-      var wBottomBar = 2 * _widthAdditionalInfo;  // @@ TEST -> 1/3 width always
-                                                  // better? if no Top.
-      //     dc.getWidth() - (4 * _widthAdditionalInfo) + marginLeft +
-      //     marginRight;
-      // if (isSmallField()) {
-      //   wBottomBar = dc.getWidth() / 2;
-      // }
-      var top = new Point(dc.getWidth() / 2, margin);
-      var left = new Point(dc.getWidth() / 2 - wBottomBar / 2,
-                           dc.getHeight() - margin);
-      var right = new Point(dc.getWidth() / 2 + wBottomBar / 2,
-                            dc.getHeight() - margin);
-      var topInner = top.move(0, 2);
-      var leftInner = left.move(2, -2);
-      var rightInner = right.move(-2, -2);
-
-      var pts = getPercentageTrianglePts(top, left, right, 100);
-      dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-      dc.fillPolygon(pts);
-      if (!isSmallField()) {
-        // @@ Draw outline, there is no drawPolygon, so fill inner with
-        // white/background
-        pts = getPercentageTrianglePts(topInner, leftInner, rightInner, 100);
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.fillPolygon(pts);
-      }
-      if (percentage > 100 && color100perc != null) {
-        pts = getPercentageTrianglePts(topInner, leftInner, rightInner, 100);
-        dc.setColor(color100perc, Graphics.COLOR_TRANSPARENT);
-        dc.fillPolygon(pts);
-        percentage = percentage - 100;
-      }
-
-      pts =
-          getPercentageTrianglePts(topInner, leftInner, rightInner, percentage);
-      dc.setColor(backColor, Graphics.COLOR_TRANSPARENT);
-      dc.fillPolygon(pts);
-
-      if (!leftAndRightCircleFillWholeScreen()) {
-        var maxwidth = (right.x - left.x);
-        var x = left.x + maxwidth / 2.0;
-        var fontValue = getFontAdditionalInfo(maxwidth, value);
-        var y = (left.y - top.y) / 2;
-        var ha = dc.getFontHeight(fontValue);
-
-        // label
-        var yLabel = y - dc.getFontHeight(mFontBottomLabel) - 3;
-        // y - dc.getFontHeight(mFontBottomLabel) - ha / 2 + margin;
-        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            x, yLabel, mFontBottomLabel, label,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        // value
-        dc.drawText(
-            x, y, fontValue, value,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-
-        // units
-        var yUnits = y + ha / 2;
-        dc.drawText(
-            x, yUnits, mFontUnits, units,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-      }
+      // draw text, but only the outline
+      // @@ on edge 830 frontcolor is white, not transparent - BUG
+      dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
+      // dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
+      dc.drawText(xRect, yRect, font, text, Graphics.TEXT_JUSTIFY_LEFT);
+      // @@ for now draw line under text
+      drawPercentageLine(xRect, yRect + height, width, percentage, 2,
+                         initialTextColor);
     }
 
     function leftAndRightCircleFillWholeScreen() {
       return dc.getWidth() - 40 <
-             (4 * _widthAdditionalInfo) + (marginLeft + marginRight);
+             (4 * mRadiusInfoField) + (marginLeft + marginRight);
     }
 
-    hidden function getHeigthInfoBottom() {
-      // @@
-    }
-    function drawBottomInfo(color, label, value, units, backColor, percentage,
-                            color100perc) {
+    function drawBottomInfo(color, value, backColor, units, outlineColor,
+                            percentage, color100perc, label) {
       var hv = dc.getFontHeight(mFontBottomValue);
       var widthLabel = dc.getTextWidthInPixels(label, mFontBottomLabel);
       var widthValue = dc.getTextWidthInPixels(value, mFontBottomValue);
@@ -361,7 +265,21 @@ import Toybox.Lang;
       drawPercentageLine(xb, yPercentage, wBottomBar, percentage, 2,
                          colorPercentageLine);
 
+      if (isSmallField()) {
+        return;
+      }
       if (leftAndRightCircleFillWholeScreen()) {
+        // @@ Only display value, ex heading
+        if (color != null) {
+          dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        }
+        dc.drawText(
+            dc.getWidth() / 2, y, mFontBottomValue, value,
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(dc.getWidth() / 2 + widthValue / 2 + marginleft2, y,
+                    mFontUnits, units,
+                    Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+
         return;
       }
 
@@ -380,37 +298,31 @@ import Toybox.Lang;
                   Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
-    function drawTopInfo(label, color, value, backColor, units, outlineColor,
-                         percentage, color100perc) {
+    function drawTopInfo(color, value, backColor, units, outlineColor,
+                         percentage, color100perc, label) {
       if (middleLayout == LayoutMiddleTriangle) {
-        drawTopInfoTriangle(label, color, value, backColor, units, outlineColor,
-                            percentage, color100perc);
+        drawTopInfoTriangle(color, value, backColor, units, outlineColor,
+                            percentage, color100perc, label);
         return;
       }
       var barX = dc.getWidth() / 2;
 
       // circle back color
-      drawAdditonalInfoBG(barX, _widthAdditionalInfo, backColor, percentage,
+      drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc);
       if (!leftAndRightCircleFillWholeScreen()) {
-        var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value);
-        drawAdditonalInfoFG(barX, _widthAdditionalInfo, color, value, fontValue,
-                            units, mFontLabelAdditional, label,
-                            mFontLabelAdditional);
-
-        // @@ label not needed here?
-        var yLabel = dc.getFontHeight(mFontBottomLabel) / 2;
-        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            barX, yLabel, mFontBottomLabel, label,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        var fontValue = getFontAdditionalInfo(
+            mRadiusInfoField * 2, value, mFontValueAdditionalStartIndex - 1);
+        drawAdditonalInfoFG(barX, color, value, fontValue, units,
+                            mFontLabelAdditional, label, mFontLabelAdditional,
+                            percentage);
       }
       // outline
-      drawAdditonalInfoOutline(barX, _widthAdditionalInfo, outlineColor);
+      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
     }
 
-    function drawTopInfoTriangle(label, color, value, backColor, units,
-                                 outlineColor, percentage, color100perc) {
+    function drawTopInfoTriangle(color, value, backColor, units, outlineColor,
+                                 percentage, color100perc, label) {
       var heightBottomBar = 0;
       if (showBottomInfo) {
         if (leftAndRightCircleFillWholeScreen()) {
@@ -419,7 +331,7 @@ import Toybox.Lang;
           heightBottomBar = dc.getFontHeight(mFontBottomValue);
         }
       }
-      var wBottomBar = 2 * _widthAdditionalInfo;
+      var wBottomBar = 2 * mRadiusInfoField;
       var top = new Point(dc.getWidth() / 2, margin);
       var left = new Point(dc.getWidth() / 2 - wBottomBar / 2,
                            dc.getHeight() - margin - heightBottomBar);
@@ -454,9 +366,10 @@ import Toybox.Lang;
       if (!leftAndRightCircleFillWholeScreen()) {
         var maxwidth = (right.x - left.x);
         var x = left.x + maxwidth / 2.0;
-        var fontValue = getFontAdditionalInfo(maxwidth, value);
+        var fontValue = getFontAdditionalInfo(
+            mRadiusInfoField * 2, value, mFontValueAdditionalStartIndex - 1);
         // var y = (left.y - top.y) / 2;
-        var y = getCenterYcoordCircleAdditionalInfo(maxwidth);
+        var y = getCenterYcoordCircleAdditionalInfo();
         var ha = dc.getFontHeight(fontValue);
 
         // label
@@ -483,46 +396,48 @@ import Toybox.Lang;
 
     function drawLeftInfo(color, value, backColor, units, outlineColor,
                           percentage, color100perc, label) {
-      var barX = _widthAdditionalInfo + marginLeft;
+      var barX = mRadiusInfoField + marginLeft;
 
       // circle back color
-      drawAdditonalInfoBG(barX, _widthAdditionalInfo, backColor, percentage,
+      drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc);
 
-      var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value);
+      var fontValue = getFontAdditionalInfo(mRadiusInfoField * 2, value,
+                                            mFontValueAdditionalStartIndex);
       // @@ determine labelFont??//
-      drawAdditonalInfoFG(barX, _widthAdditionalInfo, color, value, fontValue,
-                          units, mFontLabelAdditional, label,
-                          mFontLabelAdditional);
+      drawAdditonalInfoFG(barX, color, value, fontValue, units,
+                          mFontLabelAdditional, label, mFontLabelAdditional,
+                          percentage);
 
       // outline
-      drawAdditonalInfoOutline(barX, _widthAdditionalInfo, outlineColor);
+      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
     }
 
     function drawRightInfo(color, value, backColor, units, outlineColor,
                            percentage, color100perc, label) {
-      var barX = dc.getWidth() - _widthAdditionalInfo - marginRight;
+      var barX = dc.getWidth() - mRadiusInfoField - marginRight;
       // circle
-      drawAdditonalInfoBG(barX, _widthAdditionalInfo, backColor, percentage,
+      drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc);
 
       // outline
-      drawAdditonalInfoOutline(barX, _widthAdditionalInfo, outlineColor);
+      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
 
       // units + value
-      var fontValue = getFontAdditionalInfo(_widthAdditionalInfo * 2, value);
+      var fontValue = getFontAdditionalInfo(mRadiusInfoField * 2, value,
+                                            mFontValueAdditionalStartIndex);
 
-      drawAdditonalInfoFG(barX, _widthAdditionalInfo, color, value, fontValue,
-                          units, mFontLabelAdditional, label,
-                          mFontLabelAdditional);
+      drawAdditonalInfoFG(barX, color, value, fontValue, units,
+                          mFontLabelAdditional, label, mFontLabelAdditional,
+                          percentage);
     }
 
-    hidden function getCenterYcoordCircleAdditionalInfo(width) {
+    hidden function getCenterYcoordCircleAdditionalInfo() {
       return dc.getHeight() / 2;
     }
     hidden function drawAdditonalInfoBG(x, width, color, percentage,
                                         color100perc) {
-      var y = getCenterYcoordCircleAdditionalInfo(width);
+      var y = getCenterYcoordCircleAdditionalInfo();
 
       if (percentage < 100 || color100perc == null) {
         dc.setColor(WhatColor.COLOR_WHITE_GRAY_1, Graphics.COLOR_TRANSPARENT);
@@ -540,37 +455,52 @@ import Toybox.Lang;
       drawPercentageCircle(x, y, width, percentage);
     }
 
-    hidden function getFontAdditionalInfo(maxwidth, value) {
-      var index = mFontValueAdditionalIndex;
-      var font = mFontValueAdditional[index];
+    hidden function getFontAdditionalInfo(maxwidth, value, startIndex) {
+      var index = startIndex;
+      var fontList = mFontValueAdditional as Lang.Array<Lang.Number>;
+      var font = fontList[index];
       var widthValue = dc.getTextWidthInPixels(value, font);
 
       while (widthValue > maxwidth && index > 0) {
         index = index - 1;
-        font = mFontValueAdditional[index];
+        font = fontList[index];
         widthValue = dc.getTextWidthInPixels(value, font);
-      }      
+      }
       // System.println("font index: " + index);
       return font;
     }
 
-    hidden function drawAdditonalInfoFG(x, width, color, value, fontValue,
-                                        units, fontUnits, label, fontLabel) {
-      var y = getCenterYcoordCircleAdditionalInfo(width);
+    hidden function drawAdditonalInfoFG(x, color, value, fontValue, units,
+                                        fontUnits, label, fontLabel,
+                                        percentage) {
+      // Too many arguments used by a method, which are currently limited to 10
+      // arguments
+      var width = mRadiusInfoField;
+      var y = getCenterYcoordCircleAdditionalInfo();
 
       // label
-      if (!isSmallField() &&  label != null && label.length() > 0) {
+      if (!isSmallField() && label != null && label.length() > 0) {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        var yLabel = y - (dc.getFontHeight(fontValue) / 2) - (dc.getFontHeight(fontLabel) / 2) + marginTop;
+        var yLabel = y - (dc.getFontHeight(fontValue) / 2) -
+                     (dc.getFontHeight(fontLabel) / 2) + marginTop;
         dc.drawText(
             x, yLabel, fontLabel, label,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);        
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
 
       // value
-      dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-      dc.drawText(x, y, fontValue, value,
-                  Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+      if (percentage < 200) {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            x, y, fontValue, value,
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+      } else {
+        drawPercentageText(x, y, fontValue, value, percentage - 200,
+                           Graphics.COLOR_WHITE, Graphics.COLOR_RED,
+                           COLOR_MAX_PERCENTAGE);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+      }
+
       // units
       var ha = dc.getFontHeight(fontValue);
       if (units != null && units.length() != 0) {
@@ -583,7 +513,7 @@ import Toybox.Lang;
 
     hidden function drawAdditonalInfoOutline(x, width, color) {
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-      var y = getCenterYcoordCircleAdditionalInfo(width);
+      var y = getCenterYcoordCircleAdditionalInfo();
       dc.drawCircle(x, y, width);
     }
 
@@ -591,12 +521,6 @@ import Toybox.Lang;
     hidden function percentageToYpostion(percentage, marginTop, columnHeight) {
       return marginTop + columnHeight - (columnHeight * (percentage / 100.0));
     }
-  }
-
-  enum {
-    SmallField = 0,
-    WideField = 1,
-    OneField = 2
   }
 
   enum {

@@ -1,14 +1,12 @@
-module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
- 
-
-  class WhatEngergyExpenditure extends WhatBase {
+module WhatAppBase {
+  class WhatEnergyExpenditure extends WhatInfoBase {
     hidden var energyExpenditure = 0.0f;          // kcal/min
     hidden var targetEngergyExpenditure = 10.0f;  // kcal / min
 
-    function initialize() { WhatBase.initialize(); }
+    function initialize() { WhatInfoBase.initialize(); }
 
     function setTargetEngergyExpenditure(targetEngergyExpenditure) {
       self.targetEngergyExpenditure = targetEngergyExpenditure;
@@ -16,7 +14,7 @@ import Toybox.Activity;
 
     function updateInfo(info as Activity.Info) {
       if (info has : energyExpenditure) {
-        if (info.energyExpenditure) {
+        if (info.energyExpenditure != null) {
           energyExpenditure = info.energyExpenditure;
         } else {
           energyExpenditure = 0.0f;
@@ -24,21 +22,29 @@ import Toybox.Activity;
       }
     }
 
-    function getEnergyExpenditure() {
+    function getZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getEnergyExpenditure());
+    }
+    function getValue() { return getEnergyExpenditure(); }
+    function getFormattedValue() as Lang.String {
+      return getEnergyExpenditure().format("%.1f");
+    }
+    function getUnits() as String { return "kcal/m"; }
+    function getLabel() as Lang.String { return "Energy exp"; }
+
+   
+
+    // --
+    hidden function getEnergyExpenditure() {
       if (energyExpenditure == null) {
         return 0;
       }
       return self.energyExpenditure;
     }
 
-    // @@ long for Top view -> getUnitsTop
-    function getUnitsLong() as String { return "kcal/min"; }
-    // @@ short for left/right or bottom
-    function getUnits() as String { return "kcal/m"; }
+    hidden function getFormatString() as String { return "%.1f"; }
 
-    function getFormatString(fieldType) as String { return "%.1f"; }
-
-    function getZoneInfo(energyExpenditure) {
+    hidden function _getZoneInfo(energyExpenditure) {
       var label = "Energy exp";
       if (energyExpenditure == null || energyExpenditure == 0) {
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,
@@ -46,7 +52,7 @@ import Toybox.Activity;
       }
 
       var percOfTarget =
-          percentageOf(energyExpenditure, targetEngergyExpenditure);
+          Utils.percentageOf(energyExpenditure, targetEngergyExpenditure);
 
       var color = percentageToColor(percOfTarget);
       var color100perc = null;
