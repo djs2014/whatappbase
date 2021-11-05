@@ -42,7 +42,7 @@ module WhatAppBase {
     }
 
     function getZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getCurrentSpeed());
+      return _getZoneInfo(getCurrentSpeed(), true);
     }
     function getValue() { return convertToMetricOrStatute(getCurrentSpeed()); }
     function getFormattedValue() as Lang.String {
@@ -58,7 +58,7 @@ module WhatAppBase {
     function getLabel() as Lang.String { return "Speed"; }
 
     function getAltZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getAverageSpeed());
+      return _getZoneInfo(getAverageSpeed(), false);
     }
     function getAltValue() {
       return convertToMetricOrStatute(getAverageSpeed());
@@ -102,8 +102,8 @@ module WhatAppBase {
       return value;
     }
 
-    hidden function _getZoneInfo(speed) {
-      if (mActivityPaused) {
+    hidden function _getZoneInfo(speed, showAverageWhenPaused) {
+      if (showAverageWhenPaused && mActivityPaused) {
         return new ZoneInfo(0, "Avg. Speed", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }

@@ -4,6 +4,7 @@ import Toybox.Activity;
 module WhatAppBase {
   class WhatTestField extends WhatInfoBase {
     hidden var value = 250;
+    hidden var altValue = 100;
     hidden var targetValue = 100;
 
     function initialize() { WhatInfoBase.initialize(); }
@@ -12,6 +13,7 @@ module WhatAppBase {
 
     function setTargetValue(targetValue) { self.targetValue = targetValue; }
 
+    function setAltValue(value) { self.altValue = value; }
     // function updateInfo(info as Activity.Info) {
     //   if (info has : value) {
     //     if (info.value) {
@@ -30,12 +32,31 @@ module WhatAppBase {
     function getUnits() as String { return "test"; }
     function getLabel() as Lang.String { return "Test field"; }
 
+    function getAltZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getTestAltValue());
+    }
+    function getAltValue() {
+      return convertToMetricOrStatute(getTestAltValue());
+    }
+    function getAltFormattedValue() as Lang.String {
+      return convertToMetricOrStatute(getTestAltValue()).format("%.0f");
+    }
+    function getAltUnits() as String { return getUnits(); }
+    function getAltLabel() as Lang.String { return "Test alt"; }
+
     // --
     hidden function getTestValue() {
       if (value == null) {
         return 0;
       }
       return self.value;
+    }
+
+    hidden function getTestAltValue() {
+      if (altValue == null) {
+        return 0;
+      }
+      return self.altValue;
     }
 
     hidden function _getZoneInfo(val) {

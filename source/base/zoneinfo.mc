@@ -4,7 +4,7 @@ module WhatAppBase {
     var name;
     var color;
     var fontColor;
-    var perc;
+    var perc = 0;
     var color100perc;
 
     function initialize(zone, name, color, fontColor, perc, color100perc) {
@@ -12,7 +12,9 @@ module WhatAppBase {
       self.name = name;
       self.color = color;
       self.fontColor = fontColor;
-      self.perc = perc;
+      if (perc != null) {
+        self.perc = perc;
+      }
       self.color100perc = color100perc;
     }
   }

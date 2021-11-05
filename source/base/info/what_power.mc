@@ -60,7 +60,7 @@ module WhatAppBase {
       }
     }
 
-    function getZoneInfo() as ZoneInfo { return _getZoneInfo(powerPerX()); }
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(powerPerX(), true); }
     function getValue() { return powerPerX(); }
     function getFormattedValue() as Lang.String {
       return powerPerX().format("%.0f");
@@ -69,7 +69,7 @@ module WhatAppBase {
     function getLabel() as Lang.String { return "Power (" + perSec + "sec)"; }
 
     function getAltZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getAveragePower());
+      return _getZoneInfo(getAveragePower(), false);
     }
     function getAltValue() { return getAveragePower(); }
     function getAltFormattedValue() as Lang.String {
@@ -178,8 +178,8 @@ module WhatAppBase {
     // VO2 Max	106% – 120% FTP
     // Anaerobic Capacity	> 120% FTP
 
-    hidden function _getZoneInfo(ppx) as ZoneInfo {
-      if (mActivityPaused) {
+    hidden function _getZoneInfo(ppx, showAverageWhenPaused) as ZoneInfo {
+      if (showAverageWhenPaused && mActivityPaused) {
         return new ZoneInfo(0, "Avg. Power", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }

@@ -41,7 +41,7 @@ module WhatAppBase {
     }
 
     function getZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getCurrentCadence());
+      return _getZoneInfo(getCurrentCadence(), true);
     }
     function getValue() { return getCurrentCadence(); }
     function getFormattedValue() as Lang.String {
@@ -51,7 +51,7 @@ module WhatAppBase {
     function getLabel() as Lang.String { return "Cadence"; }
 
     function getAltZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getAverageCadence());
+      return _getZoneInfo(getAverageCadence(), false);
     }
     function getAltValue() { return getAverageCadence(); }
     function getAltFormattedValue() as Lang.String {
@@ -85,8 +85,8 @@ module WhatAppBase {
       return self.currentCadence;
     }
 
-    hidden function _getZoneInfo(rpm) {
-      if (mActivityPaused) {
+    hidden function _getZoneInfo(rpm, showAverageWhenPaused) {
+      if (showAverageWhenPaused && mActivityPaused) {
         return new ZoneInfo(0, "Avg. Cadence", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }
