@@ -278,7 +278,7 @@ module WhatAppBase {
         dc.setColor(backColor, Graphics.COLOR_TRANSPARENT);
       }
       var xb = dc.getWidth() / 2 - wAllText / 2;
-      var yb = dc.getHeight() - hv;  // + 2;
+      var yb = dc.getHeight() - hv + 2;
 
       if (!leftAndRightCircleFillWholeScreen()) {
         dc.fillRectangle(xb, yb, wAllText, hv);
@@ -290,9 +290,9 @@ module WhatAppBase {
       var heightP = dc.getHeight() - 2;
       if (isWideField()) {
         xP = xb - 1;
-        yP = yb;
+        yP = yb ;
         widthP = wAllText + 2;
-        heightP = hv;
+        heightP = hv - 3;
       }
 
       var colorPercentageLine = Graphics.COLOR_BLACK;
