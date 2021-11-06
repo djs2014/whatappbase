@@ -87,6 +87,68 @@ module WhatAppBase {
       dc.drawPoint(x + maxwidth, y);
     }
 
+    // x, y : top left coord
+    function drawPercentageRectangle(dc as Dc, x, y, width, height, percentage,
+                                     color) {
+      if (percentage >= 100) {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.drawRectangle(x, y, width, height);
+        return;
+      }
+      var maxLength = 2 * width + 2 * height;
+      var wPercentage = maxLength / 100.0 * percentage;
+      if (wPercentage <= 0) {
+        return;
+      }
+
+      var yStart = height/2 + y;
+      var xStart = x;
+      dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+      // Line up toward (x,y)
+      var wRemaining =
+          _drawPercentageLine2(dc, xStart, yStart, xStart, y, wPercentage);
+      // Line right
+      wRemaining =
+          _drawPercentageLine2(dc, xStart, y, xStart + width, y, wRemaining);
+      // Line down
+      wRemaining = _drawPercentageLine2(dc, xStart + width, y, xStart + width,
+                                        y + height, wRemaining);
+      // Line left
+      wRemaining = _drawPercentageLine2(dc, xStart + width, y + height, xStart,
+                                        y + height, wRemaining);
+    }
+
+    function _drawPercentageLine2(dc as Dc, x1, y1, x2, y2, maxLength)
+        as Lang.Number {
+      if (maxLength <= 0) {
+        return 0;
+      }
+      var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      if (distance <= maxLength) {
+        dc.drawLine(x1, y1, x2, y2);
+        return maxLength - distance;
+      }
+      // (0,0) is upper left corner
+      if (x1 == x2 && y1 > y2) {
+        // to up
+        dc.drawLine(x1, y1, x2, y1 - maxLength);
+        return 0;
+      } else if (x1 < x2 && y1 == y2) {
+        // to right
+        dc.drawLine(x1, y1, x1 + maxLength, y2);
+        return 0;
+      } else if (x1 == x2 && y1 < y2) {
+        // to down
+        dc.drawLine(x1, y1, x2, y1 + maxLength);
+        return 0;
+      } else if (x1 > x2 && y1 == y2) {
+        // to left
+        dc.drawLine(x1, y1, x1 - maxLength, y2);
+        return 0;
+      }
+      return 0;
+    }
+
     // x, y center of text
     function drawPercentageText(dc as Dc, x, y, font, text, percentage,
                                 initialTextColor, percentageColor, backColor) {
@@ -132,7 +194,8 @@ module WhatAppBase {
       return new Point(x, y);
     }
 
-    function getMatchingFont(dc as Dc, fontList as Lang.Array<Graphics.FontType>,
+    function getMatchingFont(dc as Dc,
+                             fontList as Lang.Array<Graphics.FontType>,
                              maxwidth, text, startIndex) {
       var index = startIndex;
       var font = fontList[index];

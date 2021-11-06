@@ -157,12 +157,12 @@ module WhatAppBase {
             barX, y, Graphics.FONT_SMALL, value,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         var ha = dc.getFontHeight(Graphics.FONT_SMALL);
-      if (units != null && units.length() != 0) {
-        y = y + ha / 2;
-        dc.drawText(
-            barX, y, mFontLabelAdditional, units,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-      }    
+        if (units != null && units.length() != 0) {
+          y = y + ha / 2;
+          dc.drawText(
+              barX, y, mFontLabelAdditional, units,
+              Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
       } else {
         var fontValue = Utils.getMatchingFont(
             dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
@@ -260,12 +260,6 @@ module WhatAppBase {
       var outlinePerc = altZone.perc;
       var outlineColor = altZone.color;
 
-      // if (middleLayout == LayoutMiddleCircle) {
-      // }
-      // else if (middleLayout == LayoutMiddleSmart) {
-      //   // @@ Calc area between the left/right circles
-      // }
-
       var hv = dc.getFontHeight(mFontBottomValue);
       var widthLabel = dc.getTextWidthInPixels(label, mFontBottomLabel);
       var widthValue = dc.getTextWidthInPixels(value, mFontBottomValue);
@@ -276,11 +270,6 @@ module WhatAppBase {
       var marginleft2 = 2;
       var wAllText =
           widthLabel + marginleft1 + widthValue + marginleft2 + widthUnits;
-      if (leftAndRightCircleFillWholeScreen()) {
-        wBottomBar = dc.getWidth() - marginLeft - marginRight;
-      } else {
-        wBottomBar = wAllText;
-      }
 
       var xv = dc.getWidth() / 2 - wAllText / 2;
       var y = dc.getHeight() - (hv / 2);
@@ -288,26 +277,33 @@ module WhatAppBase {
       if (backColor != null) {
         dc.setColor(backColor, Graphics.COLOR_TRANSPARENT);
       }
-      var xb = dc.getWidth() / 2 - wBottomBar / 2;
-      var yb = dc.getHeight() - hv + 2;
-      var yPercentage = dc.getHeight() - heightPercentageLineBottomBar;
-      var wPercentage = wBottomBar / 100.0 * percentage;
+      var xb = dc.getWidth() / 2 - wAllText / 2;
+      var yb = dc.getHeight() - hv;  // + 2;
 
-      if (leftAndRightCircleFillWholeScreen()) {
-        yb = dc.getHeight() - 5;
-        dc.fillRoundedRectangle(xb, yb, wBottomBar, hv / 2, 3);
-      } else {
-        dc.fillRoundedRectangle(xb, yb, wBottomBar, hv, 3);
+      if (!leftAndRightCircleFillWholeScreen()) {
+        dc.fillRectangle(xb, yb, wAllText, hv);
       }
+
+      var xP = 1;
+      var yP = 1;
+      var widthP = dc.getWidth() - 2;
+      var heightP = dc.getHeight() - 2;
+      if (isWideField()) {
+        xP = xb - 1;
+        yP = yb;
+        widthP = wAllText + 2;
+        heightP = hv;
+      }
+
       var colorPercentageLine = Graphics.COLOR_BLACK;
       if (percentage > 100) {
-        Utils.drawPercentageLine(dc, xb, yPercentage, wBottomBar, 100, 2,
-                                 colorPercentageLine);
+        Utils.drawPercentageRectangle(dc, xP, yP, widthP, heightP, 100,
+                                      colorPercentageLine);
         percentage = percentage - 100;
         colorPercentageLine = Graphics.COLOR_RED;
       }
-      Utils.drawPercentageLine(dc, xb, yPercentage, wBottomBar, percentage, 2,
-                               colorPercentageLine);
+      Utils.drawPercentageRectangle(dc, xP, yP, widthP, heightP, percentage,
+                                    colorPercentageLine);
 
       if (isSmallField()) {
         return;
