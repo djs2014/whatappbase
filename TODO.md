@@ -1,8 +1,8 @@
 x 1: what distance -> beta
 x 2 avg circle wider
 x    - show when activity paused
-    - fix radius -> minus outlinewidth/2
-    reorg graphics_util
+x    - fix radius -> minus outlinewidth/2
+x    reorg graphics_util
 3 smart layout: bottom / top on large screen  
 4 example html page with color perc circle
 5 1 field layout -> big circle etc.

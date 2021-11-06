@@ -1,6 +1,7 @@
 import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
+using WhatAppBase.Utils;
 module WhatAppBase {
   class WhatDisplay {
     hidden var dc;
@@ -120,82 +121,7 @@ module WhatAppBase {
       dc.clear();
     }
 
-    function fillPercentageCircle(x, y, radius, perc) {
-      if (perc == null || perc == 0) {
-        return;
-      }
-
-      if (perc >= 100.0) {
-        dc.fillCircle(x, y, radius);
-        return;
-      }
-      var degrees = 3.6 * perc;
-
-      var degreeStart = 180;                  // 180deg == 9 o-clock
-      var degreeEnd = degreeStart - degrees;  // 90deg == 12 o-clock
-
-      dc.setPenWidth(radius);
-      dc.drawArc(x, y, radius / 2, Graphics.ARC_CLOCKWISE, degreeStart,
-                 degreeEnd);
-      dc.setPenWidth(1.0);
-    }
-
-    function drawPercentageCircle(x, y, radius, perc, penWidth) {
-      if (perc == null || perc == 0) {
-        return;
-      }
-
-      if (perc > 100.0) {
-        perc = 100;
-      }
-      var degrees = 3.6 * perc;
-
-      var degreeStart = 180;                  // 180deg == 9 o-clock
-      var degreeEnd = degreeStart - degrees;  // 90deg == 12 o-clock
-
-      dc.setPenWidth(penWidth);
-      dc.drawArc(x, y, radius, Graphics.ARC_CLOCKWISE, degreeStart, degreeEnd);
-      dc.setPenWidth(1.0);
-    }
-
-    function drawPercentageLine(x, y, maxwidth, percentage, height, color) {
-      var wPercentage = maxwidth / 100.0 * percentage;
-      dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-      // dc.drawLine(x, y, x + wPercentage, y);
-      dc.fillRectangle(x, y, wPercentage, height);
-      dc.drawPoint(x + maxwidth, y);
-    }
-
-    hidden function getPercentageTrianglePts(top as Point, left as Point,
-                                             right as Point, percentage) {
-      if (percentage >= 100) {
-        return
-            [ top.asArray(), right.asArray(), left.asArray(), top.asArray() ];
-      }
-
-      var columnHeight = left.y - top.y;
-      var y = percentageToYpostion(percentage, top.y, columnHeight);
-
-      var slopeLeft = Utils.slopeOfLine(left.x, left.y, top.x, top.y);
-      var slopeRight = Utils.slopeOfLine(right.x, right.y, top.x, top.y);
-
-      // System.println("top" + top + "left" + left + " right" + right +
-      //                " slopeLeft:" + slopeLeft + " slopeRight:" +
-      //                slopeRight);
-      if (slopeLeft != 0.0 and slopeRight != 0.0) {
-        var x1 = (y - left.y) / slopeLeft;
-        x1 = x1 + left.x;
-        var x2 = (y - right.y) / slopeRight;
-        x2 = x2 + right.x;
-
-        // System.println("slopeLeft:" + slopeLeft + " slopeRight:" + slopeRight
-        // +
-        //                " y:" + y + " x1:" + x1 + " x2:" + x2);
-
-        return [[x1, y], [x2, y], right.asArray(), left.asArray(), [x1, y]];
-      }
-      return [];
-    }
+    
 
     // x, y center of text
     function drawPercentageText(x, y, font, text, percentage, initialTextColor,
@@ -230,7 +156,7 @@ module WhatAppBase {
       // dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
       dc.drawText(xRect, yRect, font, text, Graphics.TEXT_JUSTIFY_LEFT);
       // @@ for now draw line under text
-      drawPercentageLine(xRect, yRect + height, width, percentage, 2,
+      Utils.drawPercentageLine(dc, xRect, yRect + height, width, percentage, 2,
                          initialTextColor);
     }
 
@@ -282,12 +208,12 @@ module WhatAppBase {
       }
       var colorPercentageLine = Graphics.COLOR_BLACK;
       if (percentage > 100) {
-        drawPercentageLine(xb, yPercentage, wBottomBar, 100, 2,
+        Utils.drawPercentageLine(dc, xb, yPercentage, wBottomBar, 100, 2,
                            colorPercentageLine);
         percentage = percentage - 100;
         colorPercentageLine = Graphics.COLOR_RED;
       }
-      drawPercentageLine(xb, yPercentage, wBottomBar, percentage, 2,
+      Utils.drawPercentageLine(dc, xb, yPercentage, wBottomBar, percentage, 2,
                          colorPercentageLine);
 
       if (isSmallField()) {
@@ -372,25 +298,25 @@ module WhatAppBase {
       var leftInner = left.move(2, -2);
       var rightInner = right.move(-2, -2);
 
-      var pts = getPercentageTrianglePts(top, left, right, 100);
+      var pts = Utils.getPercentageTrianglePts(top, left, right, 100);
       dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
       dc.fillPolygon(pts);
       if (!isSmallField()) {
         // @@ Draw outline, there is no drawPolygon, so fill inner with
         // white/background
-        pts = getPercentageTrianglePts(topInner, leftInner, rightInner, 100);
+        pts = Utils.getPercentageTrianglePts(topInner, leftInner, rightInner, 100);
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(pts);
       }
       if (percentage > 100 && color100perc != null) {
-        pts = getPercentageTrianglePts(topInner, leftInner, rightInner, 100);
+        pts = Utils.getPercentageTrianglePts(topInner, leftInner, rightInner, 100);
         dc.setColor(color100perc, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(pts);
         percentage = percentage - 100;
       }
 
       pts =
-          getPercentageTrianglePts(topInner, leftInner, rightInner, percentage);
+          Utils.getPercentageTrianglePts(topInner, leftInner, rightInner, percentage);
       dc.setColor(backColor, Graphics.COLOR_TRANSPARENT);
       dc.fillPolygon(pts);
 
@@ -496,19 +422,19 @@ module WhatAppBase {
         color = WhatColor.COLOR_WHITE_GRAY_1;
       }
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-      fillPercentageCircle(x, y, width, percentage);
+      Utils.fillPercentageCircle(dc, x, y, width, percentage);
 
       if (outlineColor != null && outlineColor > 0 && outlinePerc > 0) {
         var outlineWidth = width / 8;
         var w = width - outlineWidth / 2;
         if (outlinePerc <= 100 || outlineColor100perc == null) {
           dc.setColor(outlineColor, Graphics.COLOR_TRANSPARENT);
-          drawPercentageCircle(x, y, w, outlinePerc, outlineWidth);
+          Utils.drawPercentageCircle(dc, x, y, w, outlinePerc, outlineWidth);
         } else {
           dc.setColor(outlineColor100perc, Graphics.COLOR_TRANSPARENT);
-          drawPercentageCircle(x, y, w, 100, outlineWidth);
+          Utils.drawPercentageCircle(dc, x, y, w, 100, outlineWidth);
           dc.setColor(outlineColor, Graphics.COLOR_TRANSPARENT);
-          drawPercentageCircle(x, y, w, outlinePerc - 100, outlineWidth);
+          Utils.drawPercentageCircle(dc, x, y, w, outlinePerc - 100, outlineWidth);
         }
       }
     }
@@ -575,10 +501,7 @@ module WhatAppBase {
       dc.drawCircle(x, y, width);
     }
 
-    //! Get correct y position based on a percentage
-    hidden function percentageToYpostion(percentage, marginTop, columnHeight) {
-      return marginTop + columnHeight - (columnHeight * (percentage / 100.0));
-    }
+    
   }
 
   enum {
