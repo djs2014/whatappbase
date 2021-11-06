@@ -500,14 +500,15 @@ module WhatAppBase {
 
       if (outlineColor != null && outlineColor > 0 && outlinePerc > 0) {
         var outlineWidth = width / 8;
+        var w = width - outlineWidth / 2;
         if (outlinePerc <= 100 || outlineColor100perc == null) {
           dc.setColor(outlineColor, Graphics.COLOR_TRANSPARENT);
-          drawPercentageCircle(x, y, width, outlinePerc, outlineWidth);
+          drawPercentageCircle(x, y, w, outlinePerc, outlineWidth);
         } else {
           dc.setColor(outlineColor100perc, Graphics.COLOR_TRANSPARENT);
-          drawPercentageCircle(x, y, width, 100, outlineWidth);
+          drawPercentageCircle(x, y, w, 100, outlineWidth);
           dc.setColor(outlineColor, Graphics.COLOR_TRANSPARENT);
-          drawPercentageCircle(x, y, width, outlinePerc - 100, outlineWidth);
+          drawPercentageCircle(x, y, w, outlinePerc - 100, outlineWidth);
         }
       }
     }
