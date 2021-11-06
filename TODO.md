@@ -3,11 +3,11 @@ x 2 avg circle wider
 x    - show when activity paused
 x    - fix radius -> minus outlinewidth/2
 x    reorg graphics_util
+drawPercentageRectangle (for bottom field)
 3 smart layout: bottom / top on large screen  
 4 example html page with color perc circle
 5 1 field layout -> big circle etc.
 show max value
-
 
 Not working:
  - temperature
