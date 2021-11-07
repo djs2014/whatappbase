@@ -23,14 +23,14 @@ For some data a target can be specified. If so, then the background of that fiel
 
 ![Layout](/documents/screenshots/3137.png "Large field layout")
 
-Example Datafield `What speed`:
+### Example Datafield `What speed`:
 
 - Current speed and percentage to target speed (in this example 30 km/h)
 - Calories burned per minute and percentage to target (in this example 15 kcal/min)
 - Top info: Heading (Northwest)
 - Bottom info: Elapsed distance
-- 
-Example Datafield `What power`:
+ 
+### Example Datafield `What power`:
 
 - Current power (watt) per kilogram and percentage to target (in this example FTP is 250 watt)
 - Current heartrate and percentage to maximum heartrate (based on your Gramin profile)
