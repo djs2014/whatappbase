@@ -89,21 +89,27 @@ module WhatAppBase {
 
     // x, y : top left coord
     function drawPercentageRectangle(dc as Dc, x, y, width, height, percentage,
-                                     color) {
+                                     color, lineWidth) {
+      if (percentage <= 0) {
+        return;
+      }
       if (percentage >= 100) {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(lineWidth);
         dc.drawRectangle(x, y, width, height);
+        dc.setPenWidth(1.0);
         return;
       }
       var maxLength = 2 * width + 2 * height;
-      var wPercentage = maxLength / 100.0 * percentage;
+      var wPercentage = (maxLength / 100.0 * percentage).toNumber();
       if (wPercentage <= 0) {
         return;
       }
 
-      var yStart = height/2 + y;
+      var yStart = height / 2 + y;
       var xStart = x;
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+      dc.setPenWidth(lineWidth);
       // Line up toward (x,y)
       var wRemaining =
           _drawPercentageLine2(dc, xStart, yStart, xStart, y, wPercentage);
@@ -116,6 +122,10 @@ module WhatAppBase {
       // Line left
       wRemaining = _drawPercentageLine2(dc, xStart + width, y + height, xStart,
                                         y + height, wRemaining);
+      // Line up towards starting point (half way)
+      _drawPercentageLine2(dc, xStart, y + height, xStart, yStart, wPercentage);
+
+      dc.setPenWidth(1.0);
     }
 
     function _drawPercentageLine2(dc as Dc, x1, y1, x2, y2, maxLength)
@@ -123,7 +133,8 @@ module WhatAppBase {
       if (maxLength <= 0) {
         return 0;
       }
-      var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      var distance =
+          (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))).toNumber();
       if (distance <= maxLength) {
         dc.drawLine(x1, y1, x2, y2);
         return maxLength - distance;

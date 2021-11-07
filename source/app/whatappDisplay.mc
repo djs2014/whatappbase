@@ -252,13 +252,27 @@ module WhatAppBase {
     }
 
     // @@ TODO layout bottom info/top info
-    function drawBottomInfo(label, value, units, zone, altZone) {
+    function drawBottomInfoBG(label, value, units, zone, altZone) {
+      var backColor = zone.color;
+      var percentage = zone.perc;
+      var color100perc = zone.color100perc;
+      
+      if (percentage >= 0 && leftAndRightCircleFillWholeScreen()) {
+        // Percentage bar around whole field
+        _drawBackgroundPercRectangle(2, 2, dc.getWidth() - 4,
+                                     dc.getHeight() - 4, backColor,
+                                     color100perc, percentage, 4);
+      }
+    }
+
+    function drawBottomInfoFG(label, value, units, zone, altZone) {
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
       var color100perc = zone.color100perc;
       var outlinePerc = altZone.perc;
       var outlineColor = altZone.color;
+      var outlineColor100perc = altZone.color100perc;
 
       var hv = dc.getFontHeight(mFontBottomValue);
       var widthLabel = dc.getTextWidthInPixels(label, mFontBottomLabel);
@@ -280,34 +294,20 @@ module WhatAppBase {
       var xb = dc.getWidth() / 2 - wAllText / 2;
       var yb = dc.getHeight() - hv + 2;
 
-      if (!leftAndRightCircleFillWholeScreen()) {
+      if (!leftAndRightCircleFillWholeScreen()) {  
         dc.fillRectangle(xb, yb, wAllText, hv);
+        if (percentage >= 0) {  
+          // Percentage bar around text only, text in FG
+          _drawBackgroundPercRectangle(xb, yb, wAllText, hv - 1,
+                                       Graphics.COLOR_BLACK,
+                                       Graphics.COLOR_ORANGE, percentage, 1);
+        }
       }
-
-      var xP = 1;
-      var yP = 1;
-      var widthP = dc.getWidth() - 2;
-      var heightP = dc.getHeight() - 2;
-      if (isWideField()) {
-        xP = xb - 1;
-        yP = yb ;
-        widthP = wAllText + 2;
-        heightP = hv - 3;
-      }
-
-      var colorPercentageLine = Graphics.COLOR_BLACK;
-      if (percentage > 100) {
-        Utils.drawPercentageRectangle(dc, xP, yP, widthP, heightP, 100,
-                                      colorPercentageLine);
-        percentage = percentage - 100;
-        colorPercentageLine = Graphics.COLOR_RED;
-      }
-      Utils.drawPercentageRectangle(dc, xP, yP, widthP, heightP, percentage,
-                                    colorPercentageLine);
 
       if (isSmallField()) {
         return;
       }
+
       if (leftAndRightCircleFillWholeScreen()) {
         // @@ Only display value, ex heading refactor
         if (color != null) {
@@ -344,6 +344,19 @@ module WhatAppBase {
                   Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
+    hidden function _drawBackgroundPercRectangle(x, y, width, height,
+                                                 colorPercentageLine,
+                                                 color100perc, percentage,
+                                                 lineWidth) {
+      if (percentage > 100 && color100perc != null) {
+        Utils.drawPercentageRectangle(dc, x, y, width, height, 100,
+                                      colorPercentageLine, lineWidth);
+        percentage = percentage - 100;
+        colorPercentageLine = color100perc;
+      }
+      Utils.drawPercentageRectangle(dc, x, y, width, height, percentage,
+                                    colorPercentageLine, lineWidth);
+    }
     function drawLeftInfo(label, value, units, zone, altZone) {
       var color = zone.fontColor;
       var backColor = zone.color;

@@ -89,10 +89,11 @@ module WhatAppBase {
 
       mWD.setMiddleLayout(mApp._showInfoLayout);
 
+      drawBottomInfoBG(dc);
       drawTopInfo(dc);
       drawLeftInfo(dc);
       drawRightInfo(dc);
-      drawBottomInfo(dc);
+      drawBottomInfoFG(dc);
 
       // @@ callback option?
       if (mShowAppName && mApp.appName != null && mApp.appName.length() > 0) {
@@ -149,7 +150,7 @@ module WhatAppBase {
       mWD.drawRightInfo(label, value, units, zone, altZone);
     }
 
-    function drawBottomInfo(dc) {
+    function drawBottomInfoBG(dc) {
       if (mWiBottom == null) {
         return;
       }
@@ -162,7 +163,22 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiBottom.getAltZoneInfo();
-      mWD.drawBottomInfo(label, value, units, zone, altZone);
+      mWD.drawBottomInfoBG(label, value, units, zone, altZone);
+    }
+    function drawBottomInfoFG(dc) {
+      if (mWiBottom == null) {
+        return;
+      }
+      var value = mWiBottom.getFormattedValue();
+      var zone = mWiBottom.getZoneInfo();
+      var units = mWiBottom.getUnits();
+
+      var label = zone.name;
+      if (mWiBottom.isLabelHidden()) {  // @@
+        label = "";
+      }
+      var altZone = mWiBottom.getAltZoneInfo();
+      mWD.drawBottomInfoFG(label, value, units, zone, altZone);
     }
   }
 }
