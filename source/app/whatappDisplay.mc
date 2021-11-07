@@ -141,7 +141,7 @@ module WhatAppBase {
         drawTopInfoTriangle(color, value, backColor, units, outlineColor,
                             percentage, color100perc, label);
         return;
-      } 
+      }
 
       // circle back color
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
@@ -150,7 +150,7 @@ module WhatAppBase {
 
       if (leftAndRightCircleFillWholeScreen()) {
         var ha = dc.getFontHeight(Graphics.FONT_SMALL);
-        var y = ha / 2 ; //mRadiusInfoField / 6;
+        var y = ha / 2;  // mRadiusInfoField / 6;
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             barX, y, Graphics.FONT_SMALL, value,
@@ -248,12 +248,12 @@ module WhatAppBase {
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
     }
-    
+
     function drawBottomInfoBG(label, value, units, zone, altZone) {
       var backColor = zone.color;
       var percentage = zone.perc;
       var color100perc = zone.color100perc;
-      
+
       if (percentage >= 0 && leftAndRightCircleFillWholeScreen()) {
         // Percentage bar around whole field
         _drawBackgroundPercRectangle(2, 2, dc.getWidth() - 4,
@@ -291,13 +291,18 @@ module WhatAppBase {
       var xb = dc.getWidth() / 2 - wAllText / 2;
       var yb = dc.getHeight() - hv;
 
-      if (!leftAndRightCircleFillWholeScreen()) {  
+      if (!leftAndRightCircleFillWholeScreen()) {
         dc.fillRectangle(xb, yb, wAllText, hv);
-        if (percentage >= 0) {  
+        if (percentage >= 0) {
           // Percentage bar around text only, text in FG
-          _drawBackgroundPercRectangle(xb, yb, wAllText, hv,
-                                       Graphics.COLOR_DK_GRAY,
-                                       Graphics.COLOR_ORANGE, percentage, 1);
+          var percColor = Graphics.COLOR_DK_GRAY;
+          var percColor100 = null;
+          if (percentage > 100) {
+            percColor = Graphics.COLOR_ORANGE;
+            percColor100 = Graphics.COLOR_DK_GRAY;
+          }
+          _drawBackgroundPercRectangle(xb, yb, wAllText, hv - 1, percColor,
+                                       percColor100, percentage, 1);
         }
       }
 

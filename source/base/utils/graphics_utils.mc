@@ -120,6 +120,8 @@ module WhatAppBase {
       wRemaining = _drawPercentageLine2(dc, xStart + width, y, xStart + width,
                                         y + height, wRemaining);
       // Line left
+      // Should not exceed height of field
+      // @@ var yCorr = Utils.max(dc.getHeight(), y + height);
       wRemaining = _drawPercentageLine2(dc, xStart + width, y + height, xStart,
                                         y + height, wRemaining);
       // Line up towards starting point (half way)
