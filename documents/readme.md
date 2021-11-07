@@ -21,7 +21,7 @@ For some data a target can be specified. If so, then the background of that fiel
 
 ### Datafield layout
 
-![Alt text](/documents/screenshots/3137.gif "Large field layout")
+![Layout](/documents/screenshots/3137.gif "Large field layout")
 
 Example Datafield `What speed`:
 
@@ -39,20 +39,4 @@ Example Datafield `What power`:
 
 ### Color scheme
 
-<span style="color:#E5E8E8">percentage less than 45</span>.
-<span style="color:#CCD1D1">percentage less than 55</span>.
-<span style="color:#AED6F1">percentage less than 65</span>.
-
-<span style="color:#E5E8E8">percentage less than 70</span>.
-<span style="color:#E5E8E8">percentage less than 75</span>.
-<span style="color:#E5E8E8">percentage less than 80</span>.
-<span style="color:#E5E8E8">percentage less than 85</span>.
-<span style="color:#E5E8E8">percentage less than 95</span>.
-<span style="color:#E5E8E8">percentage less than 100</span>.
-<span style="color:#E5E8E8">percentage less than 105</span>.
-<span style="color:#E5E8E8">percentage less than 115</span>.
-<span style="color:#E5E8E8">percentage less than 125</span>.
-<span style="color:#E5E8E8">percentage less than 135</span>.
-<span style="color:#E5E8E8">percentage less than 145</span>.
-<span style="color:#E5E8E8">percentage less than 155</span>.
-<span style="color:#E5E8E8">percentage more</span>.
+![Percentage colors](/documents/percentagecolors.png "Color scheme")
