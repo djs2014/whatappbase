@@ -105,9 +105,9 @@ module WhatAppBase {
       if (wPercentage <= 0) {
         return;
       }
-
-      var yStart = height / 2 + y;
+// @@ check for width/height -> should not exceed due to rounding
       var xStart = x;
+      var yStart = y + height / 2;
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
       dc.setPenWidth(lineWidth);
       // Line up toward (x,y)
@@ -123,7 +123,7 @@ module WhatAppBase {
       wRemaining = _drawPercentageLine2(dc, xStart + width, y + height, xStart,
                                         y + height, wRemaining);
       // Line up towards starting point (half way)
-      _drawPercentageLine2(dc, xStart, y + height, xStart, yStart, wPercentage);
+      _drawPercentageLine2(dc, xStart, y + height, xStart, yStart, wRemaining);
 
       dc.setPenWidth(1.0);
     }
