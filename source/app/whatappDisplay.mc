@@ -141,9 +141,7 @@ module WhatAppBase {
         drawTopInfoTriangle(color, value, backColor, units, outlineColor,
                             percentage, color100perc, label);
         return;
-      } else if (middleLayout == LayoutMiddleSmart) {
-      }
-      // @@ Circle TODO refactor
+      } 
 
       // circle back color
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
@@ -151,14 +149,14 @@ module WhatAppBase {
                           altZone.color100perc);
 
       if (leftAndRightCircleFillWholeScreen()) {
-        var y = mRadiusInfoField / 6;
+        var ha = dc.getFontHeight(Graphics.FONT_SMALL);
+        var y = ha / 2 ; //mRadiusInfoField / 6;
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             barX, y, Graphics.FONT_SMALL, value,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        var ha = dc.getFontHeight(Graphics.FONT_SMALL);
         if (units != null && units.length() != 0) {
-          y = y + ha / 2;
+          y = ha;
           dc.drawText(
               barX, y, mFontLabelAdditional, units,
               Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
@@ -250,8 +248,7 @@ module WhatAppBase {
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
     }
-
-    // @@ TODO layout bottom info/top info
+    
     function drawBottomInfoBG(label, value, units, zone, altZone) {
       var backColor = zone.color;
       var percentage = zone.perc;
@@ -292,14 +289,14 @@ module WhatAppBase {
         dc.setColor(backColor, Graphics.COLOR_TRANSPARENT);
       }
       var xb = dc.getWidth() / 2 - wAllText / 2;
-      var yb = dc.getHeight() - hv + 2;
+      var yb = dc.getHeight() - hv;
 
       if (!leftAndRightCircleFillWholeScreen()) {  
         dc.fillRectangle(xb, yb, wAllText, hv);
         if (percentage >= 0) {  
           // Percentage bar around text only, text in FG
-          _drawBackgroundPercRectangle(xb, yb, wAllText, hv - 1,
-                                       Graphics.COLOR_BLACK,
+          _drawBackgroundPercRectangle(xb, yb, wAllText, hv,
+                                       Graphics.COLOR_DK_GRAY,
                                        Graphics.COLOR_ORANGE, percentage, 1);
         }
       }
@@ -350,9 +347,9 @@ module WhatAppBase {
                                                  lineWidth) {
       if (percentage > 100 && color100perc != null) {
         Utils.drawPercentageRectangle(dc, x, y, width, height, 100,
-                                      colorPercentageLine, lineWidth);
+                                      color100perc, lineWidth);
         percentage = percentage - 100;
-        colorPercentageLine = color100perc;
+        // colorPercentageLine = color100perc;
       }
       Utils.drawPercentageRectangle(dc, x, y, width, height, percentage,
                                     colorPercentageLine, lineWidth);
@@ -511,6 +508,6 @@ module WhatAppBase {
   enum {
     LayoutMiddleCircle = 0,
     LayoutMiddleTriangle = 1,
-    LayoutMiddleSmart = 2,
+    // LayoutMiddleSmart = 2,
   }
 }
