@@ -21,7 +21,7 @@ For some data a target can be specified. If so, then the background of that fiel
 
 ### Datafield layout
 
-![Layout](/documents/screenshots/3137.gif "Large field layout")
+![Layout](/documents/screenshots/3137.png "Large field layout")
 
 Example Datafield `What speed`:
 
@@ -36,6 +36,10 @@ Example Datafield `What power`:
 - Current heartrate and percentage to maximum heartrate (based on your Gramin profile)
 - Top info: Training effect
 - Bottom info: Calories burned
+
+![Layout](/documents/screenshots/9653.png "Activity paused")
+
+When activity is paused, some data will show the average value. Ex. `Speed` and `Power`.
 
 ### Color scheme
 
