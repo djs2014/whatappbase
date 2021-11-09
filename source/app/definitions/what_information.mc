@@ -3,8 +3,6 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
 
-  
-
   class WhatInformation {
     var objInstance = null;
 
@@ -24,6 +22,9 @@ import Toybox.Activity;
     var methodGetAltFormattedValue = null;
     var methodGetAltUnits = null;
     var methodGetAltLabel = null;
+
+    var methodGetMaxZoneInfo = null;
+    var methodGetMaxValue = null;
 
     var methodIsLabelHidden = null;  // @@ via methodGetLabel?
 
@@ -47,6 +48,10 @@ import Toybox.Activity;
                                                    : getAltFormattedValue);
       methodGetAltUnits = new Lang.Method(self.objInstance, : getAltUnits);
       methodGetAltLabel = new Lang.Method(self.objInstance, : getAltLabel);
+
+      methodGetMaxZoneInfo = new Lang.Method(self.objInstance,
+                                             : getMaxZoneInfo);
+      methodGetMaxValue = new Lang.Method(self.objInstance, : getMaxValue);
       // @@
       methodIsLabelHidden = new Lang.Method(self.objInstance, : isLabelHidden);
     }
@@ -79,6 +84,11 @@ import Toybox.Activity;
     function getAltUnits() as String { return methodGetAltUnits.invoke(); }
     function getAltLabel() as String { return methodGetAltLabel.invoke(); }
 
+    function getMaxZoneInfo() as ZoneInfo {
+      return methodGetMaxZoneInfo.invoke();
+    }
+    function getMaxValue() { return methodGetMaxValue.invoke(); }
+
     function setCallback(callbackMethod, callback) as Void {
       switch (callbackMethod) {
         case cbZoneInfo:
@@ -103,7 +113,8 @@ import Toybox.Activity;
           methodGetAltValue = new Lang.Method(self.objInstance, callback);
           break;
         case cbAltFormattedValue:
-          methodGetAltFormattedValue = new Lang.Method(self.objInstance, callback);
+          methodGetAltFormattedValue =
+              new Lang.Method(self.objInstance, callback);
           break;
         case cbAltUnits:
           methodGetAltUnits = new Lang.Method(self.objInstance, callback);
@@ -114,7 +125,7 @@ import Toybox.Activity;
         default:
           System.println("Callback not defined: " + callbackMethod);
       }
-    }  
+    }
   }
 }
 

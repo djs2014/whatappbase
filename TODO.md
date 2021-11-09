@@ -1,13 +1,7 @@
-x 1: what distance -> beta
-x 2 avg circle wider
-x    - show when activity paused
-x    - fix radius -> minus outlinewidth/2
-x    reorg graphics_util
-drawPercentageRectangle (for bottom field)
-3 smart layout: bottom / top on large screen  
-4 example html page with color perc circle
-5 1 field layout -> big circle etc.
 show max value
+1 field layout : settings= order of fields abr1,abr2, etc.
+2 timer
+3 'hitt' - trigger on power level -> timer 5 min beep etc.. countdown.
 
 Not working:
  - temperature

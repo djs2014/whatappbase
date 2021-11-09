@@ -78,6 +78,21 @@ module WhatAppBase {
       dc.setPenWidth(1.0);
     }
 
+    function drawPercentagePointerOnCircle(dc as Dc, x, y, radius, perc,
+                                           penWidth) {
+      if (perc == null || perc == 0) {
+        return;
+      }
+      var degrees = 3.6 * perc;
+
+      var degreeStart = 180 - degrees + 1;   // 180deg == 9 o-clock
+      var degreeEnd = 180 - degrees;    // 90deg == 12 o-clock
+
+      dc.setPenWidth(penWidth);
+      dc.drawArc(x, y, radius, Graphics.ARC_CLOCKWISE, degreeStart, degreeEnd);
+      dc.setPenWidth(1.0);
+    }
+
     function drawPercentageLine(dc as Dc, x, y, maxwidth, percentage, height,
                                 color) {
       var wPercentage = maxwidth / 100.0 * percentage;
@@ -105,7 +120,7 @@ module WhatAppBase {
       if (wPercentage <= 0) {
         return;
       }
-// @@ check for width/height -> should not exceed due to rounding
+      // @@ check for width/height -> should not exceed due to rounding
       var xStart = x;
       var yStart = y + height / 2;
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
