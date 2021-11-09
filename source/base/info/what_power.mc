@@ -78,6 +78,11 @@ module WhatAppBase {
     function getAltUnits() as String { return "w"; }
     function getAltLabel() as Lang.String { return "Avg power"; }
 
+    function getMaxValue() { return getMaxPower(); }
+    function getMaxZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getMaxPower(), false);
+    }
+
     // Power per weight
     // function getPPWZoneInfo() as ZoneInfo {
     //   return _getZoneInfo(powerPerX());

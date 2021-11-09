@@ -24,7 +24,9 @@ module WhatAppBase {
     //   }
     // }
 
-    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getTestValue()); }
+    function getZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getTestValue(), true);
+    }
     function getValue() { return convertToMetricOrStatute(getTestValue()); }
     function getFormattedValue() as Lang.String {
       return convertToMetricOrStatute(getTestValue()).format("%.0f");
@@ -33,7 +35,7 @@ module WhatAppBase {
     function getLabel() as Lang.String { return "Test field"; }
 
     function getAltZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getTestAltValue());
+      return _getZoneInfo(getTestAltValue(), false);
     }
     function getAltValue() {
       return convertToMetricOrStatute(getTestAltValue());
@@ -44,8 +46,15 @@ module WhatAppBase {
     function getAltUnits() as String { return getUnits(); }
     function getAltLabel() as Lang.String { return "Test alt"; }
 
+    function getMaxValue() { return getMaxTestValue(); }
+    function getMaxZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getMaxTestValue(), false);
+    }
     // --
     hidden function getTestValue() {
+      if (mActivityPaused) {
+        return getTestAltValue();
+      }
       if (value == null) {
         return 0;
       }
@@ -59,7 +68,19 @@ module WhatAppBase {
       return self.altValue;
     }
 
-    hidden function _getZoneInfo(val) {
+    hidden function getMaxTestValue() {
+      if (value == null) {
+        return 0;
+      }
+      return self.value + (self.value * 0.2);
+    }
+
+    hidden function _getZoneInfo(val, showAverageWhenPaused) {
+      if (showAverageWhenPaused && mActivityPaused) {
+        return new ZoneInfo(0, "Alt value", Graphics.COLOR_WHITE,
+                            Graphics.COLOR_BLACK, 0, null);
+      }
+
       var label = "test value";
       if (val == null || val == 0) {
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,
