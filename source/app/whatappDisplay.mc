@@ -148,7 +148,7 @@ module WhatAppBase {
                           color100perc, outlinePerc, outlineColor,
                           altZone.color100perc);
 
-      if (leftAndRightCircleFillWholeScreen()) {
+      if (!isSmallField() && leftAndRightCircleFillWholeScreen()) {
         var ha = dc.getFontHeight(Graphics.FONT_SMALL);
         var y = ha / 2;  // mRadiusInfoField / 6;
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
@@ -161,7 +161,7 @@ module WhatAppBase {
               barX, y, mFontLabelAdditional, units,
               Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
-      } else {
+      } else if (!isSmallField()) {
         var fontValue = Utils.getMatchingFont(
             dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
 
@@ -228,7 +228,7 @@ module WhatAppBase {
         var ha = dc.getFontHeight(fontValue);
 
         // label
-        var yLabel = y - dc.getFontHeight(mFontBottomLabel) - 3;        
+        var yLabel = y - dc.getFontHeight(mFontBottomLabel) - 3;
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             x, yLabel, mFontBottomLabel, label,
@@ -310,7 +310,7 @@ module WhatAppBase {
       }
 
       if (leftAndRightCircleFillWholeScreen()) {
-        // @@ Only display value, ex heading 
+        // @@ Only display value, ex heading
         if (color != null) {
           dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         }
@@ -454,14 +454,14 @@ module WhatAppBase {
         return;
       }
 
-      var outlineWidth = width; 
+      var outlineWidth = width;
       var w = width - outlineWidth / 2;
       var y = getCenterYcoordCircleAdditionalInfo();
       dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
       Utils.drawPercentagePointerOnCircle(dc, barX, y, w, maxPercentage,
                                           outlineWidth);
     }
-    
+
     hidden function drawAdditonalInfoFG(x, color, value, fontValue, units,
                                         fontUnits, label, fontLabel,
                                         percentage) {

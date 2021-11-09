@@ -17,12 +17,13 @@ module WhatAppBase {
     ShowInfoTimeOfDay = 10,
     ShowInfoCalories = 11,
     ShowInfoElapsedTime = 12,
-    ShowInfoAscentDescent = 13,  // @@ TODO combine ascent/descent
+    ShowInfoTimer = 13,
     ShowInfoTrainingEffect = 14,
     ShowInfoTemperature = 15,  // @@ not working yet
     ShowInfoEnergyExpenditure = 16,
     ShowInfoPowerPerBodyWeight = 17,
     ShowInfoTestField = 18
+    // @@ TODO ShowInfoAscentDescentcombine ascent/descent
   }
 
   class BaseFactory {
@@ -40,7 +41,7 @@ module WhatAppBase {
     hidden var mwCalories = null as WhatCalories;
     hidden var mwTrainingEffect = null as WhatTrainingEffect;
     hidden var mwTime = null as WhatTime;
-    hidden var mwTimer = null as WhatTime;
+    // hidden var mwTimer = null as WhatTime;
     hidden var mwHeading = null as WhatHeading;
     hidden var mwEngergyExpenditure = null as WhatEnergyExpenditure;
     hidden var mwTestField = null as WhatTestField;
@@ -106,7 +107,15 @@ module WhatAppBase {
           break;
         case ShowInfoElapsedTime:
           if (wi.getObject() instanceof WhatTime) {
-            // zone info is the same
+            wi.setCallback(cbZoneInfo, : getElapsedZoneInfo);
+            wi.setCallback(cbFormattedValue, : getElapsedFormattedValue);
+            wi.setCallback(cbUnits, : getElapsedUnits);
+            wi.setCallback(cbLabel, : getElapsedLabel);
+          }
+          break;
+        case ShowInfoTimer:
+          if (wi.getObject() instanceof WhatTime) {
+            wi.setCallback(cbZoneInfo, : getTimerZoneInfo);
             wi.setCallback(cbFormattedValue, : getTimerFormattedValue);
             wi.setCallback(cbUnits, : getTimerUnits);
             wi.setCallback(cbLabel, : getTimerLabel);
@@ -189,6 +198,8 @@ module WhatAppBase {
           return mwPressure;
 
         case ShowInfoTimeOfDay:
+        case ShowInfoElapsedTime:
+        case ShowInfoTimer:
           if (mwTime == null) {
             mwTime = new WhatTime();
           }
@@ -199,12 +210,6 @@ module WhatAppBase {
             mwCalories = new WhatCalories();
           }
           return mwCalories;
-
-        case ShowInfoElapsedTime:
-          if (mwTimer == null) {
-            mwTimer = new WhatTime();
-          }
-          return mwTimer;
 
           //   case ShowInfoTotalDescent:
           //     return new WhatInformation(mwAltitude);
