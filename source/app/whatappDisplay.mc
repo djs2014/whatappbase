@@ -457,7 +457,7 @@ module WhatAppBase {
       var outlineWidth = width; 
       var w = width - outlineWidth / 2;
       var y = getCenterYcoordCircleAdditionalInfo();
-      dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);
+      dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
       Utils.drawPercentagePointerOnCircle(dc, barX, y, w, maxPercentage,
                                           outlineWidth);
     }
