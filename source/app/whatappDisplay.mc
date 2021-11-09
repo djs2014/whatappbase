@@ -128,7 +128,7 @@ module WhatAppBase {
              (4 * mRadiusInfoField) + (marginLeft + marginRight);
     }
 
-    function drawTopInfo(label, value, units, zone, altZone) {
+    function drawTopInfo(label, value, units, zone, altZone, maxZone) {
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
@@ -228,8 +228,7 @@ module WhatAppBase {
         var ha = dc.getFontHeight(fontValue);
 
         // label
-        var yLabel = y - dc.getFontHeight(mFontBottomLabel) - 3;
-        // y - dc.getFontHeight(mFontBottomLabel) - ha / 2 + margin;
+        var yLabel = y - dc.getFontHeight(mFontBottomLabel) - 3;        
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             x, yLabel, mFontBottomLabel, label,
@@ -249,7 +248,7 @@ module WhatAppBase {
       }
     }
 
-    function drawBottomInfoBG(label, value, units, zone, altZone) {
+    function drawBottomInfoBG(label, value, units, zone, altZone, maxZone) {
       var backColor = zone.color;
       var percentage = zone.perc;
       var color100perc = zone.color100perc;
@@ -262,7 +261,7 @@ module WhatAppBase {
       }
     }
 
-    function drawBottomInfoFG(label, value, units, zone, altZone) {
+    function drawBottomInfoFG(label, value, units, zone, altZone, maxZone) {
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
@@ -311,7 +310,7 @@ module WhatAppBase {
       }
 
       if (leftAndRightCircleFillWholeScreen()) {
-        // @@ Only display value, ex heading refactor
+        // @@ Only display value, ex heading 
         if (color != null) {
           dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         }
@@ -359,7 +358,7 @@ module WhatAppBase {
       Utils.drawPercentageRectangle(dc, x, y, width, height, percentage,
                                     colorPercentageLine, lineWidth);
     }
-    function drawLeftInfo(label, value, units, zone, altZone) {
+    function drawLeftInfo(label, value, units, zone, altZone, maxZone) {
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
@@ -367,11 +366,13 @@ module WhatAppBase {
       var outlinePerc = altZone.perc;
       var outlineColor = altZone.color;
       var barX = mRadiusInfoField + marginLeft;
-
+      var maxPercentage = maxZone.perc;
       // circle back color
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc, outlinePerc, outlineColor,
                           altZone.color100perc);
+
+      drawMaxInfo(barX, mRadiusInfoField, maxPercentage);
 
       var fontValue = Utils.getMatchingFont(
           dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
@@ -383,7 +384,7 @@ module WhatAppBase {
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
     }
 
-    function drawRightInfo(label, value, units, zone, altZone) {
+    function drawRightInfo(label, value, units, zone, altZone, maxZone) {
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
@@ -391,10 +392,12 @@ module WhatAppBase {
       var outlinePerc = altZone.perc;
       var outlineColor = altZone.color;
       var barX = dc.getWidth() - mRadiusInfoField - marginRight;
+      var maxPercentage = maxZone.perc;
       // circle
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc, outlinePerc, outlineColor,
                           altZone.color100perc);
+      drawMaxInfo(barX, mRadiusInfoField, maxPercentage);
 
       // units + value
       var fontValue = Utils.getMatchingFont(
@@ -446,21 +449,19 @@ module WhatAppBase {
       }
     }
 
-    // hidden function getFontValue(maxwidth, value, startIndex) {
-    //   var index = startIndex;
-    //   var fontList = mFontsValue as Lang.Array<Lang.Number>;
-    //   var font = fontList[index];
-    //   var widthValue = dc.getTextWidthInPixels(value, font);
+    function drawMaxInfo(barX, width, maxPercentage) {
+      if (maxPercentage == null || maxPercentage <= 0) {
+        return;
+      }
 
-    //   while (widthValue > maxwidth && index > 0) {
-    //     index = index - 1;
-    //     font = fontList[index];
-    //     widthValue = dc.getTextWidthInPixels(value, font);
-    //   }
-    //   // System.println("font index: " + index);
-    //   return font;
-    // }
-
+      var outlineWidth = width; 
+      var w = width - outlineWidth / 2;
+      var y = getCenterYcoordCircleAdditionalInfo();
+      dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+      Utils.drawPercentagePointerOnCircle(dc, barX, y, w, maxPercentage,
+                                          outlineWidth);
+    }
+    
     hidden function drawAdditonalInfoFG(x, color, value, fontValue, units,
                                         fontUnits, label, fontLabel,
                                         percentage) {

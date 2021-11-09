@@ -60,6 +60,11 @@ module WhatAppBase {
     function getAltUnits() as String { return "rpm"; }
     function getAltLabel() as Lang.String { return "Avg cadence"; }
 
+    function getMaxValue() { return getMaxCadence(); }
+    function getMaxZoneInfo() as ZoneInfo {
+       return _getZoneInfo(getMaxCadence(), false);
+    }
+
     // --
     hidden function getAverageCadence() {
       if (avarageCadence == null) {

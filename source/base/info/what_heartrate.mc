@@ -66,6 +66,11 @@ module WhatAppBase {
     function getAltUnits() as String { return "bpm"; }
     function getAltLabel() as Lang.String { return "Avg heartrate"; }
 
+    function getMaxValue() { return getMaxHeartrate(); }
+    function getMaxZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getMaxHeartrate());
+    }
+
     // --
     hidden function getAverageHeartrate() {
       if (avarageHeartrate == null) {
@@ -73,7 +78,7 @@ module WhatAppBase {
       }
       return self.avarageHeartrate;
     }
- 
+
     hidden function getMaxHeartrate() {
       if (maxHeartRate == null) {
         return 0;

@@ -116,7 +116,8 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiLeft.getAltZoneInfo();
-      mWD.drawLeftInfo(label, value, units, zone, altZone);
+      var maxZone = mWiLeft.getMaxZoneInfo();
+      mWD.drawLeftInfo(label, value, units, zone, altZone, maxZone);
     }
     function drawTopInfo(dc) {
       if (mWiTop == null) {
@@ -131,7 +132,8 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiTop.getAltZoneInfo();
-      mWD.drawTopInfo(label, value, units, zone, altZone);
+      var maxZone = mWiTop.getMaxZoneInfo();
+      mWD.drawTopInfo(label, value, units, zone, altZone, maxZone);
     }
 
     function drawRightInfo(dc) {
@@ -147,7 +149,8 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiRight.getAltZoneInfo();
-      mWD.drawRightInfo(label, value, units, zone, altZone);
+      var maxZone = mWiRight.getMaxZoneInfo();
+      mWD.drawRightInfo(label, value, units, zone, altZone, maxZone);
     }
 
     function drawBottomInfoBG(dc) {
@@ -163,7 +166,8 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiBottom.getAltZoneInfo();
-      mWD.drawBottomInfoBG(label, value, units, zone, altZone);
+      var maxZone = mWiBottom.getMaxZoneInfo();
+      mWD.drawBottomInfoBG(label, value, units, zone, altZone, maxZone);
     }
     function drawBottomInfoFG(dc) {
       if (mWiBottom == null) {
@@ -178,7 +182,8 @@ module WhatAppBase {
         label = "";
       }
       var altZone = mWiBottom.getAltZoneInfo();
-      mWD.drawBottomInfoFG(label, value, units, zone, altZone);
+      var maxZone = mWiBottom.getMaxZoneInfo();
+      mWD.drawBottomInfoFG(label, value, units, zone, altZone, maxZone);
     }
   }
 }

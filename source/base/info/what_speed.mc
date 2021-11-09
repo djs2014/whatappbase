@@ -69,6 +69,11 @@ module WhatAppBase {
     function getAltUnits() as String { return getUnits(); }
     function getAltLabel() as Lang.String { return "Avg speed"; }
 
+    function getMaxValue() { return getMaxSpeed(); }
+    function getMaxZoneInfo() as ZoneInfo {
+      return _getZoneInfo(getMaxSpeed(), false);
+    }
+
     // --
     hidden function getAverageSpeed() {
       if (avarageSpeed == null) {

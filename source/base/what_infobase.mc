@@ -53,6 +53,11 @@ module WhatAppBase {
     function getAltUnits() as Lang.String { return getUnits(); }
     function getAltLabel() as Lang.String { return ""; }
 
+    function getMaxValue() { return 0.0f; }
+    function getMaxZoneInfo() as ZoneInfo {
+      return new ZoneInfo(0, "", Graphics.COLOR_WHITE, Graphics.COLOR_BLACK, 0,
+                          null);
+    }
     // function convertToDisplayFormat ->
     //  function getFormattedValue(value, fieldType) as Lang.String {
     //   if (value == null) {
