@@ -156,7 +156,7 @@ module WhatAppBase {
             barX, y, Graphics.FONT_SMALL, value,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         if (units != null && units.length() != 0) {
-          y = ha;
+          y = ha + 1;
           dc.drawText(
               barX, y, mFontLabelAdditional, units,
               Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);

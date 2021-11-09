@@ -1,15 +1,19 @@
 # Todo:
 
-One field layout : settings= order of fields abr1,abr2, etc.
 2 timer datafield
+    - central circle -> units to right?
+    - target time?
+
+One field layout : settings= order of fields abr1,abr2, etc.
 3 'hitt' - trigger on power level -> timer 5 min beep etc.. countdown.
 option to auto adjust target (use %rule)
-    -> if >0 -> set target to x% of end/avg value
+    -> if >0 -> set target to target +/- x% of end/avg value
+    -> only enabled after x elapsed distance
 nightmode - when not started or paused
 - circle + line and black background not filled and filled rectangle around text on top of triangle
 - icons using custom font for info / pressure 
 - zones for altitude / 
-
+- if target distance -> display estimated time?
 
 ## Not working:
  - temperature
