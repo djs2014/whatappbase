@@ -86,7 +86,7 @@ module WhatAppBase {
       var degrees = 3.6 * perc;
 
       var degreeStart = 180 - degrees + 1;   // 180deg == 9 o-clock
-      var degreeEnd = 180 - degrees;    // 90deg == 12 o-clock
+      var degreeEnd = 180 - degrees - 1;    // 90deg == 12 o-clock
 
       dc.setPenWidth(penWidth);
       dc.drawArc(x, y, radius, Graphics.ARC_CLOCKWISE, degreeStart, degreeEnd);
