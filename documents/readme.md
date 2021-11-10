@@ -16,6 +16,7 @@ Available data to show:
  - Grade
  - Pressure (Ambient or at sealevel)
  - Time of day
+ - Elapsed time/timer
 
 For some data a target can be specified. If so, then the background of that field will show the percentage (and color).
 

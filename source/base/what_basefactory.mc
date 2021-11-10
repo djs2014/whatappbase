@@ -3,7 +3,6 @@ import Toybox.Lang;
 import Toybox.System;
 // using WhatAppBase.Types;
 module WhatAppBase {
-
   enum {
     ShowInfoNothing = 0,
     ShowInfoPower = 1,
@@ -17,13 +16,14 @@ module WhatAppBase {
     ShowInfoAmbientPressure = 9,
     ShowInfoTimeOfDay = 10,
     ShowInfoCalories = 11,
-    ShowInfoTotalAscent = 12,   // @@ TODO combine ascent/descent
-    ShowInfoTotalDescent = 13,  // @@ TODO combine ascent/descent
+    ShowInfoElapsedTime = 12,
+    ShowInfoTimer = 13,
     ShowInfoTrainingEffect = 14,
     ShowInfoTemperature = 15,  // @@ not working yet
     ShowInfoEnergyExpenditure = 16,
-    ShowInfoPowerPerBodyWeight = 17,  
+    ShowInfoPowerPerBodyWeight = 17,
     ShowInfoTestField = 18
+    // @@ TODO ShowInfoAscentDescentcombine ascent/descent
   }
 
   class BaseFactory {
@@ -36,10 +36,12 @@ module WhatAppBase {
     hidden var mwAltitude = null as WhatAltitude;
     hidden var mwSpeed = null as WhatSpeed;
     hidden var mwPressure = null as WhatPressure;
-    // hidden var mwTemperature = null as WhatTemperature; //@@ show current weather
+    // hidden var mwTemperature = null as WhatTemperature; //@@ show current
+    // weather
     hidden var mwCalories = null as WhatCalories;
     hidden var mwTrainingEffect = null as WhatTrainingEffect;
     hidden var mwTime = null as WhatTime;
+    // hidden var mwTimer = null as WhatTime;
     hidden var mwHeading = null as WhatHeading;
     hidden var mwEngergyExpenditure = null as WhatEnergyExpenditure;
     hidden var mwTestField = null as WhatTestField;
@@ -102,6 +104,23 @@ module WhatAppBase {
             wi.setCallback(cbUnits, : getPPWUnits);
             wi.setCallback(cbLabel, : getPPWLabel);
           }
+          break;
+        case ShowInfoElapsedTime:
+          if (wi.getObject() instanceof WhatTime) {
+            wi.setCallback(cbZoneInfo, : getElapsedZoneInfo);
+            wi.setCallback(cbFormattedValue, : getElapsedFormattedValue);
+            wi.setCallback(cbUnits, : getElapsedUnits);
+            wi.setCallback(cbLabel, : getElapsedLabel);
+          }
+          break;
+        case ShowInfoTimer:
+          if (wi.getObject() instanceof WhatTime) {
+            wi.setCallback(cbZoneInfo, : getTimerZoneInfo);
+            wi.setCallback(cbFormattedValue, : getTimerFormattedValue);
+            wi.setCallback(cbUnits, : getTimerUnits);
+            wi.setCallback(cbLabel, : getTimerLabel);
+          }
+          break;
         default:
       }
 
@@ -114,9 +133,9 @@ module WhatAppBase {
 
     function _getInstance(showInfo, hrFallback,
                           trainingEffectFallback) as WhatInfoBase {
-    //   if (mDebug) {
-    //     System.println("_getInstance showInfo: " + showInfo);
-    //   }
+      //   if (mDebug) {
+      //     System.println("_getInstance showInfo: " + showInfo);
+      //   }
       switch (showInfo) {
         case ShowInfoPower:
           if (mwPower == null) {
@@ -179,6 +198,8 @@ module WhatAppBase {
           return mwPressure;
 
         case ShowInfoTimeOfDay:
+        case ShowInfoElapsedTime:
+        case ShowInfoTimer:
           if (mwTime == null) {
             mwTime = new WhatTime();
           }
@@ -190,9 +211,6 @@ module WhatAppBase {
           }
           return mwCalories;
 
-          //@@TODO   case ShowInfoTotalAscent:
-
-          //     return new WhatInformation(mwAltitude);
           //   case ShowInfoTotalDescent:
           //     return new WhatInformation(mwAltitude);
         case ShowInfoTrainingEffect:
@@ -210,11 +228,11 @@ module WhatAppBase {
           }
           return mwTrainingEffect;
 
-        // case ShowInfoTemperature:
-        //   if (mwTemperature == null) {
-        //     mwTemperature = new WhatTemperature();
-        //   }
-        //   return mwTemperature;
+          // case ShowInfoTemperature:
+          //   if (mwTemperature == null) {
+          //     mwTemperature = new WhatTemperature();
+          //   }
+          //   return mwTemperature;
 
         case ShowInfoEnergyExpenditure:
           if (mwEngergyExpenditure == null) {
