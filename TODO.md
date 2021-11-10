@@ -4,7 +4,9 @@
     - central circle -> units to right?
     - target time?
 
-One field layout : settings= order of fields abr1,abr2, etc.
+Submodules define app/base
+    Sep app: One field layout : settings= order of fields abr1,abr2, etc.
+
 3 'hitt' - trigger on power level -> timer 5 min beep etc.. countdown.
 option to auto adjust target (use %rule)
     -> if >0 -> set target to target +/- x% of end/avg value
