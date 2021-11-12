@@ -88,54 +88,54 @@ module WhatAppBase {
         return Graphics.COLOR_WHITE;
       }
       if (percentage < 45) {
-        return WhatColor.COLOR_WHITE_GRAY_2;
+        return Colors.COLOR_WHITE_GRAY_2;
       }
       if (percentage < 55) {
-        return WhatColor.COLOR_WHITE_GRAY_3;
+        return Colors.COLOR_WHITE_GRAY_3;
       }
       if (percentage < 65) {
-        return WhatColor.COLOR_WHITE_BLUE_3;
+        return Colors.COLOR_WHITE_BLUE_3;
       }
       if (percentage < 70) {
-        return WhatColor.COLOR_WHITE_DK_BLUE_3;
+        return Colors.COLOR_WHITE_DK_BLUE_3;
       }
       if (percentage < 75) {
-        return WhatColor.COLOR_WHITE_LT_GREEN_3;
+        return Colors.COLOR_WHITE_LT_GREEN_3;
       }
       if (percentage < 80) {
-        return WhatColor.COLOR_WHITE_GREEN_3;
+        return Colors.COLOR_WHITE_GREEN_3;
       }
       if (percentage < 85) {
-        return WhatColor.COLOR_WHITE_YELLOW_3;
+        return Colors.COLOR_WHITE_YELLOW_3;
       }
       if (percentage < 95) {
-        return WhatColor.COLOR_WHITE_ORANGE_3;
+        return Colors.COLOR_WHITE_ORANGE_3;
       }
       if (percentage == 100) {
-        return WhatColor.COLOR_WHITE_ORANGERED_2;  // @@ diff color? _4
+        return Colors.COLOR_WHITE_ORANGERED_2;  // @@ diff color? _4
       }
       if (percentage < 105) {
-        return WhatColor.COLOR_WHITE_ORANGERED_3;
+        return Colors.COLOR_WHITE_ORANGERED_3;
       }
       if (percentage < 115) {
-        return WhatColor.COLOR_WHITE_ORANGERED2_3;
+        return Colors.COLOR_WHITE_ORANGERED2_3;
       }
       if (percentage < 125) {
-        return WhatColor.COLOR_WHITE_RED_3;
+        return Colors.COLOR_WHITE_RED_3;
       }
 
       if (percentage < 135) {
-        return WhatColor.COLOR_WHITE_DK_RED_3;
+        return Colors.COLOR_WHITE_DK_RED_3;
       }
 
       if (percentage < 145) {
-        return WhatColor.COLOR_WHITE_PURPLE_3;
+        return Colors.COLOR_WHITE_PURPLE_3;
       }
 
       if (percentage < 155) {
-        return WhatColor.COLOR_WHITE_DK_PURPLE_3;
+        return Colors.COLOR_WHITE_DK_PURPLE_3;
       }
-      return WhatColor.COLOR_WHITE_DK_PURPLE_4;
+      return Colors.COLOR_WHITE_DK_PURPLE_4;
     }
   }
 }

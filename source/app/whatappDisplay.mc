@@ -37,7 +37,7 @@ module WhatAppBase {
     ] as Lang.Array<Lang.Number>;
     hidden var mRadiusInfoField = 15;
 
-    hidden var COLOR_MAX_PERCENTAGE = WhatColor.COLOR_WHITE_DK_PURPLE_4;
+    hidden var COLOR_MAX_PERCENTAGE = Colors.COLOR_WHITE_DK_PURPLE_4;
 
     var width = 0;
     var height = 0;
@@ -420,7 +420,7 @@ module WhatAppBase {
       var y = getCenterYcoordCircleAdditionalInfo();
 
       if (percentage < 100 || color100perc == null) {
-        dc.setColor(WhatColor.COLOR_WHITE_GRAY_1, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(Colors.COLOR_WHITE_GRAY_1, Graphics.COLOR_TRANSPARENT);
       } else {
         dc.setColor(color100perc, Graphics.COLOR_TRANSPARENT);
         percentage = percentage - 100;
@@ -428,7 +428,7 @@ module WhatAppBase {
       dc.fillCircle(x, y, width);
 
       if (color == backgroundColor) {
-        color = WhatColor.COLOR_WHITE_GRAY_1;
+        color = Colors.COLOR_WHITE_GRAY_1;
       }
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
       Utils.fillPercentageCircle(dc, x, y, width, percentage);

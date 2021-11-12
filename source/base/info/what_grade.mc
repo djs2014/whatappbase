@@ -81,47 +81,47 @@ module WhatAppBase {
 
     hidden function getGradeColor(grade) {
       if (grade < -12) {
-        return WhatColor.COLOR_WHITE_DK_BLUE_4;
+        return Colors.COLOR_WHITE_DK_BLUE_4;
       }
       if (grade < -10) {
-        return WhatColor.COLOR_WHITE_DK_BLUE_3;
+        return Colors.COLOR_WHITE_DK_BLUE_3;
       }
       if (grade < -4) {
-        return WhatColor.COLOR_WHITE_BLUE_3;
+        return Colors.COLOR_WHITE_BLUE_3;
       }
 
       if (grade < 0) {
-        return WhatColor.COLOR_WHITE_LT_GREEN_3;
+        return Colors.COLOR_WHITE_LT_GREEN_3;
       }
       if (grade < 4) {
-        return WhatColor.COLOR_WHITE_GREEN_3;
+        return Colors.COLOR_WHITE_GREEN_3;
       }
 
       if (grade < 6) {
-        return WhatColor.COLOR_WHITE_YELLOW_3;
+        return Colors.COLOR_WHITE_YELLOW_3;
       }
       if (grade < 8) {
-        return WhatColor.COLOR_WHITE_ORANGE_3;
+        return Colors.COLOR_WHITE_ORANGE_3;
       }
       if (grade < 10) {
-        return WhatColor.COLOR_WHITE_ORANGERED_3;
+        return Colors.COLOR_WHITE_ORANGERED_3;
       }
       if (grade < 12) {
-        return WhatColor.COLOR_WHITE_ORANGERED2_3;
+        return Colors.COLOR_WHITE_ORANGERED2_3;
       }
       if (grade < 14) {
-        return WhatColor.COLOR_WHITE_RED_3;
+        return Colors.COLOR_WHITE_RED_3;
       }
       if (grade < 15) {
-        return WhatColor.COLOR_WHITE_DK_RED_3;
+        return Colors.COLOR_WHITE_DK_RED_3;
       }
       if (grade < 16) {
-        return WhatColor.COLOR_WHITE_PURPLE_3;
+        return Colors.COLOR_WHITE_PURPLE_3;
       }
       if (grade < 17) {
-        return WhatColor.COLOR_WHITE_DK_PURPLE_3;
+        return Colors.COLOR_WHITE_DK_PURPLE_3;
       }
-      return WhatColor.COLOR_WHITE_DK_PURPLE_4;
+      return Colors.COLOR_WHITE_DK_PURPLE_4;
     }
   }
 }

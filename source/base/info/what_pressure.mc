@@ -264,37 +264,37 @@ module WhatAppBase {
 
     hidden function getPressureColor(pressure) {
       if (pressure < 960) {
-        return WhatColor.COLOR_WHITE_DK_PURPLE_3;
+        return Colors.COLOR_WHITE_DK_PURPLE_3;
       }
       if (pressure < 970) {
-        return WhatColor.COLOR_WHITE_PURPLE_3;
+        return Colors.COLOR_WHITE_PURPLE_3;
       }
       if (pressure < 980) {
-        return WhatColor.COLOR_WHITE_DK_BLUE_3;
+        return Colors.COLOR_WHITE_DK_BLUE_3;
       }
       if (pressure < 990) {
-        return WhatColor.COLOR_WHITE_BLUE_3;
+        return Colors.COLOR_WHITE_BLUE_3;
       }
       if (pressure < 1000) {
-        return WhatColor.COLOR_WHITE_LT_GREEN_3;
+        return Colors.COLOR_WHITE_LT_GREEN_3;
       }
       if (pressure < 1010) {
-        return WhatColor.COLOR_WHITE_GREEN_3;
+        return Colors.COLOR_WHITE_GREEN_3;
       }
       if (pressure < 1020) {
-        return WhatColor.COLOR_WHITE_YELLOW_3;
+        return Colors.COLOR_WHITE_YELLOW_3;
       }
       if (pressure < 1030) {
-        return WhatColor.COLOR_WHITE_ORANGE_3;
+        return Colors.COLOR_WHITE_ORANGE_3;
       }
       if (pressure < 1040) {
-        return WhatColor.COLOR_WHITE_ORANGERED_3;
+        return Colors.COLOR_WHITE_ORANGERED_3;
       }
       if (pressure < 1050) {
-        return WhatColor.COLOR_WHITE_ORANGERED2_3;
+        return Colors.COLOR_WHITE_ORANGERED2_3;
       }
 
-      return WhatColor.COLOR_WHITE_RED_3;
+      return Colors.COLOR_WHITE_RED_3;
     }
   }
 }

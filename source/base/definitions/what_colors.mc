@@ -2,8 +2,8 @@ import Toybox.Lang;
 import Toybox.System;
 module WhatAppBase {
   // https://htmlcolorcodes.com/  -> use tint 3
-  (:WhatColor)
-  module WhatColor {
+  (:Colors)
+  module Colors {
     // color scale
     const COLOR_WHITE_1 = 0xFBEEE6;
     const COLOR_WHITE_2 = 0xFBFCFC;
