@@ -67,16 +67,16 @@ module WhatAppBase {
 
       self.width = dc.getWidth();
       self.height = dc.getHeight();
-      self.fieldType = Types.SmallField;
+      self.fieldType = Utils.getFieldType(dc);
 
-      if (self.width >= 246) {
-        self.fieldType = Types.WideField;
-        if (self.height >= 100) {
-          self.fieldType = Types.LargeField;
-        } else if (self.height >= 322) {
-          self.fieldType = Types.OneField;
-        }
-      }
+      // if (self.width >= 246) {
+      //   self.fieldType = Types.WideField;
+      //   if (self.height >= 100) {
+      //     self.fieldType = Types.LargeField;
+      //   } else if (self.height >= 322) {
+      //     self.fieldType = Types.OneField;
+      //   }
+      // }
 
       // System.println("w[" + self.width + "] h[" + self.height + "] type[" +
       //                self.fieldType + "]");
@@ -209,7 +209,8 @@ module WhatAppBase {
                                              100);
         dc.setColor(color100perc, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(pts);
-        percentage = percentage - 100;
+        //percentage = percentage - 100;
+        percentage = percentage.toNumber() % 100;
       }
 
       pts = Utils.getPercentageTrianglePts(topInner, leftInner, rightInner,
@@ -352,7 +353,8 @@ module WhatAppBase {
       if (percentage > 100 && color100perc != null) {
         Utils.drawPercentageRectangle(dc, x, y, width, height, 100,
                                       color100perc, lineWidth);
-        percentage = percentage - 100;
+        // percentage = percentage - 100;
+        percentage = percentage.toNumber() % 100;
         // colorPercentageLine = color100perc;
       }
       Utils.drawPercentageRectangle(dc, x, y, width, height, percentage,

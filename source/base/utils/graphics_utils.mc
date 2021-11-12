@@ -95,7 +95,7 @@ module WhatAppBase {
         return;
       }
 
-      if (perc > 100.0) {
+      if (perc > 100) {
         perc = 100;
       }
       var degrees = 3.6 * perc;
@@ -113,7 +113,9 @@ module WhatAppBase {
       if (perc == null || perc == 0) {
         return;
       }
-      var degrees = 3.6 * perc;
+      var normPerc = perc.toNumber() % 100;
+      var loops = perc.toNumber() / 100; // integer division!
+      var degrees = 3.6 * normPerc;
 
       var degreeStart = 180 - degrees + 1;  // 180deg == 9 o-clock
       var degreeEnd = 180 - degrees - 1;    // 90deg == 12 o-clock
@@ -121,6 +123,17 @@ module WhatAppBase {
       dc.setPenWidth(penWidth);
       dc.drawArc(x, y, radius, Graphics.ARC_CLOCKWISE, degreeStart, degreeEnd);
       dc.setPenWidth(1.0);
+      if (loops > 0) {
+        var degreeMiddle = -1 * (180 - degrees);
+        var center = new Utils.Point(x,y);
+        var dotWidth = 3;        
+        while (loops > 0 ){
+          var point = pointOnCircle(penWidth, degreeMiddle, center); 
+          dc.fillCircle(point.x, point.y, dotWidth);
+          loops = loops - 1;
+          penWidth = penWidth + (2 * dotWidth) + 1;
+        }
+      }
     }
 
     function drawPercentageLine(dc as Dc, x, y, maxwidth, percentage, height,
