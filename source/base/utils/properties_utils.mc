@@ -3,7 +3,8 @@ import Toybox.Test;
 import Toybox.Application;
 import Toybox.System;
 module WhatAppBase {
-  ( : Utils) module Utils {
+  (:Utils) 
+  module Utils {
     // typedef Numeric as Number or Float or Long or Double;
 
     function getStringProperty(key, dflt) {

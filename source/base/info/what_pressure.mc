@@ -2,6 +2,7 @@ import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Time;
+using WhatAppBase.Colors;
 // using Toybox.SensorHistory;
 module WhatAppBase {
   class WhatPressure extends WhatInfoBase {

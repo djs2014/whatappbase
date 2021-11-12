@@ -1,6 +1,7 @@
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
+using WhatAppBase.Colors;
 module WhatAppBase {
   class WhatGrade extends WhatInfoBase {
     hidden var previousAltitude = 0;

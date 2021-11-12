@@ -2,15 +2,45 @@ import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
 import Toybox.Math;
-using WhatAppBase.Utils;
+using WhatAppBase.Colors;
+
 module WhatAppBase {
-  ( : Utils) module Utils {
+  (:Utils)
+  module Utils {
+    function isSmallField(dc as Dc) {
+      return getFieldType(dc) == Types.SmallField;
+    }
+    function isWideField(dc as Dc) {
+      return getFieldType(dc) == Types.WideField;
+    }
+    function isLargeField(dc as Dc) {
+      return getFieldType(dc) == Types.LargeField;
+    }
+    function isOneField(dc as Dc) { return getFieldType(dc) == Types.OneField; }
+
+    function getFieldType(dc as Dc) {
+      var width = dc.getWidth();
+      var height = dc.getHeight();
+      var fieldType = Types.SmallField;
+
+      if (width >= 246) {
+        fieldType = Types.WideField;
+        if (height >= 100) {
+          fieldType = Types.LargeField;
+        } else if (height >= 322) {
+          fieldType = Types.OneField;
+        }
+      }
+      return fieldType;
+    }
+
     //! Get correct y position based on a percentage
     function percentageToYpostion(percentage, marginTop, columnHeight) {
       return marginTop + columnHeight - (columnHeight * (percentage / 100.0));
     }
 
-    function getPercentageTrianglePts(top as Utils.Point, left as Utils.Point, right as Utils.Point, percentage) {
+    function getPercentageTrianglePts(top as Utils.Point, left as Utils.Point,
+                                      right as Utils.Point, percentage) {
       if (percentage >= 100) {
         return
             [ top.asArray(), right.asArray(), left.asArray(), top.asArray() ];
@@ -85,7 +115,7 @@ module WhatAppBase {
       }
       var degrees = 3.6 * perc;
 
-      var degreeStart = 180 - degrees + 1;   // 180deg == 9 o-clock
+      var degreeStart = 180 - degrees + 1;  // 180deg == 9 o-clock
       var degreeEnd = 180 - degrees - 1;    // 90deg == 12 o-clock
 
       dc.setPenWidth(penWidth);
@@ -236,6 +266,61 @@ module WhatAppBase {
       }
       // System.println("font index: " + index);
       return font;
+    }
+
+    function percentageToColor(percentage) {
+      if (percentage == null || percentage == 0) {
+        return Graphics.COLOR_WHITE;
+      }
+      if (percentage < 45) {
+        return Colors.COLOR_WHITE_GRAY_2;
+      }
+      if (percentage < 55) {
+        return Colors.COLOR_WHITE_GRAY_3;
+      }
+      if (percentage < 65) {
+        return Colors.COLOR_WHITE_BLUE_3;
+      }
+      if (percentage < 70) {
+        return Colors.COLOR_WHITE_DK_BLUE_3;
+      }
+      if (percentage < 75) {
+        return Colors.COLOR_WHITE_LT_GREEN_3;
+      }
+      if (percentage < 80) {
+        return Colors.COLOR_WHITE_GREEN_3;
+      }
+      if (percentage < 85) {
+        return Colors.COLOR_WHITE_YELLOW_3;
+      }
+      if (percentage < 95) {
+        return Colors.COLOR_WHITE_ORANGE_3;
+      }
+      if (percentage == 100) {
+        return Colors.COLOR_WHITE_ORANGERED_2;  // @@ diff color? _4
+      }
+      if (percentage < 105) {
+        return Colors.COLOR_WHITE_ORANGERED_3;
+      }
+      if (percentage < 115) {
+        return Colors.COLOR_WHITE_ORANGERED2_3;
+      }
+      if (percentage < 125) {
+        return Colors.COLOR_WHITE_RED_3;
+      }
+
+      if (percentage < 135) {
+        return Colors.COLOR_WHITE_DK_RED_3;
+      }
+
+      if (percentage < 145) {
+        return Colors.COLOR_WHITE_PURPLE_3;
+      }
+
+      if (percentage < 155) {
+        return Colors.COLOR_WHITE_DK_PURPLE_3;
+      }
+      return Colors.COLOR_WHITE_DK_PURPLE_4;
     }
   }
 }

@@ -31,14 +31,14 @@ module WhatAppBase {
     }
 
     function percentageOf(value, max) {
-      if (max == 0 || max < 0) {
+      if (max == 0 || max < 0 || value == null || max == null) {
         return 0.0f;
       }
       return value / (max / 100.0);
     }
 
     function valueOfPercentage(percentage, maxValue) {
-      if (percentage == 0.0) { return maxValue;}
+      if (percentage == 0.0 || percentage == null || maxValue == null) { return maxValue;}
       return (maxValue * (percentage / 100.0));
     }
 

@@ -2,6 +2,7 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
 using WhatAppBase.Types;
+using WhatAppBase.Colors;
 module WhatAppBase {
   class WhatInfoBase {
     hidden var mFieldType = Types.SmallField;

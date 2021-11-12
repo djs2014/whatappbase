@@ -1,7 +1,8 @@
 import Toybox.System;
 import Toybox.Lang;
 module WhatAppBase {
-  ( : Utils) module Utils {
+  (:Utils)
+  module Utils {
     const MILE = 1.609344;
     const FEET = 3.281;
     const POUND = 2.20462262;

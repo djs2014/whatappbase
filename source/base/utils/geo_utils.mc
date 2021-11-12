@@ -2,7 +2,8 @@ using Toybox.System;
 using Toybox.Math;
 using Toybox.Lang;
 module WhatAppBase {
-  ( : Utils) module Utils {
+  (:Utils) 
+  module Utils {
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
       if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) {
         return 0;
