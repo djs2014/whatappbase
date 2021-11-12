@@ -1,5 +1,14 @@
 # Todo:
+time_utils fix -> from airq test app
+graphics_utils idem
 
+air quality data?
+Test app:
+    - https://www.iqair.com/air-pollution-data-api
+
+    - https://openweathermap.org/api/air-pollution <--
+    - disable/enable background
+    
 2 timer datafield
     - central circle -> units to right?
     - target time?
@@ -16,6 +25,11 @@ nightmode - when not started or paused
 - icons using custom font for info / pressure 
 - zones for altitude / 
 - if target distance -> display estimated time?
+
+- App name Show version 
+
+
+
 
 ## Not working:
  - temperature
