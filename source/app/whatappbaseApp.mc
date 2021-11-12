@@ -1,7 +1,7 @@
 import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
-using WhatAppBase.Utils;
+using WhatAppBase.Utils as Utils;
 
 module WhatAppBase {
   class WhatApp {

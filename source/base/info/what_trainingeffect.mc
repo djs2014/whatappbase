@@ -1,7 +1,7 @@
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
-using WhatAppBase.Colors;
+// using WhatAppBase.Colors;
 module WhatAppBase {
   class WhatTrainingEffect extends WhatInfoBase {
     hidden var trainingEffect = 0;

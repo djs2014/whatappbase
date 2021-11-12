@@ -1,6 +1,8 @@
 # Todo:
 time_utils fix -> from airq test app
 graphics_utils idem
+loop perc -> % and /
+max line -> add circle per loop
 
 air quality data?
 Test app:

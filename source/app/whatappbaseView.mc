@@ -3,7 +3,7 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.System;
-using WhatAppBase.Types;
+// using WhatAppBase.Types;
 
 module WhatAppBase {
   class WhatAppView extends WatchUi.DataField {

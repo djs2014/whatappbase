@@ -1,7 +1,7 @@
 import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
-using WhatAppBase.Utils;
+// using WhatAppBase.Utils;
 module WhatAppBase {
   class WhatDisplay {
     hidden var dc;

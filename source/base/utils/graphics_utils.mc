@@ -2,7 +2,7 @@ import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
 import Toybox.Math;
-using WhatAppBase.Colors;
+// using WhatAppBase.Colors;
 
 module WhatAppBase {
   (:Utils)

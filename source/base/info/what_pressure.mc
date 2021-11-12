@@ -2,7 +2,7 @@ import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Time;
-using WhatAppBase.Colors;
+// using WhatAppBase.Colors;
 // using Toybox.SensorHistory;
 module WhatAppBase {
   class WhatPressure extends WhatInfoBase {
@@ -45,7 +45,7 @@ module WhatAppBase {
           self.meanSeaLevelPressure = 0.0f;
         }
 
-        if (ensureXSecondsPassed(lastCheck, 1)) {
+        if (Utils.ensureXSecondsPassed(lastCheck, 1)) {
           lastCheck = Time.now().value();
           System.println("addPressurePerSec: " + lastCheck);
           addPressurePerSec(meanSeaLevelPressure);

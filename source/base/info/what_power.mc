@@ -38,7 +38,7 @@ module WhatAppBase {
         if (info.currentPower) {
           power = info.currentPower;
         }
-        if (ensureXSecondsPassed(lastCheck, 1)) {
+        if (Utils.ensureXSecondsPassed(lastCheck, 1)) {
           lastCheck = Time.now().value();
           System.println("Add power: " + lastCheck);
           addPower(power);
