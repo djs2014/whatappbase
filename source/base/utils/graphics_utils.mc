@@ -122,18 +122,31 @@ module WhatAppBase {
 
       dc.setPenWidth(penWidth);
       dc.drawArc(x, y, radius, Graphics.ARC_CLOCKWISE, degreeStart, degreeEnd);
-      dc.setPenWidth(1.0);
+      
       if (loops > 0) {
-        var degreeMiddle = -1 * (180 - degrees);
-        var center = new Utils.Point(x,y);
-        var dotWidth = 3;        
+        // lines
+        var dotWidth = 2;
+        dc.setPenWidth(dotWidth);  
+        var posOnLine = penWidth - dotWidth / 2;    
         while (loops > 0 ){
-          var point = pointOnCircle(penWidth, degreeMiddle, center); 
-          dc.fillCircle(point.x, point.y, dotWidth);
+          dc.drawArc(x, y, posOnLine, Graphics.ARC_CLOCKWISE, degreeStart + 1, degreeEnd - 1);
           loops = loops - 1;
-          penWidth = penWidth + (2 * dotWidth) + 1;
+          posOnLine = posOnLine + (2 * dotWidth) + 1;
         }
+
+        // dots
+        // var degreeMiddle = -1 * (180 - degrees);
+        // var center = new Utils.Point(x,y);
+        // var dotWidth = 2;    
+        // var posOnLine = penWidth - dotWidth / 2;    
+        // while (loops > 0 ){
+        //   var point = pointOnCircle(posOnLine, degreeMiddle, center); 
+        //   dc.fillCircle(point.x, point.y, dotWidth);
+        //   loops = loops - 1;
+        //   posOnLine = posOnLine + (2 * dotWidth) + 1;
+        // }
       }
+      dc.setPenWidth(1.0);
     }
 
     function drawPercentageLine(dc as Dc, x, y, maxwidth, percentage, height,
