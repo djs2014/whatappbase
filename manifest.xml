@@ -40,6 +40,10 @@
             Use "Monkey C: Edit Annotations" from the Visual Studio Code
             command palette to edit the annotations.
         -->
-        <iq:annotations/>
+        <iq:annotations>
+            <iq:annotation>Utils</iq:annotation>
+            <iq:annotation>Colors</iq:annotation>
+            <iq:annotation>Types</iq:annotation>
+        </iq:annotations>
     </iq:barrel>
 </iq:manifest>

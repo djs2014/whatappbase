@@ -2,6 +2,7 @@ import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
 import Toybox.Math;
+using WhatAppBase.Utils;
 module WhatAppBase {
   ( : Utils) module Utils {
     //! Get correct y position based on a percentage
@@ -9,8 +10,7 @@ module WhatAppBase {
       return marginTop + columnHeight - (columnHeight * (percentage / 100.0));
     }
 
-    function getPercentageTrianglePts(top as Point, left as Point,
-                                      right as Point, percentage) {
+    function getPercentageTrianglePts(top as Utils.Point, left as Utils.Point, right as Utils.Point, percentage) {
       if (percentage >= 100) {
         return
             [ top.asArray(), right.asArray(), left.asArray(), top.asArray() ];
@@ -214,12 +214,12 @@ module WhatAppBase {
                                initialTextColor);
     }
 
-    function pointOnCircle(radius, angleInDegrees, center as Point) as Point {
+    function pointOnCircle(radius, angleInDegrees, center as Utils.Point) as Utils.Point {
       // Convert from degrees to radians
       var x = (radius * Math.cos(deg2rad(angleInDegrees))) + center.x;
       var y = (radius * Math.sin(deg2rad(angleInDegrees))) + center.y;
 
-      return new Point(x, y);
+      return new Utils.Point(x, y);
     }
 
     function getMatchingFont(dc as Dc,

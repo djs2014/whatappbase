@@ -184,10 +184,10 @@ module WhatAppBase {
         }
       }
       var wBottomBar = 2 * mRadiusInfoField;
-      var top = new Point(dc.getWidth() / 2, margin);
-      var left = new Point(dc.getWidth() / 2 - wBottomBar / 2,
+      var top = new Utils.Point(dc.getWidth() / 2, margin);
+      var left = new Utils.Point(dc.getWidth() / 2 - wBottomBar / 2,
                            dc.getHeight() - margin - heightBottomBar);
-      var right = new Point(dc.getWidth() / 2 + wBottomBar / 2,
+      var right = new Utils.Point(dc.getWidth() / 2 + wBottomBar / 2,
                             dc.getHeight() - margin - heightBottomBar);
       var topInner = top.move(0, 2);
       var leftInner = left.move(2, -2);
