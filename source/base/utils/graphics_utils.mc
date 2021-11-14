@@ -108,8 +108,7 @@ module WhatAppBase {
       dc.setPenWidth(1.0);
     }
 
-    function drawPercentagePointerOnCircle(dc as Dc, x, y, radius, perc,
-                                           penWidth) {
+    function drawPercentagePointerOnCircle(dc as Dc, x, y, radius, perc, penWidth, loopIndicator) {
       if (perc == null || perc == 0) {
         return;
       }
@@ -123,15 +122,18 @@ module WhatAppBase {
       dc.setPenWidth(penWidth);
       dc.drawArc(x, y, radius, Graphics.ARC_CLOCKWISE, degreeStart, degreeEnd);
       
-      if (loops > 0) {
-        // lines
-        var dotWidth = 2;
-        dc.setPenWidth(dotWidth);  
-        var posOnLine = penWidth - dotWidth / 2;    
+      if (loops > 0 && loopIndicator != 0) {
+        // lines        
+        dc.setPenWidth(1.0);
+        var x1 = x + radius * loopIndicator;
+        var y1 = y - 2;
+        var x2 = x1;
+        var y2 = y + 2;
         while (loops > 0 ){
-          dc.drawArc(x, y, posOnLine, Graphics.ARC_CLOCKWISE, degreeStart + 1, degreeEnd - 1);
-          loops = loops - 1;
-          posOnLine = posOnLine + (2 * dotWidth) + 1;
+          x1 = x1 + 1 * (-1 * loopIndicator);
+          x2 = x1;
+          dc.drawLine(x1, y1, x2, y2);
+          loops = loops - 1;          
         }
 
         // dots
@@ -266,8 +268,8 @@ module WhatAppBase {
       // dc.setColor(Graphics.COLOR_TRANSPARENT, backColor);
       dc.drawText(xRect, yRect, font, text, Graphics.TEXT_JUSTIFY_LEFT);
       // @@ for now draw line under text
-      Utils.drawPercentageLine(dc, xRect, yRect + height, width, percentage, 2,
-                               initialTextColor);
+      // Utils.drawPercentageLine(dc, xRect, yRect + height, width, percentage, 2,
+      //                          initialTextColor);
     }
 
     function pointOnCircle(radius, angleInDegrees, center as Utils.Point) as Utils.Point {

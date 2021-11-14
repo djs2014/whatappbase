@@ -5,6 +5,8 @@ import Toybox.Lang;
 module WhatAppBase {
   class WhatDisplay {
     hidden var dc;
+    // bug for edge 830, no transparent text if background has multiple colors
+    hidden var mTransparentTextNotPossible = true;
     hidden var margin = 1;  // y @@ -> convert to marginTop/marginBottom
     hidden var marginTop = 1;
     hidden var marginLeft = 1;
@@ -374,10 +376,9 @@ module WhatAppBase {
                           color100perc, outlinePerc, outlineColor,
                           altZone.color100perc);
 
-      drawMaxInfo(barX, mRadiusInfoField, maxPercentage);
+      drawMaxInfo(barX, mRadiusInfoField, maxPercentage, -2);
 
-      var fontValue = Utils.getMatchingFont(
-          dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
+      var fontValue = Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
       // @@ determine labelFont??//
       drawAdditonalInfoFG(barX, color, value, fontValue, units,
                           mFontLabelAdditional, label, mFontLabelAdditional,
@@ -399,7 +400,7 @@ module WhatAppBase {
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc, outlinePerc, outlineColor,
                           altZone.color100perc);
-      drawMaxInfo(barX, mRadiusInfoField, maxPercentage);
+      drawMaxInfo(barX, mRadiusInfoField, maxPercentage, 2);
 
       // units + value
       var fontValue = Utils.getMatchingFont(
@@ -451,7 +452,7 @@ module WhatAppBase {
       }
     }
 
-    function drawMaxInfo(barX, width, maxPercentage) {
+    function drawMaxInfo(barX, width, maxPercentage, loopIndicator) {
       if (maxPercentage == null || maxPercentage <= 0) {
         return;
       }
@@ -460,8 +461,7 @@ module WhatAppBase {
       var w = width - outlineWidth / 2;
       var y = getCenterYcoordCircleAdditionalInfo();
       dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-      Utils.drawPercentagePointerOnCircle(dc, barX, y, w, maxPercentage,
-                                          outlineWidth);
+      Utils.drawPercentagePointerOnCircle(dc, barX, y, w, maxPercentage, outlineWidth, loopIndicator);
     }
 
     hidden function drawAdditonalInfoFG(x, color, value, fontValue, units,
@@ -477,17 +477,17 @@ module WhatAppBase {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
         var yLabel = y - (dc.getFontHeight(fontValue) / 2) -
                      (dc.getFontHeight(fontLabel) / 2) + marginTop;
-        dc.drawText(
-            x, yLabel, fontLabel, label,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(x, yLabel, fontLabel, label,Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
 
       // value
-      if (percentage < 200) {
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            x, y, fontValue, value,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+      if (percentage < 200 || mTransparentTextNotPossible) {
+        if (percentage < 200) {
+          dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        } else {
+          dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        }
+        dc.drawText(x, y, fontValue, value,Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       } else {
         Utils.drawPercentageText(dc, x, y, fontValue, value, percentage - 200,
                                  Graphics.COLOR_WHITE, Graphics.COLOR_RED,
