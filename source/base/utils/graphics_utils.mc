@@ -37,7 +37,7 @@ module WhatAppBase {
 
     function getPercentageTrianglePts(top as Utils.Point, left as Utils.Point, right as Utils.Point, percentage as Numeric) as Array<Coordinate> {
       if (percentage >= 100) {
-        return [ top.asArray(), right.asArray(), left.asArray(), top.asArray() ] as Array<Coordinate>;
+        return [ top.asCoordinate(), right.asCoordinate(), left.asCoordinate(), top.asCoordinate() ] as Array<Coordinate>;
       }
 
       var columnHeight = left.y - top.y;
@@ -54,7 +54,7 @@ module WhatAppBase {
 
         var t1 = [x1, y] as Coordinate;
         var t2 = [x2, y] as Coordinate;
-        return [t1, t2, right.asArray(), left.asArray(), t1] as Array<Coordinate>;
+        return [t1, t2, right.asCoordinate(), left.asCoordinate(), t1] as Array<Coordinate>;
       }
       return [] as Array<Coordinate>;
     }

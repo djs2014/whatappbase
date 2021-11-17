@@ -15,8 +15,7 @@ module WhatAppBase {
         self.y = y;
       }
 
-      // @@ asCoordinate
-      function asArray() as Coordinate { return [ x, y ] as Coordinate ; }
+      function asCoordinate() as Coordinate { return [ x, y ] as Coordinate ; }
       function toString() as String { return "[" + x + "," + y + "]"; }
       function move(dx as Number, dy as Number) as Utils.Point { return new Utils.Point(x + dx, y + dy); }
     }

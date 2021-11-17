@@ -77,7 +77,7 @@ module WhatAppBase {
       fieldType = Utils.getFieldType(dc);
           
       // @@ function to set fonts + some dimensions
-      mRadiusInfoField = Utils.min(fieldWidth / 4, fieldHeight / 2 + 10).toNumber();
+      mRadiusInfoField = Utils.min(fieldWidth / 4, fieldCenterY + 10).toNumber();
       mFontValueStartIndex = 4;
       mFontBottomValueStartIndex = 3;
       if (isSmallField()) {
@@ -135,22 +135,14 @@ module WhatAppBase {
         var ha = dc.getFontHeight(Graphics.FONT_SMALL);
         var y = ha / 2;  // mRadiusInfoField / 6;
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            barX, y, Graphics.FONT_SMALL, value,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(barX, y, Graphics.FONT_SMALL, value,Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         if (units != null && units.length() != 0) {
           y = ha + 1;
-          dc.drawText(
-              barX, y, mFontLabelAdditional, units,
-              Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+          dc.drawText(barX, y, mFontLabelAdditional, units,Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
       } else if (!isSmallField()) {
-        var fontValue = Utils.getMatchingFont(
-            dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
-
-        drawAdditonalInfoFG(barX, color, value, fontValue, units,
-                            mFontLabelAdditional, label, mFontLabelAdditional,
-                            percentage);
+        var fontValue = Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
+        drawAdditonalInfoFG(barX, color, value, fontValue, units,mFontLabelAdditional, label, mFontLabelAdditional,percentage);
       }
       // outline
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
@@ -169,10 +161,8 @@ module WhatAppBase {
       }
       var wBottomBar = 2 * mRadiusInfoField;
       var top = new Utils.Point(fieldCenterX, margin);
-      var left = new Utils.Point(fieldCenterX - wBottomBar / 2,
-                           fieldHeight - margin - heightBottomBar);
-      var right = new Utils.Point(fieldCenterX + wBottomBar / 2,
-                            fieldHeight - margin - heightBottomBar);
+      var left = new Utils.Point(fieldCenterX - wBottomBar / 2,fieldHeight - margin - heightBottomBar);
+      var right = new Utils.Point(fieldCenterX + wBottomBar / 2,fieldHeight - margin - heightBottomBar);
       var topInner = top.move(0, 2);
       var leftInner = left.move(2, -2);
       var rightInner = right.move(-2, -2);
@@ -189,11 +179,9 @@ module WhatAppBase {
         dc.fillPolygon(pts);
       }
       if (percentage > 100 && color100perc != null) {
-        pts = Utils.getPercentageTrianglePts(topInner, leftInner, rightInner,
-                                             100);
+        pts = Utils.getPercentageTrianglePts(topInner, leftInner, rightInner, 100);
         dc.setColor(color100perc, Graphics.COLOR_TRANSPARENT);
-        dc.fillPolygon(pts);
-        //percentage = percentage - 100;
+        dc.fillPolygon(pts);        
         percentage = percentage.toNumber() % 100;
       }
 
@@ -204,15 +192,11 @@ module WhatAppBase {
       if (!leftAndRightCircleFillWholeScreen()) {
         var maxwidth = (right.x - left.x);
         var x = left.x + maxwidth / 2.0;
-        var fontValue =
-            Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value,
-                                  mFontValueStartIndex - 1);
-        // var y = (left.y - top.y) / 2;
-        var y = fieldCenterY;
+        var fontValue =Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex - 1);        
         var ha = dc.getFontHeight(fontValue);
 
         // label
-        var yLabel = y - dc.getFontHeight(mFontBottomLabel) - 3;
+        var yLabel = fieldCenterY - dc.getFontHeight(mFontBottomLabel) - 3;
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             x, yLabel, mFontBottomLabel, label,
@@ -220,15 +204,11 @@ module WhatAppBase {
 
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         // value
-        dc.drawText(
-            x, y, fontValue, value,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(x, fieldCenterY, fontValue, value,Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
 
         // units
-        var yUnits = y + ha / 2;
-        dc.drawText(
-            x, yUnits, mFontUnits, units,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        var yUnits = fieldCenterY + ha / 2;
+        dc.drawText(x, yUnits, mFontUnits, units, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
     }
 
@@ -393,33 +373,32 @@ module WhatAppBase {
     hidden function drawAdditonalInfoBG(x as Number, width as Number, color as ColorType, percentage as Numeric, 
               color100perc as ColorType?, outlinePerc as Numeric, outlineColor as ColorType, outlineColor100perc as ColorType?) as Void {
       var dc = mDc as Dc;
-      var y = fieldCenterY;
-
+      
       if (percentage < 100 || color100perc == null) {
         dc.setColor(Colors.COLOR_WHITE_GRAY_1, Graphics.COLOR_TRANSPARENT);
       } else {
         dc.setColor(color100perc, Graphics.COLOR_TRANSPARENT);
         percentage = percentage - 100;
       }
-      dc.fillCircle(x, y, width);
+      dc.fillCircle(x, fieldCenterY, width);
 
       if (color == backgroundColor) {
         color = Colors.COLOR_WHITE_GRAY_1;
       }
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-      Utils.fillPercentageCircle(dc, x, y, width, percentage);
+      Utils.fillPercentageCircle(dc, x, fieldCenterY, width, percentage);
 
       if (outlineColor != null && outlineColor > 0 && outlinePerc > 0) {
         var outlineWidth = width / 8;
         var w = width - outlineWidth / 2;
         if (outlinePerc <= 100 || outlineColor100perc == null) {
           dc.setColor(outlineColor, Graphics.COLOR_TRANSPARENT);
-          Utils.drawPercentageCircle(dc, x, y, w, outlinePerc, outlineWidth);
+          Utils.drawPercentageCircle(dc, x, fieldCenterY, w, outlinePerc, outlineWidth);
         } else {
           dc.setColor(outlineColor100perc, Graphics.COLOR_TRANSPARENT);
-          Utils.drawPercentageCircle(dc, x, y, w, 100, outlineWidth);
+          Utils.drawPercentageCircle(dc, x, fieldCenterY, w, 100, outlineWidth);
           dc.setColor(outlineColor, Graphics.COLOR_TRANSPARENT);
-          Utils.drawPercentageCircle(dc, x, y, w, outlinePerc - 100, outlineWidth);
+          Utils.drawPercentageCircle(dc, x, fieldCenterY, w, outlinePerc - 100, outlineWidth);
         }
       }
     }
@@ -440,13 +419,11 @@ module WhatAppBase {
       // Too many arguments used by a method, which are currently limited to 10  arguments
       var dc = mDc as Dc;
       var width = mRadiusInfoField;
-      var y = fieldCenterY;
-
+      
       // label
       if (!isSmallField() && label != null && label.length() > 0) {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        var yLabel = y - (dc.getFontHeight(fontValue) / 2) -
-                     (dc.getFontHeight(fontLabel) / 2) + marginTop;
+        var yLabel = fieldCenterY - (dc.getFontHeight(fontValue) / 2) - (dc.getFontHeight(fontLabel) / 2) + marginTop;
         dc.drawText(x, yLabel, fontLabel, label,Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
 
@@ -457,19 +434,18 @@ module WhatAppBase {
         } else {
           dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         }
-        dc.drawText(x, y, fontValue, value,Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(x, fieldCenterY, fontValue, value,Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       } else {
-        Utils.drawPercentageText(dc, x, y, fontValue, value, percentage - 200,
-                                 Graphics.COLOR_WHITE, Graphics.COLOR_RED,
-                                 COLOR_MAX_PERCENTAGE);
+        Utils.drawPercentageText(dc, x, fieldCenterY, fontValue, value, percentage - 200,
+                                 Graphics.COLOR_WHITE, Graphics.COLOR_RED, COLOR_MAX_PERCENTAGE);
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
       }
 
       // units
       var ha = dc.getFontHeight(fontValue);
       if (units != null && units.length() != 0) {
-        y = y + ha / 2;
-        dc.drawText(x, y, fontUnits, units, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        var yUnits = fieldCenterY + ha / 2;
+        dc.drawText(x, yUnits, fontUnits, units, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
     }
 

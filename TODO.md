@@ -1,5 +1,5 @@
 # Todo:
-git air quality
+cleanup object if not shown ->whatinf..
 watch air quality
 
 
