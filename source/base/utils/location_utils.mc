@@ -3,77 +3,118 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Position;
+
 module WhatAppBase {
   (:Utils) 
   module Utils {
     class CurrentLocation {
-      var lat = 0;
-      var lon = 0;
+      hidden var mLocation as Location?; 
+      hidden var mAccuracy as Quality? = Position.QUALITY_NOT_AVAILABLE;
 
       function initialize() {}
 
-      function hasLocation() { return self.lat != 0 && self.lon != 0; }
+      function hasLocation() as Boolean { return mLocation != null; } 
 
-      function infoLocation() {
-        return Lang.format("current($1$,$2$)",
-                           [ lat.format("%.4f"), lon.format("%.4f") ]);
+      function infoLocation() as String {
+        if (!hasLocation()) { return "No location"; }
+        var currentLocation = mLocation as Location;
+        var degrees = currentLocation.toDegrees();
+        var latCurrent = degrees[0];
+        var lonCurrent = degrees[1];
+        return "Current location: [" + latCurrent.format("%04d") + "," + lonCurrent.format("%04d") + "]";
       }
 
-      function onCompute(info as Activity.Info) {
+      function getAccuracy() as Quality {
+        if (mAccuracy == null) { return Position.QUALITY_NOT_AVAILABLE; }
+        return mAccuracy;
+      }
+      
+      function getLocation() as Location? {
+        return mLocation;
+      }
+
+      function onCompute(info as Activity.Info) as Void {
         try {
           var location = null;
-          if (info has : currentLocation && info.currentLocation != null) {
-            location = getNewLocation(info.currentLocation);
+          mAccuracy = Position.QUALITY_NOT_AVAILABLE;
+          if (info != null) {
+            if (info has :currentLocation && info.currentLocation != null) {
+              location = info.currentLocation as Location;
+              if (info has :currentLocationAccuracy && info.currentLocationAccuracy != null) {
+                mAccuracy = info.currentLocationAccuracy;
+              }
+              if (locationChanged(location)) {
+                System.println("Activity location lat/lon: " + location.toDegrees() + " accuracy: " + mAccuracy);
+              }
+            }
           }
           if (location == null) {
             var posnInfo = Position.getInfo();
-            if (posnInfo has : position && posnInfo.position != null) {
-              location = getNewLocation(posnInfo.position);
+            if (posnInfo != null && posnInfo has :position && posnInfo.position != null) {              
+              location = posnInfo.position as Location;
+              if (posnInfo has :accuracy && posnInfo.accuracy != null) {
+                mAccuracy = posnInfo.accuracy;                
+              }
+              if (locationChanged(location)) {
+                System.println("Position location lat/lon: " + location.toDegrees() + " accuracy: " + mAccuracy);
+              }
             }
           }
           if (location != null) {
-            self.lat = location[0];
-            self.lon = location[1];
+            mLocation = location;
+          } else if (mLocation != null) {
+            mAccuracy = Position.QUALITY_LAST_KNOWN;
           }
         } catch (ex) {
           ex.printStackTrace();
         }
+      }     
+
+      hidden function locationChanged(location as Location?) as Boolean {
+        if (location == null) {
+          if (mLocation == null) { return false;
+          } else { return true; }
+        }
+        if (mLocation == null) {
+          if (location == null) { return false;
+          } else { return true; }
+        }
+        // This will crash the compiler when on strict level
+        // if (mLocation == null && location == null ){ return false; }
+        // if ( (mLocation != null && location == null) || (mLocation == null && location != null) ){ return true; }
+
+        var currentLocation = mLocation as Location;
+        var currentDegrees = currentLocation.toDegrees();
+
+        var newLocation = location as Location;
+        var degrees = newLocation.toDegrees();
+        
+        return degrees[0] != currentDegrees[0] && degrees[1] != currentDegrees[1];        
       }
 
-      hidden function getNewLocation(position as Position.Location) {
-        if (position == null) {
-          return null;
-        }
-        var location = position.toDegrees();
-        var lat = location[0];
-        var lon = location[1];
-        if (lat.toNumber() != 0 && lon.toNumber() != 0 && self.lat != lat &&
-            self.lon != lon) {
-          return location;
-        }
-        return null;
-      }
-
-      function getRelativeToObservation(lat, lon) as Lang.String {
+      function getRelativeToObservation(latObservation as Float, lonObservation as Float) as String {
         if (!hasLocation()) {
           return "";
         }
 
+        var currentLocation = mLocation as Location;
+        var degrees = currentLocation.toDegrees();
+        var latCurrent = degrees[0];
+        var lonCurrent = degrees[1];
+
         var distanceMetric = "km";
         var distance =
-            Utils.getDistanceFromLatLonInKm(self.lat, self.lon, lat, lon);
+            Utils.getDistanceFromLatLonInKm(latCurrent, lonCurrent, latObservation, lonObservation);
 
         var deviceSettings = System.getDeviceSettings();
         if (deviceSettings.distanceUnits == System.UNIT_STATUTE) {
           distance = Utils.kilometerToMile(distance);
           distanceMetric = "m";
         }
-        var bearing = Utils.getRhumbLineBearing(self.lat, self.lon, lat, lon);
+        var bearing = Utils.getRhumbLineBearing(latCurrent, lonCurrent, latObservation, lonObservation);
         var compassDirection = Utils.getCompassDirection(bearing);
 
-        return Lang.format(
-            "$1$ $2$ ($3$)",
-            [ distance.format("%.2f"), distanceMetric, compassDirection ]);
+        return format("$1$ $2$ ($3$)",[ distance.format("%.2f"), distanceMetric, compassDirection ]);
       }
     }
   }

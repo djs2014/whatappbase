@@ -4,133 +4,115 @@ import Toybox.Lang;
 // using WhatAppBase.Utils;
 module WhatAppBase {
   class WhatDisplay {
-    hidden var dc;
+    hidden var mDc as Dc?;
     // bug for edge 830, no transparent text if background has multiple colors
-    hidden var mTransparentTextNotPossible = true;
-    hidden var margin = 1;  // y @@ -> convert to marginTop/marginBottom
-    hidden var marginTop = 1;
-    hidden var marginLeft = 1;
-    hidden var marginRight = 1;
-    hidden var heightPercentageLineBottomBar = 2;
-    hidden var backgroundColor = Graphics.COLOR_WHITE;
-    hidden var nightMode = false;
-    hidden var showTopInfo = true;
-    hidden var showLeftInfo = true;
-    hidden var showRightInfo = true;
-    hidden var showBottomInfo = true;
-    hidden var middleLayout = LayoutMiddleTriangle;
+    hidden var mTransparentTextNotPossible as Boolean = true;
+    hidden var margin as Number = 1;  // y @@ -> convert to marginTop/marginBottom
+    hidden var marginTop as Number = 1;
+    hidden var marginLeft as Number = 1;
+    hidden var marginRight as Number = 1;
+    hidden var heightPercentageLineBottomBar as Number = 2;
+    hidden var backgroundColor as ColorType = Graphics.COLOR_WHITE;
+    hidden var nightMode as Boolean = false;
+    hidden var showTopInfo as Boolean = true;
+    hidden var showLeftInfo as Boolean = true;
+    hidden var showRightInfo as Boolean = true;
+    hidden var showBottomInfo as Boolean = true;
+    hidden var middleLayout as LayoutMiddle = LayoutMiddleTriangle;
 
-    hidden var mFontBottomLabel = Graphics.FONT_TINY;
-    hidden var mFontBottomValue = Graphics.FONT_TINY;
-    hidden var mFontBottomValueStartIndex = 1;
-    hidden var mFontsBottomValue = [
+    hidden var mFontBottomLabel as FontType = Graphics.FONT_TINY;
+    hidden var mFontBottomValue as FontType = Graphics.FONT_TINY;
+    hidden var mFontBottomValueStartIndex as Number = 1;
+    //hidden var mFontsBottomValue as Array<FontType> = [4];
+    hidden var mFontsBottomValue as Array = [
       Graphics.FONT_TINY, Graphics.FONT_SYSTEM_SMALL,
       Graphics.FONT_SYSTEM_MEDIUM, Graphics.FONT_SYSTEM_LARGE
-    ] as Lang.Array<Lang.Number>;
-    hidden var mFontUnits = Graphics.FONT_XTINY;
+    ];
+    hidden var mFontUnits as FontType = Graphics.FONT_XTINY;
 
     // @@ rename mFontsValue to --mFontValue
-    hidden var mFontLabelAdditional = Graphics.FONT_XTINY;
-    hidden var mFontValueStartIndex = 1;
-    hidden var mFontsValue = [
+    hidden var mFontLabelAdditional as FontType = Graphics.FONT_XTINY;
+    hidden var mFontValueStartIndex as Number = 1;
+    hidden var mFontsValue as Array = [
       Graphics.FONT_SYSTEM_SMALL, Graphics.FONT_SYSTEM_MEDIUM,
       Graphics.FONT_SYSTEM_LARGE, Graphics.FONT_NUMBER_MILD,
       Graphics.FONT_NUMBER_HOT
-    ] as Lang.Array<Lang.Number>;
-    hidden var mRadiusInfoField = 15;
+    ];
+    hidden var mRadiusInfoField as Number = 15;
 
-    hidden var COLOR_MAX_PERCENTAGE = Colors.COLOR_WHITE_DK_PURPLE_4;
+    hidden var COLOR_MAX_PERCENTAGE as ColorType = Colors.COLOR_WHITE_DK_PURPLE_4;
 
-    var width = 0;
-    var height = 0;
-    var fieldType = Types.SmallField;
+    var fieldWidth as Number = 0;
+    var fieldHeight as Number = 0;
+    var fieldCenterY as Number = 0;
+    var fieldCenterX as Number = 0;
+    var fieldType as Types.FieldType = Types.SmallField;
 
-    function initialize() {}
-
-    function isSmallField() { return fieldType == Types.SmallField; }
-    function isWideField() { return fieldType == Types.WideField; }
-    function isLargeField() { return fieldType == Types.LargeField; }
-    function isOneField() { return fieldType == Types.OneField; }
-    function isNightMode() { return nightMode; }
-    function setNightMode(nightMode) { self.nightMode = nightMode; }
-    function setMiddleLayout(middleLayout) { self.middleLayout = middleLayout; }
-    function setShowTopInfo(showTopInfo) { self.showTopInfo = showTopInfo; }
-    function setShowLeftInfo(showLeftInfo) { self.showLeftInfo = showLeftInfo; }
-
-    function setShowRightInfo(showRightInfo) {
-      self.showRightInfo = showRightInfo;
-    }
-    function setShowBottomInfo(showBottomInfo) {
-      self.showBottomInfo = showBottomInfo;
+    function initialize() {
+      // mFontsBottomValue[0] = Graphics.FONT_TINY;
+      // mFontsBottomValue[1] = Graphics.FONT_SYSTEM_SMALL;
+      // mFontsBottomValue[2] = Graphics.FONT_SYSTEM_MEDIUM;
+      // mFontsBottomValue[3] = Graphics.FONT_SYSTEM_LARGE;
     }
 
-    function onLayout(dc as Dc) {
-      self.dc = dc;
+    function isSmallField() as Boolean { return fieldType == Types.SmallField; }
+    function isWideField() as Boolean { return fieldType == Types.WideField; }
+    function isLargeField() as Boolean { return fieldType == Types.LargeField; }
+    function isOneField() as Boolean { return fieldType == Types.OneField; }
+    function isNightMode() as Boolean { return nightMode; }
+    function setNightMode(nightMode as Boolean) as Void { self.nightMode = nightMode; }
+    function setMiddleLayout(middleLayout as LayoutMiddle) as Void { self.middleLayout = middleLayout; }
+    function setShowTopInfo(showTopInfo as Boolean) as Void { self.showTopInfo = showTopInfo; }
+    function setShowLeftInfo(showLeftInfo as Boolean) as Void { self.showLeftInfo = showLeftInfo; }    
+    function setShowRightInfo(showRightInfo as Boolean) as Void { self.showRightInfo = showRightInfo; }
+    function setShowBottomInfo(showBottomInfo as Boolean) as Void { self.showBottomInfo = showBottomInfo; }
 
-      self.width = dc.getWidth();
-      self.height = dc.getHeight();
-      self.fieldType = Utils.getFieldType(dc);
+    function onLayout(dc as Dc) as Void {
+      mDc = dc;
 
-      // if (self.width >= 246) {
-      //   self.fieldType = Types.WideField;
-      //   if (self.height >= 100) {
-      //     self.fieldType = Types.LargeField;
-      //   } else if (self.height >= 322) {
-      //     self.fieldType = Types.OneField;
-      //   }
-      // }
-
-      // System.println("w[" + self.width + "] h[" + self.height + "] type[" +
-      //                self.fieldType + "]");
-      // if (self.height < 80) {
-      //   self.fieldType= SmallField;
-      // }
-
-      // 1 large field: w[246] h[322]
-      // 2 fields: w[246] h[160]
-      // 3 fields: w[246] h[106]
-
+      fieldWidth = dc.getWidth();
+      fieldHeight = dc.getHeight();
+      fieldCenterY = fieldHeight / 2;
+      fieldCenterX = fieldWidth / 2;
+      fieldType = Utils.getFieldType(dc);
+          
       // @@ function to set fonts + some dimensions
-      mRadiusInfoField = Utils.min(dc.getWidth() / 4, dc.getHeight() / 2 + 10);
+      mRadiusInfoField = Utils.min(fieldWidth / 4, fieldHeight / 2 + 10).toNumber();
       mFontValueStartIndex = 4;
       mFontBottomValueStartIndex = 3;
       if (isSmallField()) {
-        mRadiusInfoField = 29.0f;
+        mRadiusInfoField = 29;
         mFontValueStartIndex = 1;
         mFontBottomValueStartIndex = 1;
       } else if (isWideField()) {
         if (!showBottomInfo && !showTopInfo) {
-          mRadiusInfoField = dc.getWidth() / 4;
+          mRadiusInfoField = fieldWidth / 4;
         }
         mFontValueStartIndex = 3;
         mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
       } else if (isLargeField()) {
         if (!showBottomInfo && !showTopInfo) {
-          mRadiusInfoField = dc.getWidth() / 4;
+          mRadiusInfoField = fieldWidth / 4;
         }
         mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
       } else {
         mFontLabelAdditional = Graphics.FONT_TINY;  // @@ test
       }
     }
-    function onUpdate(dc as Dc) {
-      if (dc has : setAntiAlias) {
+
+    function onUpdate(dc as Dc) as Void {
+      if (dc has :setAntiAlias) { // @@ Where to use..
         dc.setAntiAlias(true);
       }
       onLayout(dc);
     }
 
-    function clearDisplay(color, backColor) {
-      dc.setColor(color, backColor);
-      dc.clear();
+    function leftAndRightCircleFillWholeScreen() as Boolean {
+      return fieldWidth - 40 < (4 * mRadiusInfoField) + (marginLeft + marginRight);
     }
 
-    function leftAndRightCircleFillWholeScreen() {
-      return dc.getWidth() - 40 <
-             (4 * mRadiusInfoField) + (marginLeft + marginRight);
-    }
-
-    function drawTopInfo(label, value, units, zone, altZone, maxZone) {
+    function drawTopInfo(label as String, value as String, units as String, 
+              zone as ZoneInfo, altZone as ZoneInfo, maxZone as ZoneInfo) as Void {
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
@@ -138,18 +120,17 @@ module WhatAppBase {
       var outlinePerc = altZone.perc;
       var outlineColor = altZone.color;
 
-      var barX = dc.getWidth() / 2;
+      var barX = fieldCenterX;
       if (middleLayout == LayoutMiddleTriangle) {
-        drawTopInfoTriangle(color, value, backColor, units, outlineColor,
-                            percentage, color100perc, label);
+        drawTopInfoTriangle(color, value, backColor, units, outlineColor, percentage, color100perc, label);
         return;
       }
 
       // circle back color
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
-                          color100perc, outlinePerc, outlineColor,
-                          altZone.color100perc);
+                          color100perc, outlinePerc, outlineColor, altZone.color100perc);
 
+      var dc = mDc as Dc;
       if (!isSmallField() && leftAndRightCircleFillWholeScreen()) {
         var ha = dc.getFontHeight(Graphics.FONT_SMALL);
         var y = ha / 2;  // mRadiusInfoField / 6;
@@ -175,8 +156,9 @@ module WhatAppBase {
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
     }
 
-    function drawTopInfoTriangle(color, value, backColor, units, outlineColor,
-                                 percentage, color100perc, label) {
+    function drawTopInfoTriangle(color as ColorType, value as String, backColor as ColorType, units as String, outlineColor as ColorType, 
+              percentage as Numeric, color100perc as ColorType?, label as String) as Void {
+      var dc = mDc as Dc;                
       var heightBottomBar = 0;
       if (showBottomInfo) {
         if (leftAndRightCircleFillWholeScreen()) {
@@ -186,11 +168,11 @@ module WhatAppBase {
         }
       }
       var wBottomBar = 2 * mRadiusInfoField;
-      var top = new Utils.Point(dc.getWidth() / 2, margin);
-      var left = new Utils.Point(dc.getWidth() / 2 - wBottomBar / 2,
-                           dc.getHeight() - margin - heightBottomBar);
-      var right = new Utils.Point(dc.getWidth() / 2 + wBottomBar / 2,
-                            dc.getHeight() - margin - heightBottomBar);
+      var top = new Utils.Point(fieldCenterX, margin);
+      var left = new Utils.Point(fieldCenterX - wBottomBar / 2,
+                           fieldHeight - margin - heightBottomBar);
+      var right = new Utils.Point(fieldCenterX + wBottomBar / 2,
+                            fieldHeight - margin - heightBottomBar);
       var topInner = top.move(0, 2);
       var leftInner = left.move(2, -2);
       var rightInner = right.move(-2, -2);
@@ -215,8 +197,7 @@ module WhatAppBase {
         percentage = percentage.toNumber() % 100;
       }
 
-      pts = Utils.getPercentageTrianglePts(topInner, leftInner, rightInner,
-                                           percentage);
+      pts = Utils.getPercentageTrianglePts(topInner, leftInner, rightInner, percentage);
       dc.setColor(backColor, Graphics.COLOR_TRANSPARENT);
       dc.fillPolygon(pts);
 
@@ -227,7 +208,7 @@ module WhatAppBase {
             Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value,
                                   mFontValueStartIndex - 1);
         // var y = (left.y - top.y) / 2;
-        var y = getCenterYcoordCircleAdditionalInfo();
+        var y = fieldCenterY;
         var ha = dc.getFontHeight(fontValue);
 
         // label
@@ -251,20 +232,22 @@ module WhatAppBase {
       }
     }
 
-    function drawBottomInfoBG(label, value, units, zone, altZone, maxZone) {
+    function drawBottomInfoBG(label as String, value as String, units as String, zone as ZoneInfo, altZone as ZoneInfo, maxZone as ZoneInfo) as Void {
+      var dc = mDc as Dc;
       var backColor = zone.color;
       var percentage = zone.perc;
       var color100perc = zone.color100perc;
 
       if (percentage >= 0 && leftAndRightCircleFillWholeScreen()) {
         // Percentage bar around whole field
-        _drawBackgroundPercRectangle(2, 2, dc.getWidth() - 4,
-                                     dc.getHeight() - 4, backColor,
+        _drawBackgroundPercRectangle(2, 2, fieldWidth - 4,
+                                     fieldHeight - 4, backColor,
                                      color100perc, percentage, 4);
       }
     }
 
-    function drawBottomInfoFG(label, value, units, zone, altZone, maxZone) {
+    function drawBottomInfoFG(label as String, value as String, units as String, zone as ZoneInfo, altZone as ZoneInfo, maxZone as ZoneInfo) as Void {
+      var dc = mDc as Dc;
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
@@ -284,14 +267,14 @@ module WhatAppBase {
       var wAllText =
           widthLabel + marginleft1 + widthValue + marginleft2 + widthUnits;
 
-      var xv = dc.getWidth() / 2 - wAllText / 2;
-      var y = dc.getHeight() - (hv / 2);
+      var xv = fieldCenterX - wAllText / 2;
+      var y = fieldHeight - (hv / 2);
 
       if (backColor != null) {
         dc.setColor(backColor, Graphics.COLOR_TRANSPARENT);
       }
-      var xb = dc.getWidth() / 2 - wAllText / 2;
-      var yb = dc.getHeight() - hv;
+      var xb = fieldCenterX - wAllText / 2;
+      var yb = fieldHeight - hv;
 
       if (!leftAndRightCircleFillWholeScreen()) {
         dc.fillRectangle(xb, yb, wAllText, hv);
@@ -322,47 +305,42 @@ module WhatAppBase {
                                   value, mFontBottomValueStartIndex);
         widthValue = dc.getTextWidthInPixels(value, fontBottomValue);
         hv = dc.getFontHeight(fontBottomValue);
-        y = dc.getHeight() - (hv / 2);
+        y = fieldHeight - (hv / 2);
         dc.drawText(
-            dc.getWidth() / 2, y, fontBottomValue, value,
+            fieldCenterX, y, fontBottomValue, value,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(dc.getWidth() / 2 + widthValue / 2 + marginleft2, y,
+        dc.drawText(fieldCenterX + widthValue / 2 + marginleft2, y,
                     mFontUnits, units,
                     Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
         return;
       }
 
-      if (color != null) {
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-      }
+      if (color != null) {dc.setColor(color, Graphics.COLOR_TRANSPARENT);}
 
-      dc.drawText(xv, y, mFontBottomLabel, label,
-                  Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+      dc.drawText(xv, y, mFontBottomLabel, label, Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
       dc.drawText(xv + widthLabel + marginleft1, y, mFontBottomValue, value,
-                  Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+          Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
-      dc.drawText(xv + widthLabel + marginleft1 + widthValue + marginleft2, y,
-                  mFontUnits, units,
-                  Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+      dc.drawText(xv + widthLabel + marginleft1 + widthValue + marginleft2, y, mFontUnits, units,
+          Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
-    hidden function _drawBackgroundPercRectangle(x, y, width, height,
-                                                 colorPercentageLine,
-                                                 color100perc, percentage,
-                                                 lineWidth) {
+    hidden function _drawBackgroundPercRectangle(x as Number, y as Number, width as Number, height as Number, colorPercentageLine as ColorType,
+            color100perc as ColorType?, percentage as Numeric, lineWidth as Number) as Void {
+      var dc = mDc as Dc;              
       if (percentage > 100 && color100perc != null) {
-        Utils.drawPercentageRectangle(dc, x, y, width, height, 100,
-                                      color100perc, lineWidth);
+        Utils.drawPercentageRectangle(dc, x, y, width, height, 100, color100perc, lineWidth);
         // percentage = percentage - 100;
         percentage = percentage.toNumber() % 100;
         // colorPercentageLine = color100perc;
       }
-      Utils.drawPercentageRectangle(dc, x, y, width, height, percentage,
-                                    colorPercentageLine, lineWidth);
+      Utils.drawPercentageRectangle(dc, x, y, width, height, percentage,colorPercentageLine, lineWidth);    
     }
-    function drawLeftInfo(label, value, units, zone, altZone, maxZone) {
+
+    function drawLeftInfo(label as String, value as String, units as String, zone as ZoneInfo, altZone as ZoneInfo, maxZone as ZoneInfo) as Void {
+      var dc = mDc as Dc;
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
@@ -373,8 +351,7 @@ module WhatAppBase {
       var maxPercentage = maxZone.perc;
       // circle back color
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
-                          color100perc, outlinePerc, outlineColor,
-                          altZone.color100perc);
+                          color100perc, outlinePerc, outlineColor, altZone.color100perc);
 
       drawMaxInfo(barX, mRadiusInfoField, maxPercentage, -2);
 
@@ -387,40 +364,36 @@ module WhatAppBase {
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
     }
 
-    function drawRightInfo(label, value, units, zone, altZone, maxZone) {
+    function drawRightInfo(label as String, value as String, units as String, 
+              zone as ZoneInfo, altZone as ZoneInfo, maxZone as ZoneInfo) as Void {
+      var dc = mDc as Dc;                
       var color = zone.fontColor;
       var backColor = zone.color;
       var percentage = zone.perc;
       var color100perc = zone.color100perc;
       var outlinePerc = altZone.perc;
       var outlineColor = altZone.color;
-      var barX = dc.getWidth() - mRadiusInfoField - marginRight;
+      var barX = fieldWidth - mRadiusInfoField - marginRight;
       var maxPercentage = maxZone.perc;
       // circle
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
-                          color100perc, outlinePerc, outlineColor,
-                          altZone.color100perc);
+                          color100perc, outlinePerc, outlineColor, altZone.color100perc);
       drawMaxInfo(barX, mRadiusInfoField, maxPercentage, 2);
 
       // units + value
-      var fontValue = Utils.getMatchingFont(
-          dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
+      var fontValue = Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
 
       drawAdditonalInfoFG(barX, color, value, fontValue, units,
-                          mFontLabelAdditional, label, mFontLabelAdditional,
-                          percentage);
+                          mFontLabelAdditional, label, mFontLabelAdditional, percentage);
 
       // outline
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
-    }
+    }   
 
-    hidden function getCenterYcoordCircleAdditionalInfo() {
-      return dc.getHeight() / 2;
-    }
-    hidden function drawAdditonalInfoBG(x, width, color, percentage,
-                                        color100perc, outlinePerc, outlineColor,
-                                        outlineColor100perc) {
-      var y = getCenterYcoordCircleAdditionalInfo();
+    hidden function drawAdditonalInfoBG(x as Number, width as Number, color as ColorType, percentage as Numeric, 
+              color100perc as ColorType?, outlinePerc as Numeric, outlineColor as ColorType, outlineColor100perc as ColorType?) as Void {
+      var dc = mDc as Dc;
+      var y = fieldCenterY;
 
       if (percentage < 100 || color100perc == null) {
         dc.setColor(Colors.COLOR_WHITE_GRAY_1, Graphics.COLOR_TRANSPARENT);
@@ -446,31 +419,28 @@ module WhatAppBase {
           dc.setColor(outlineColor100perc, Graphics.COLOR_TRANSPARENT);
           Utils.drawPercentageCircle(dc, x, y, w, 100, outlineWidth);
           dc.setColor(outlineColor, Graphics.COLOR_TRANSPARENT);
-          Utils.drawPercentageCircle(dc, x, y, w, outlinePerc - 100,
-                                     outlineWidth);
+          Utils.drawPercentageCircle(dc, x, y, w, outlinePerc - 100, outlineWidth);
         }
       }
     }
 
-    function drawMaxInfo(barX, width, maxPercentage, loopIndicator) {
-      if (maxPercentage == null || maxPercentage <= 0) {
-        return;
-      }
-
+    function drawMaxInfo(barX as Number, width as Number, maxPercentage as Numeric?, loopIndicator as Number) as Void {
+      if (maxPercentage == null) { return; }
+      if (maxPercentage <= 0) { return; }
+      var dc = mDc as Dc;
       var outlineWidth = width;
       var w = width - outlineWidth / 2;
-      var y = getCenterYcoordCircleAdditionalInfo();
+      var y = fieldCenterY;
       dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
       Utils.drawPercentagePointerOnCircle(dc, barX, y, w, maxPercentage, outlineWidth, loopIndicator);
     }
 
-    hidden function drawAdditonalInfoFG(x, color, value, fontValue, units,
-                                        fontUnits, label, fontLabel,
-                                        percentage) {
-      // Too many arguments used by a method, which are currently limited to 10
-      // arguments
+    hidden function drawAdditonalInfoFG(x as Number, color as ColorType, value as String, fontValue as FontType, units as String,
+                                        fontUnits as FontType, label as String, fontLabel as FontType, percentage as Numeric) as Void {
+      // Too many arguments used by a method, which are currently limited to 10  arguments
+      var dc = mDc as Dc;
       var width = mRadiusInfoField;
-      var y = getCenterYcoordCircleAdditionalInfo();
+      var y = fieldCenterY;
 
       // label
       if (!isSmallField() && label != null && label.length() > 0) {
@@ -499,23 +469,20 @@ module WhatAppBase {
       var ha = dc.getFontHeight(fontValue);
       if (units != null && units.length() != 0) {
         y = y + ha / 2;
-        dc.drawText(
-            x, y, fontUnits, units,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(x, y, fontUnits, units, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       }
     }
 
-    hidden function drawAdditonalInfoOutline(x, width, color) {
+    hidden function drawAdditonalInfoOutline(x as Number, width as Number, color as ColorType) as Void {
+      var dc = mDc as Dc;
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-      var y = getCenterYcoordCircleAdditionalInfo();
-      dc.drawCircle(x, y, width);
+      dc.drawCircle(x, fieldCenterY, width);
     }
 
   }
 
-  enum {
+  enum LayoutMiddle {
     LayoutMiddleCircle = 0,
-    LayoutMiddleTriangle = 1,
-    // LayoutMiddleSmart = 2,
+    LayoutMiddleTriangle = 1    
   }
 }

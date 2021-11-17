@@ -1,20 +1,24 @@
+import Toybox.Lang;
+import Toybox.System;
+import Toybox.Graphics;
+
 module WhatAppBase {
   class ZoneInfo {
-    var zone;
-    var name;
-    var color;
-    var fontColor;
-    var perc = 0;
-    var color100perc;
+    var zone as Number = 0;
+    var name as String = "";
+    var color as ColorType = Graphics.COLOR_WHITE;
+    var fontColor as ColorType = Graphics.COLOR_BLACK;
+    var perc as Numeric = 0.0;
+    var color100perc as ColorType?;
 
-    function initialize(zone, name, color, fontColor, perc, color100perc) {
+    function initialize(zone as Number, name  as String, color as ColorType, 
+      fontColor as ColorType, perc as Numeric, color100perc as ColorType?) {
       self.zone = zone;
       self.name = name;
       self.color = color;
       self.fontColor = fontColor;
-      if (perc != null) {
-        self.perc = perc;
-      }
+      self.perc = perc;
+      if (self.perc == null) { self.perc = 0; }      
       self.color100perc = color100perc;
     }
   }

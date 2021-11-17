@@ -7,36 +7,39 @@ using Toybox.UserProfile;
 module WhatAppBase {
   // ( : Info) module Info {
   class WhatPower extends WhatInfoBase {
-    hidden var perSec = 3 as Lang.Number;
-    hidden var ftp = 250 as Lang.Number;
-    hidden var dataPerSec = [] as Lang.Array<Lang.Number>;
+    hidden var perSec as Number = 3;
+    hidden var ftp as Number = 250;
+    hidden var dataPerSec as Array = [];
 
-    hidden var averagePower = 0 as Lang.Number;
-    hidden var maxPower = 0 as Lang.Number;
-    hidden var userWeightKg = 0.0f;
+    hidden var averagePower as Number = 0;
+    hidden var maxPower as Number = 0 ;
+    hidden var userWeightKg as Float = 0.0f;
 
-    hidden var lastCheck = 0 as Lang.Number;
+    hidden var lastCheck as Number = 0;
 
     function initialize() { WhatInfoBase.initialize(); }
 
     function initWeight() as Void {
       var profile = UserProfile.getProfile();
-      userWeightKg = profile.weight / 1000.0;
+      userWeightKg = 0.0f;
+      if (profile.weight == null) { return; }
+      var weight = profile.weight as Float;
+      userWeightKg = weight / 1000.0;
     }
 
-    function setFtp(ftp as Lang.Number) { self.ftp = ftp; }
-    function setPerSec(perSec as Lang.Number) { self.perSec = perSec; }
+    function setFtp(ftp as Number) as Void { self.ftp = ftp; }
+    function setPerSec(perSec as Number) as Void { self.perSec = perSec; }
 
     // Must be called once per second
-    function updateInfo(info as Activity.Info) {
+    function updateInfo(info as Activity.Info) as Void {
       mAvailable = false;
       mActivityPaused = activityIsPaused(info);
 
-      if (info has : currentPower) {
+      if (info has :currentPower) {
         mAvailable = true;
         var power = 0;
-        if (info.currentPower) {
-          power = info.currentPower;
+        if (info.currentPower != null) {
+          power = info.currentPower as Number;
         }
         if (Utils.ensureXSecondsPassed(lastCheck, 1)) {
           lastCheck = Time.now().value();
@@ -45,40 +48,40 @@ module WhatAppBase {
         }
       }
 
-      if (info has : averagePower) {
-        if (info.averagePower) {
-          averagePower = info.averagePower;
+      if (info has :averagePower) {
+        if (info.averagePower != null) {
+          averagePower = info.averagePower as Number;
         } else {
-          averagePower = 0.0f;
+          averagePower = 0;
         }
       }
 
-      if (info has : maxPower) {
-        if (info.maxPower) {
-          maxPower = info.maxPower;
+      if (info has :maxPower) {
+        if (info.maxPower != null) {
+          maxPower = info.maxPower as Number;
         }
       }
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(powerPerX(), true); }
-    function getValue() { return powerPerX(); }
-    function getFormattedValue() as Lang.String {
+    function getValue() as WhatValue { return powerPerX(); }
+    function getFormattedValue() as String {
       return powerPerX().format("%.0f");
     }
     function getUnits() as String { return "w"; }
-    function getLabel() as Lang.String { return "Power (" + perSec + "sec)"; }
+    function getLabel() as String { return "Power (" + perSec + "sec)"; }
 
     function getAltZoneInfo() as ZoneInfo {
       return _getZoneInfo(getAveragePower(), false);
     }
-    function getAltValue() { return getAveragePower(); }
-    function getAltFormattedValue() as Lang.String {
+    function getAltValue() as WhatValue { return getAveragePower(); }
+    function getAltFormattedValue() as String {
       return getAveragePower().format("%.0f");
     }
     function getAltUnits() as String { return "w"; }
-    function getAltLabel() as Lang.String { return "Avg power"; }
+    function getAltLabel() as String { return "Avg power"; }
 
-    function getMaxValue() { return getMaxPower(); }
+    function getMaxValue() as WhatValue { return getMaxPower(); }
     function getMaxZoneInfo() as ZoneInfo {
       return _getZoneInfo(getMaxPower(), false);
     }
@@ -87,10 +90,10 @@ module WhatAppBase {
     // function getPPWZoneInfo() as ZoneInfo {
     //   return _getZoneInfo(powerPerX());
     // }
-    function getPPWValue() {
+    function getPPWValue() as Number {
       return convertToMetricOrStatute(powerPerWeight());
     }
-    function getPPWFormattedValue() as Lang.String {
+    function getPPWFormattedValue() as String {
       return convertToMetricOrStatute(powerPerWeight()).format("%.1f");
     }
     function getPPWUnits() as String {
@@ -100,7 +103,7 @@ module WhatAppBase {
         return "w/kg";
       }
     }
-    function getPPWLabel() as Lang.String {
+    function getPPWLabel() as String {
       if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
         return "Avg power/lbs";
       } else {
@@ -110,28 +113,28 @@ module WhatAppBase {
 
     // --
 
-    hidden function convertToMetricOrStatute(value) {
+    hidden function convertToMetricOrStatute(value as Numeric) as Numeric {
       if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
         value = Utils.kilogramToLbs(value);
       }
       return value;
     }
-    hidden function getAveragePower() as Lang.Number {
+    hidden function getAveragePower() as Number {
       if (averagePower == null) {
         return 0;
       }
       return self.averagePower;
     }
 
-    hidden function getMaxPower() as Lang.Number {
+    hidden function getMaxPower() as Number {
       if (maxPower == null) {
         return 0;
       }
       return self.maxPower;
     }
 
-    hidden function addPower(power) {
-      // var dataPerSec = powerDataPerSecond as Lang.Array<Lang.Number>;
+    hidden function addPower(power as Number) as Void {
+      // var dataPerSec = powerDataPerSecond as Array<Number>;
       if (dataPerSec.size() >= perSec) {
         dataPerSec = dataPerSec.slice(1, perSec);
       }
@@ -139,12 +142,12 @@ module WhatAppBase {
       dataPerSec.add(power);
     }
 
-    hidden function powerPerX() as Lang.Number {
+    hidden function powerPerX() as Number {
       if (mActivityPaused) {
         return getAveragePower();
       }
 
-      var perSec = dataPerSec as Lang.Array<Lang.Number>;
+      var perSec = dataPerSec as Array<Number>;
       if (perSec.size() == 0) {
         return 0;
       }
@@ -156,7 +159,7 @@ module WhatAppBase {
       return ppx / perSec.size();
     }
 
-    hidden function powerPerWeight() as Lang.Float {
+    hidden function powerPerWeight() as Float {
       if (mActivityPaused) {
         return averagePowerPerWeight();
       }
@@ -166,7 +169,7 @@ module WhatAppBase {
       return powerPerX() / userWeightKg.toFloat();
     }
 
-    hidden function averagePowerPerWeight() as Lang.Float {
+    hidden function averagePowerPerWeight() as Float {
       if (userWeightKg == 0) {
         return 0.0f;
       }
@@ -183,7 +186,7 @@ module WhatAppBase {
     // VO2 Max	106% – 120% FTP
     // Anaerobic Capacity	> 120% FTP
 
-    hidden function _getZoneInfo(ppx, showAverageWhenPaused) as ZoneInfo {
+    hidden function _getZoneInfo(ppx as Number, showAverageWhenPaused as Boolean) as ZoneInfo {
       if (showAverageWhenPaused && mActivityPaused) {
         return new ZoneInfo(0, "Avg. Power", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);

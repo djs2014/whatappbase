@@ -3,84 +3,72 @@ import Toybox.System;
 import Toybox.Activity;
 module WhatAppBase {
   class WhatCadence extends WhatInfoBase {
-    hidden var currentCadence = 0;
-    hidden var avarageCadence = 0;
-    hidden var maxCadence = 0;
-    hidden var targetCadence = 30;
+    hidden var currentCadence as Number = 0;
+    hidden var avarageCadence as Number = 0;
+    hidden var maxCadence as Number = 0;
+    hidden var targetCadence as Number = 30;
 
     function initialize() { WhatInfoBase.initialize(); }
 
-    function setTargetCadence(targetCadence) {
-      self.targetCadence = targetCadence;
-    }
+    function setTargetCadence(targetCadence as Number) as Void { self.targetCadence = targetCadence; }
 
-    function updateInfo(info as Activity.Info) {
+    function updateInfo(info as Activity.Info) as Void {
       mActivityPaused = activityIsPaused(info);
-      if (info has : currentCadence) {
-        if (info.currentCadence) {
-          currentCadence = info.currentCadence;
+      if (info has :currentCadence) {
+        if (info.currentCadence != null) {
+          currentCadence = info.currentCadence as Number;
         } else {
-          currentCadence = 0.0f;
+          currentCadence = 0;
         }
       }
 
-      if (info has : averageCadence) {
-        if (info.averageCadence) {
-          avarageCadence = info.averageCadence;
+      if (info has :averageCadence) {
+        if (info.averageCadence != null) {
+          avarageCadence = info.averageCadence as Number;
         } else {
-          avarageCadence = 0.0f;
+          avarageCadence = 0;
         }
       }
-      if (info has : maxCadence) {
-        if (info.maxCadence) {
-          maxCadence = info.maxCadence;
+      if (info has :maxCadence) {
+        if (info.maxCadence != null) {
+          maxCadence = info.maxCadence as Number;
         } else {
-          maxCadence = 0.0f;
+          maxCadence = 0;
         }
       }
     }
 
-    function getZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getCurrentCadence(), true);
-    }
-    function getValue() { return getCurrentCadence(); }
-    function getFormattedValue() as Lang.String {
-      return getCurrentCadence().format("%.0f");
-    }
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getCurrentCadence(), true); }
+    function getValue() as WhatValue { return getCurrentCadence(); }
+    function getFormattedValue() as String { return getCurrentCadence().format("%.0f"); }
     function getUnits() as String { return "rpm"; }
-    function getLabel() as Lang.String { return "Cadence"; }
+    function getLabel() as String { return "Cadence"; }
 
-    function getAltZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getAverageCadence(), false);
-    }
-    function getAltValue() { return getAverageCadence(); }
-    function getAltFormattedValue() as Lang.String {
-      return getAverageCadence().format("%.0f");
-    }
+    function getAltZoneInfo() as ZoneInfo { return _getZoneInfo(getAverageCadence(), false); }
+    function getAltValue() as WhatValue { return getAverageCadence(); }
+    function getAltFormattedValue() as String { return getAverageCadence().format("%.0f"); }
     function getAltUnits() as String { return "rpm"; }
-    function getAltLabel() as Lang.String { return "Avg cadence"; }
+    function getAltLabel() as String { return "Avg cadence"; }
 
-    function getMaxValue() { return getMaxCadence(); }
-    function getMaxZoneInfo() as ZoneInfo {
-       return _getZoneInfo(getMaxCadence(), false);
-    }
+    function getMaxValue() as WhatValue { return getMaxCadence(); }
+    function getMaxZoneInfo() as ZoneInfo { return _getZoneInfo(getMaxCadence(), false); }
 
     // --
-    hidden function getAverageCadence() {
+    hidden function getAverageCadence() as Number {
       if (avarageCadence == null) {
         return 0;
       }
       return self.avarageCadence;
     }
 
-    hidden function getMaxCadence() {
+    hidden function getMaxCadence() as Number {
       if (maxCadence == null) {
         return 0;
       }
       return self.maxCadence;
     }
 
-    hidden function getCurrentCadence() {
+    hidden function getCurrentCadence() as Number {
       if (mActivityPaused) {
         return getAverageCadence();
       }
@@ -90,7 +78,7 @@ module WhatAppBase {
       return self.currentCadence;
     }
 
-    hidden function _getZoneInfo(rpm, showAverageWhenPaused) {
+    hidden function _getZoneInfo(rpm as Number, showAverageWhenPaused as Boolean) as ZoneInfo {
       if (showAverageWhenPaused && mActivityPaused) {
         return new ZoneInfo(0, "Avg. Cadence", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);

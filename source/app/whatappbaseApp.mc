@@ -5,16 +5,16 @@ using WhatAppBase.Utils as Utils;
 
 module WhatAppBase {
   class WhatApp {
-    var appName = "";
-    var mFactory = new BaseFactory();
-    var mDebug = false;
+    var appName as String = "";
+    var mFactory as BaseFactory = new BaseFactory();
+    var mDebug as Boolean = false;
     // const FIVE_MINUTES = new Time.Duration(5 * 60);
 
-    var _showInfoLayout = LayoutMiddleCircle;
+    var _showInfoLayout as LayoutMiddle = LayoutMiddleCircle;
 
     function initialize() {}
 
-    function setAppName(appName as Lang.String) { self.appName = appName; }
+    function setAppName(appName as String) as Void { self.appName = appName; }
     // onStart() is called on application start up
     function onStart(state as Dictionary?) as Void {
     }
@@ -29,25 +29,18 @@ module WhatAppBase {
       return [new WhatAppView(self)] as Array < Views or InputDelegates > ;
     }
 
-    function onSettingsChanged() { loadUserSettings(); }
+    function onSettingsChanged() as Void { loadUserSettings(); }
 
-    function loadUserSettings() {
+    function loadUserSettings() as Void {
       try {
-        var showInfoTop =
-            Utils.getNumberProperty("showInfoTop", ShowInfoTrainingEffect);
-        var showInfoLeft =
-            Utils.getNumberProperty("showInfoLeft", ShowInfoPower);
-        var showInfoRight =
-            Utils.getNumberProperty("showInfoRight", ShowInfoHeartrate);
-        var showInfoBottom =
-            Utils.getNumberProperty("showInfoBottom", ShowInfoCalories);
-        var showInfoHrFallback =
-            Utils.getNumberProperty("showInfoHrFallback", ShowInfoCadence);
-        var showInfoTrainingEffectFallback = Utils.getNumberProperty(
-            "showInfoTrainingEffectFallback", ShowInfoEnergyExpenditure);
+        var showInfoTop = Utils.getNumberProperty("showInfoTop", ShowInfoTrainingEffect) as ShowInfo;
+        var showInfoLeft = Utils.getNumberProperty("showInfoLeft", ShowInfoPower) as ShowInfo;
+        var showInfoRight = Utils.getNumberProperty("showInfoRight", ShowInfoHeartrate) as ShowInfo;
+        var showInfoBottom = Utils.getNumberProperty("showInfoBottom", ShowInfoCalories) as ShowInfo;
+        var showInfoHrFallback = Utils.getNumberProperty("showInfoHrFallback", ShowInfoCadence) as ShowInfo;
+        var showInfoTrainingEffectFallback = Utils.getNumberProperty("showInfoTrainingEffectFallback", ShowInfoEnergyExpenditure) as ShowInfo;
 
-        mFactory.setFields(showInfoTop, showInfoLeft, showInfoRight,
-                           showInfoBottom);
+        mFactory.setFields(showInfoTop, showInfoLeft, showInfoRight, showInfoBottom);
         mFactory.setHrFallback(showInfoHrFallback);
         mFactory.setTrainingEffectFallback(showInfoTrainingEffectFallback);
 
@@ -58,8 +51,7 @@ module WhatAppBase {
         setProperties(mFactory.getInstance(showInfoHrFallback));
         setProperties(mFactory.getInstance(showInfoTrainingEffectFallback));
 
-        _showInfoLayout =
-            Utils.getNumberProperty("showInfoLayout", LayoutMiddleCircle);
+        _showInfoLayout = Utils.getNumberProperty("showInfoLayout", LayoutMiddleCircle) as LayoutMiddle;
 
         System.println("Settings loaded");
         if (mFactory.isDebug()) {
@@ -90,21 +82,18 @@ module WhatAppBase {
       } else if (obj instanceof WhatHeartrate) {
         obj.initZones();
       } else if (obj instanceof WhatSpeed) {
-        obj.setTargetSpeed(Utils.getNumberProperty("targetSpeed", 30));
+        obj.setTargetSpeed(Utils.getFloatProperty("targetSpeed", 30.0));
       } else if (obj instanceof WhatCadence) {
         obj.setTargetCadence(Utils.getNumberProperty("targetCadence", 95));
       } else if (obj instanceof WhatDistance) {
-        obj.setTargetDistance(Utils.getNumberProperty("targetDistance", 150));
+        obj.setTargetDistance(Utils.getFloatProperty("targetDistance", 150.0));
       } else if (obj instanceof WhatCalories) {
         obj.setTargetCalories(Utils.getNumberProperty("targetCalories", 2000));
       } else if (obj instanceof WhatEnergyExpenditure) {
-        obj.setTargetEngergyExpenditure(
-            Utils.getNumberProperty("targetEnergyExpenditure", 15));
+        obj.setTargetEngergyExpenditure( Utils.getFloatProperty("targetEnergyExpenditure", 15.0));
       } else if (obj instanceof WhatHeading) {
-        obj.setMinimalLocationAccuracy(
-            Utils.getNumberProperty("minimalLocationAccuracy", 0));
-        obj.setMinimalElapsedDistanceInMeters(
-            Utils.getNumberProperty("minimalElapsedDistanceInMeters", 0));
+        obj.setMinimalLocationAccuracy(Utils.getNumberProperty("minimalLocationAccuracy", 0));
+        obj.setMinimalElapsedDistanceInMeters(Utils.getNumberProperty("minimalElapsedDistanceInMeters", 0));
       } else if (obj instanceof WhatTestField) {
         obj.setTargetValue(Utils.getNumberProperty("targetTestValue", 100));
         obj.setValue(Utils.getNumberProperty("testValue", 145));

@@ -1,76 +1,75 @@
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
-// using WhatAppBase.Colors;
+import Toybox.Graphics;
+
 module WhatAppBase {
   class WhatGrade extends WhatInfoBase {
-    hidden var previousAltitude = 0;
-    hidden var currentAltitude = 0;
-    hidden var previousElapsedDistance = 0;
-    hidden var elapsedDistance = 0;
-    hidden var grade = 0.0f;  // %
+    hidden var previousAltitude as Float = 0.0f;
+    hidden var currentAltitude as Float = 0.0f;
+    hidden var previousElapsedDistance as Float = 0.0f;
+    hidden var elapsedDistance as Float = 0.0f;
+    hidden var grade as Float = 0.0f;  // %
 
     function initialize() { WhatInfoBase.initialize(); }
 
     function updateInfo(info as Activity.Info) {
-      if (info has : altitude) {
+      if (info has :altitude) {
         previousAltitude = currentAltitude;
         if (info.altitude != null) {
-          currentAltitude = info.altitude;
+          currentAltitude = info.altitude as Float;
         } else {
           currentAltitude = 0.0f;
         }
       }
-      if (info has : elapsedDistance) {
+      if (info has :elapsedDistance) {
         previousElapsedDistance = elapsedDistance;
         if (info.elapsedDistance != null) {
-          elapsedDistance = info.elapsedDistance;
+          elapsedDistance = info.elapsedDistance as Float;
         } else {
           elapsedDistance = 0.0f;
         }
       }
 
       grade = 0.0f;
-      if (info has : altitude && info has : elapsedDistance) {
+      if (info has :altitude && info has :elapsedDistance) {
         var rise = currentAltitude - previousAltitude;
         var run = elapsedDistance - previousElapsedDistance;
-        if (run != 0) {
+        if (run != 0.0) {
           grade = (rise.toFloat() / run.toFloat()) * 100.0;
         }
       }
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(getGrade()); }
-    function getValue() { return getGrade(); }
-    function getFormattedValue() as Lang.String {
-      return getGrade().format("%.1f");
-    }
+    function getValue() as WhatValue { return getGrade(); }
+    function getFormattedValue() as String { return getGrade().format("%.1f"); }
     function getUnits() as String { return "%"; }
-    function getLabel() as Lang.String { return "Grade"; }
+    function getLabel() as String { return "Grade"; }
 
     // --
-    hidden function getCurrentAltitude() {
+    hidden function getCurrentAltitude() as Float {
       if (currentAltitude == null) {
-        return 0;
+        return 0.0f;
       }
       return self.currentAltitude;
     }
 
-    hidden function getCurrentDistance() {
+    hidden function getCurrentDistance() as Float {
       if (elapsedDistance == null) {
-        return 0;
+        return 0.0f;
       }
       return self.elapsedDistance;
     }
 
-    hidden function getGrade() {
+    hidden function getGrade() as Float {
       if (grade == null) {
         return 0.0f;
       }
       return grade;
     }
 
-    hidden function _getZoneInfo(grade) as ZoneInfo {
+    hidden function _getZoneInfo(grade as Float) as ZoneInfo {
       if (grade == null || grade == 0) {
         return new ZoneInfo(0, "Grade", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
@@ -80,7 +79,7 @@ module WhatAppBase {
       return new ZoneInfo(0, "Grade", color, Graphics.COLOR_BLACK, 0, null);
     }
 
-    hidden function getGradeColor(grade) {
+    hidden function getGradeColor(grade as Float) as ColorType {
       if (grade < -12) {
         return Colors.COLOR_WHITE_DK_BLUE_4;
       }

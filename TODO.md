@@ -1,13 +1,7 @@
 # Todo:
-disable perc text code due to bug in firmware - make alternative
-use dots instead of lines for the loops
 git air quality
 watch air quality
 
-<!-- time_utils fix -> from airq test app
-graphics_utils idem -->
-loop perc -> % and /
-max line -> add circle per loop
 
 air quality data?
 Test app:

@@ -2,33 +2,34 @@ import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Time;
+import Toybox.Graphics;
 // using WhatAppBase.Colors;
 // using Toybox.SensorHistory;
 module WhatAppBase {
   class WhatPressure extends WhatInfoBase {
-    hidden var perMin = 30;
-    hidden var dataOneMin = [] as Lang.Array<Lang.Number>;
-    hidden var dataPerMin = [] as Lang.Array<Lang.Number>;
-    hidden var fastPressureDropPerMin = 0.1877f;
+    hidden var perMin as Number = 30;
+    hidden var dataOneMin as Array = [];
+    hidden var dataPerMin as Array = [];
+    hidden var fastPressureDropPerMin as Float = 0.1877f;
 
     // in km
-    hidden var ambientPressure = 0.0f;
-    hidden var meanSeaLevelPressure = 0.0f;
-    hidden var showSeaLevelPressure = false;
+    hidden var ambientPressure as Float = 0.0f;
+    hidden var meanSeaLevelPressure as Float = 0.0f;
+    hidden var showSeaLevelPressure as Boolean = false;
 
-    hidden var lastCheck = 0 as Lang.Number;
+    hidden var lastCheck as Number = 0;
 
     function initialize() { WhatInfoBase.initialize(); }
 
-    function setPerMin(perMin) { self.perMin = perMin; }
-    function reset() { dataPerMin = []; }
-    function setShowSeaLevelPressure(showSeaLevelPressure as Boolean) {
+    function setPerMin(perMin as Number) as Void { self.perMin = perMin; }
+    function reset() as Void { dataPerMin = []; }
+    function setShowSeaLevelPressure(showSeaLevelPressure as Boolean) as Void {
       self.showSeaLevelPressure = showSeaLevelPressure;
     }
-    function isSeaLevelPressure() { return showSeaLevelPressure; }
+    function isSeaLevelPressure() as Boolean { return showSeaLevelPressure; }
 
-    function updateInfo(info as Activity.Info) {
-      if (info has : ambientPressure) {
+    function updateInfo(info as Activity.Info) as Void {
+      if (info has :ambientPressure) {
         mAvailable = true;
         if (info.ambientPressure != null) {
           self.ambientPressure = Utils.pascalToMilliBar(info.ambientPressure);
@@ -37,7 +38,7 @@ module WhatAppBase {
         }
       }
 
-      if (info has : meanSeaLevelPressure) {
+      if (info has :meanSeaLevelPressure) {
         if (info.meanSeaLevelPressure != null) {
           self.meanSeaLevelPressure =
               Utils.pascalToMilliBar(info.meanSeaLevelPressure);
@@ -54,12 +55,10 @@ module WhatAppBase {
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(getPressure()); }
-    function getValue() { return getPressure(); }
-    function getFormattedValue() as Lang.String {
-      return getPressure().format(getFormatString());
-    }
+    function getValue() as WhatValue { return getPressure(); }
+    function getFormattedValue() as String { return getPressure().format(getFormatString()); }
     function getUnits() as String { return "hPa"; }
-    function getLabel() as Lang.String {
+    function getLabel() as String {
       if (showSeaLevelPressure) {
         return "Sealevel";
       }
@@ -67,7 +66,7 @@ module WhatAppBase {
     }
 
     // --
-    hidden function addPressurePerSec(pressure) {
+    hidden function addPressurePerSec(pressure as Float) as Void {
       if (pressure == 0.0f) {
         return;
       }
@@ -81,7 +80,7 @@ module WhatAppBase {
       dataOneMin.add(pressure);
     }
 
-    hidden function addPressurePerMin(avgPressurePerMin) {
+    hidden function addPressurePerMin(avgPressurePerMin as Float) as Void {
       if (dataPerMin.size() >= perMin) {
         dataPerMin = dataPerMin.slice(1, perMin);
       }
@@ -89,12 +88,12 @@ module WhatAppBase {
       dataPerMin.add(avgPressurePerMin);
     }
 
-    hidden function getAvgPressureOneMin() {
+    hidden function getAvgPressureOneMin() as Float {
       if (dataOneMin.size() == 0) {
         return 0.0f;
       }
 
-      var oneMin = dataOneMin as Lang.Array<Lang.Number>;
+      var oneMin = dataOneMin as Array<Float>;
       var ppx = 0.0f;
       for (var x = 0; x < oneMin.size(); x++) {
         ppx = ppx + oneMin[x];
@@ -102,12 +101,12 @@ module WhatAppBase {
       return ppx / oneMin.size();
     }
 
-    hidden function pressurePerMinX() {
+    hidden function pressurePerMinX() as Float {
       if (dataPerMin.size() == 0) {
         return 0.0f;
       }
 
-      var perMin = dataPerMin as Lang.Array<Lang.Number>;
+      var perMin = dataPerMin as Array<Float>;
       var ppx = 0.0f;
       for (var x = 0; x < perMin.size(); x++) {
         ppx = ppx + perMin[x];
@@ -116,7 +115,7 @@ module WhatAppBase {
     }
 
     // on location or at sea level
-    hidden function getPressure() {
+    hidden function getPressure() as Float {
       if (showSeaLevelPressure) {
         return getSeaLevelPressure();
       } else {
@@ -125,17 +124,17 @@ module WhatAppBase {
     }
 
     // on location
-    hidden function getAmbientPressure() {
+    hidden function getAmbientPressure() as Float {
       if (ambientPressure == null) {
-        return 0;
+        return 0.0f;
       }
       return ambientPressure;
     }
 
     // at sealevel
-    hidden function getSeaLevelPressure() {
+    hidden function getSeaLevelPressure() as Float {
       if (meanSeaLevelPressure == null) {
-        return 0;
+        return 0.0f;
       }
       return meanSeaLevelPressure;
     }
@@ -196,7 +195,7 @@ module WhatAppBase {
     //  steady.
     // 1Hg = 33.86389 mBar
     // ~ 33.8 / 60 / 3 == 0.1877 per minute avg
-    hidden function getTrendLevel(diffInMbar) {
+    hidden function getTrendLevel(diffInMbar as Float) as String {
       // @@ ?? convert to avg measure period
       // System.println("Diff in mBar: " + diffInMbar);
 
@@ -215,19 +214,12 @@ module WhatAppBase {
       return "++";
     }
 
-    hidden function _getZoneInfo(pressure) as ZoneInfo {
+    hidden function _getZoneInfo(pressure as Float) as ZoneInfo {
       var label = "Pressure";
       if (showSeaLevelPressure) {
         label = "Sea level";
       }
-      var trend = "";
-      // var sensorIter = getIterator();
-      // if (sensorIter != null) {
-      //   trend = "H " + sensorIter.next().data;
-      //   System.println("History: " + sensorIter.next().data);
-      // } else {
-      // }
-
+            
       // calc trend
       var avg = pressurePerMinX();
       if (avg == 0) {
@@ -238,10 +230,9 @@ module WhatAppBase {
       }
 
       var diff = meanSeaLevelPressure - avg;
-      // System.println("Avg pressure: " + avg + " diff: " + diff);
-      if (diff) {
-        // trend = " (" + diff.format("%.2f") + ")";  // trend
-        trend = " " + getTrendLevel(diff);
+      var trend = getTrendLevel(diff);
+      if (trend.length() > 0) {
+        trend = " " + trend;
       }
 
       if (pressure == null || pressure == 0) {
@@ -263,7 +254,7 @@ module WhatAppBase {
                           null);
     }
 
-    hidden function getPressureColor(pressure) {
+    hidden function getPressureColor(pressure as Float) as ColorType {
       if (pressure < 960) {
         return Colors.COLOR_WHITE_DK_PURPLE_3;
       }

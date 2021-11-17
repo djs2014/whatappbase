@@ -2,23 +2,19 @@ import Toybox.Graphics;
 import Toybox.System;
 import Toybox.Lang;
 import Toybox.Math;
-// using WhatAppBase.Colors;
 
 module WhatAppBase {
   (:Utils)
   module Utils {
-    function isSmallField(dc as Dc) {
-      return getFieldType(dc) == Types.SmallField;
-    }
-    function isWideField(dc as Dc) {
-      return getFieldType(dc) == Types.WideField;
-    }
-    function isLargeField(dc as Dc) {
-      return getFieldType(dc) == Types.LargeField;
-    }
-    function isOneField(dc as Dc) { return getFieldType(dc) == Types.OneField; }
+    function isSmallField(dc as Dc) as Boolean { return getFieldType(dc) == Types.SmallField; }
+    function isWideField(dc as Dc) as Boolean { return getFieldType(dc) == Types.WideField; }
+    function isLargeField(dc as Dc) as Boolean { return getFieldType(dc) == Types.LargeField; }
+    function isOneField(dc as Dc) as Boolean { return getFieldType(dc) == Types.OneField; }
 
-    function getFieldType(dc as Dc) {
+    // 1 large field: w[246] h[322]
+    // 2 fields: w[246] h[160]
+    // 3 fields: w[246] h[106]
+    function getFieldType(dc as Dc) as Types.FieldType {
       var width = dc.getWidth();
       var height = dc.getHeight();
       var fieldType = Types.SmallField;
@@ -35,15 +31,13 @@ module WhatAppBase {
     }
 
     //! Get correct y position based on a percentage
-    function percentageToYpostion(percentage, marginTop, columnHeight) {
-      return marginTop + columnHeight - (columnHeight * (percentage / 100.0));
+    function percentageToYpostion(percentage as Numeric, marginTop as Number, columnHeight as Number) as Number {
+      return (marginTop + columnHeight - (columnHeight * (percentage / 100.0))).toNumber();
     }
 
-    function getPercentageTrianglePts(top as Utils.Point, left as Utils.Point,
-                                      right as Utils.Point, percentage) {
+    function getPercentageTrianglePts(top as Utils.Point, left as Utils.Point, right as Utils.Point, percentage as Numeric) as Array<Coordinate> {
       if (percentage >= 100) {
-        return
-            [ top.asArray(), right.asArray(), left.asArray(), top.asArray() ];
+        return [ top.asArray(), right.asArray(), left.asArray(), top.asArray() ] as Array<Coordinate>;
       }
 
       var columnHeight = left.y - top.y;
@@ -52,25 +46,20 @@ module WhatAppBase {
       var slopeLeft = Utils.slopeOfLine(left.x, left.y, top.x, top.y);
       var slopeRight = Utils.slopeOfLine(right.x, right.y, top.x, top.y);
 
-      // System.println("top" + top + "left" + left + " right" + right +
-      //                " slopeLeft:" + slopeLeft + " slopeRight:" +
-      //                slopeRight);
       if (slopeLeft != 0.0 and slopeRight != 0.0) {
         var x1 = (y - left.y) / slopeLeft;
         x1 = x1 + left.x;
         var x2 = (y - right.y) / slopeRight;
         x2 = x2 + right.x;
 
-        // System.println("slopeLeft:" + slopeLeft + " slopeRight:" + slopeRight
-        // +
-        //                " y:" + y + " x1:" + x1 + " x2:" + x2);
-
-        return [[x1, y], [x2, y], right.asArray(), left.asArray(), [x1, y]];
+        var t1 = [x1, y] as Coordinate;
+        var t2 = [x2, y] as Coordinate;
+        return [t1, t2, right.asArray(), left.asArray(), t1] as Array<Coordinate>;
       }
-      return [];
+      return [] as Array<Coordinate>;
     }
 
-    function fillPercentageCircle(dc as Dc, x, y, radius, perc) {
+    function fillPercentageCircle(dc as Dc, x as Number, y as Number, radius as Number, perc as Numeric) as Void {
       if (perc == null || perc == 0) {
         return;
       }
@@ -90,7 +79,7 @@ module WhatAppBase {
       dc.setPenWidth(1.0);
     }
 
-    function drawPercentageCircle(dc as Dc, x, y, radius, perc, penWidth) {
+    function drawPercentageCircle(dc as Dc, x as Number, y as Number, radius as Number, perc as Numeric, penWidth as Number) as Void {
       if (perc == null || perc == 0) {
         return;
       }
@@ -108,7 +97,8 @@ module WhatAppBase {
       dc.setPenWidth(1.0);
     }
 
-    function drawPercentagePointerOnCircle(dc as Dc, x, y, radius, perc, penWidth, loopIndicator) {
+    function drawPercentagePointerOnCircle(dc as Dc, x as Number, y as Number, radius as Number, perc as Numeric, penWidth as Number, 
+      loopIndicator as Number) as Void {
       if (perc == null || perc == 0) {
         return;
       }
@@ -134,25 +124,13 @@ module WhatAppBase {
           x2 = x1;
           dc.drawLine(x1, y1, x2, y2);
           loops = loops - 1;          
-        }
-
-        // dots
-        // var degreeMiddle = -1 * (180 - degrees);
-        // var center = new Utils.Point(x,y);
-        // var dotWidth = 2;    
-        // var posOnLine = penWidth - dotWidth / 2;    
-        // while (loops > 0 ){
-        //   var point = pointOnCircle(posOnLine, degreeMiddle, center); 
-        //   dc.fillCircle(point.x, point.y, dotWidth);
-        //   loops = loops - 1;
-        //   posOnLine = posOnLine + (2 * dotWidth) + 1;
-        // }
+        }       
       }
       dc.setPenWidth(1.0);
     }
 
-    function drawPercentageLine(dc as Dc, x, y, maxwidth, percentage, height,
-                                color) {
+    function drawPercentageLine(dc as Dc, x as Number, y as Number, maxwidth as Number, percentage as Numeric, height as Number,
+                                color as ColorType) as Void {
       var wPercentage = maxwidth / 100.0 * percentage;
       dc.setColor(color, Graphics.COLOR_TRANSPARENT);
 
@@ -161,8 +139,8 @@ module WhatAppBase {
     }
 
     // x, y : top left coord
-    function drawPercentageRectangle(dc as Dc, x, y, width, height, percentage,
-                                     color, lineWidth) {
+    function drawPercentageRectangle(dc as Dc, x as Number, y as Number, width as Number, height as Number, percentage as Numeric,
+                                     color as ColorType, lineWidth as Number) as Void {
       if (percentage <= 0) {
         return;
       }
@@ -203,8 +181,8 @@ module WhatAppBase {
       dc.setPenWidth(1.0);
     }
 
-    function _drawPercentageLine2(dc as Dc, x1, y1, x2, y2, maxLength)
-        as Lang.Number {
+    function _drawPercentageLine2(dc as Dc, x1 as Number, y1 as Number, x2 as Number, y2 as Number, maxLength as Number)
+        as Number {
       if (maxLength <= 0) {
         return 0;
       }
@@ -236,10 +214,10 @@ module WhatAppBase {
     }
 
     // x, y center of text
-    function drawPercentageText(dc as Dc, x, y, font, text, percentage,
-                                initialTextColor, percentageColor, backColor) {
+    function drawPercentageText(dc as Dc, x as Number, y as Number, font as FontType, text as String, percentage as Numeric,
+                                initialTextColor as Number, percentageColor as Number, backColor as ColorType) as Void {
       var textDimensions =
-          dc.getTextDimensions(text, font) as Lang.Array<Lang.Number>;  // [w,h]
+          dc.getTextDimensions(text, font) as Array<Number>;  // [w,h]
       var width = textDimensions[0];
       var height = textDimensions[1];
 
@@ -272,31 +250,30 @@ module WhatAppBase {
       //                          initialTextColor);
     }
 
-    function pointOnCircle(radius, angleInDegrees, center as Utils.Point) as Utils.Point {
+    function pointOnCircle(radius as Number, angleInDegrees as Number, center as Utils.Point) as Utils.Point {
       // Convert from degrees to radians
-      var x = (radius * Math.cos(deg2rad(angleInDegrees))) + center.x;
-      var y = (radius * Math.sin(deg2rad(angleInDegrees))) + center.y;
+      var x = ((radius * Math.cos(deg2rad(angleInDegrees))) + center.x) as Number;
+      var y = ((radius * Math.sin(deg2rad(angleInDegrees))) + center.y) as Number;
 
       return new Utils.Point(x, y);
     }
 
-    function getMatchingFont(dc as Dc,
-                             fontList as Lang.Array<Graphics.FontType>,
-                             maxwidth, text, startIndex) {
+    function getMatchingFont(dc as Dc, fontList as Array,
+                maxwidth as Number, text as String, startIndex as Number) as FontType {
       var index = startIndex;
-      var font = fontList[index];
+      var font = fontList[index] as FontType;
       var widthValue = dc.getTextWidthInPixels(text, font);
 
       while (widthValue > maxwidth && index > 0) {
         index = index - 1;
-        font = fontList[index];
+        font = fontList[index] as FontType;
         widthValue = dc.getTextWidthInPixels(text, font);
       }
       // System.println("font index: " + index);
       return font;
     }
 
-    function percentageToColor(percentage) {
+    function percentageToColor(percentage as Numeric?) as ColorType {
       if (percentage == null || percentage == 0) {
         return Graphics.COLOR_WHITE;
       }
@@ -325,7 +302,7 @@ module WhatAppBase {
         return Colors.COLOR_WHITE_ORANGE_3;
       }
       if (percentage == 100) {
-        return Colors.COLOR_WHITE_ORANGERED_2;  // @@ diff color? _4
+        return Colors.COLOR_WHITE_ORANGERED_2;  
       }
       if (percentage < 105) {
         return Colors.COLOR_WHITE_ORANGERED_3;
