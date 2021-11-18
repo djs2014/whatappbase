@@ -3,55 +3,37 @@ import Toybox.System;
 import Toybox.Activity;
 module WhatAppBase {
   class WhatTestField extends WhatInfoBase {
-    hidden var value = 250;
-    hidden var altValue = 100;
-    hidden var targetValue = 100;
+    hidden var value as Numeric = 250 ;
+    hidden var altValue as Numeric = 100;
+    hidden var targetValue as Numeric = 100;
 
     function initialize() { WhatInfoBase.initialize(); }
 
-    function setValue(value) { self.value = value; }
+    function setValue(value as Numeric) as Void { self.value = value; }
 
-    function setTargetValue(targetValue) { self.targetValue = targetValue; }
+    function setTargetValue(targetValue as Numeric) as Void { self.targetValue = targetValue; }
 
-    function setAltValue(value) { self.altValue = value; }
-    // function updateInfo(info as Activity.Info) {
-    //   if (info has : value) {
-    //     if (info.value) {
-    //       value = info.value;
-    //     } else {
-    //       value = 0.0f;
-    //     }
-    //   }
-    // }
-
-    function getZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getTestValue(), true);
-    }
-    function getValue() { return convertToMetricOrStatute(getTestValue()); }
-    function getFormattedValue() as Lang.String {
+    function setAltValue(value as Numeric) as Void  { self.altValue = value; }
+    
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getTestValue(), true); }
+    function getValue() as WhatValue { return convertToMetricOrStatute(getTestValue()); }
+    function getFormattedValue() as String {
       return convertToMetricOrStatute(getTestValue()).format("%.0f");
     }
     function getUnits() as String { return "test"; }
-    function getLabel() as Lang.String { return "Test field"; }
+    function getLabel() as String { return "Test field"; }
 
-    function getAltZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getTestAltValue(), false);
-    }
-    function getAltValue() {
-      return convertToMetricOrStatute(getTestAltValue());
-    }
-    function getAltFormattedValue() as Lang.String {
-      return convertToMetricOrStatute(getTestAltValue()).format("%.0f");
-    }
+    function getAltZoneInfo() as ZoneInfo { return _getZoneInfo(getTestAltValue(), false); }
+    function getAltValue() as WhatValue { return convertToMetricOrStatute(getTestAltValue()); }
+    function getAltFormattedValue() as String { return convertToMetricOrStatute(getTestAltValue()).format("%.0f"); }
     function getAltUnits() as String { return getUnits(); }
-    function getAltLabel() as Lang.String { return "Test alt"; }
+    function getAltLabel() as String { return "Test alt"; }
 
-    function getMaxValue() { return getMaxTestValue(); }
-    function getMaxZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getMaxTestValue(), false);
+    function getMaxValue() as WhatValue { return getMaxTestValue(); }
+    function getMaxZoneInfo() as ZoneInfo { return _getZoneInfo(getMaxTestValue(), false);
     }
     // --
-    hidden function getTestValue() {
+    hidden function getTestValue() as Numeric {
       if (mActivityPaused) {
         return getTestAltValue();
       }
@@ -61,21 +43,23 @@ module WhatAppBase {
       return self.value;
     }
 
-    hidden function getTestAltValue() {
+    hidden function getTestAltValue() as Numeric {
       if (altValue == null) {
         return 0;
       }
       return self.altValue;
     }
 
-    hidden function getMaxTestValue() {
+    hidden function getMaxTestValue() as Numeric {
       if (value == null) {
         return 0;
       }
       return self.value + (self.value * 0.2);
     }
 
-    hidden function _getZoneInfo(val, showAverageWhenPaused) {
+    hidden function convertToMetricOrStatute(value as Numeric) as Numeric { return value; }
+
+    hidden function _getZoneInfo(val as Numeric, showAverageWhenPaused as Boolean) as ZoneInfo {
       if (showAverageWhenPaused && mActivityPaused) {
         return new ZoneInfo(0, "Alt value", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);

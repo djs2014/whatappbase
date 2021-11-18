@@ -3,53 +3,45 @@ import Toybox.System;
 import Toybox.Activity;
 module WhatAppBase {
   class WhatCalories extends WhatInfoBase {
-    hidden var calories = 0.0f;           // kcal
-    hidden var targetCalories = 2000.0f;  // kcal
+    hidden var calories as Number = 0;           // kcal
+    hidden var targetCalories as Number = 2000;  // kcal
 
-    hidden var elapsedTime = 0.0f;  // msec
+    hidden var elapsedTime as Number = 0;  // msec
 
     function initialize() { WhatInfoBase.initialize(); }
 
-    function setTargetCalories(targetCalories) {
-      self.targetCalories = targetCalories;
-    }
+    function setTargetCalories(targetCalories as Number) as Void { self.targetCalories = targetCalories; }
 
-    function updateInfo(info as Activity.Info) {
-      if (info has : calories) {
+    function updateInfo(info as Activity.Info) as Void {
+      if (info has :calories) {
         if (info.calories != null) {
-          calories = info.calories;
+          calories = info.calories as Number;
         } else {
-          calories = 0.0f;
+          calories = 0;
         }
       }
-      if (info has : elapsedTime) {
+      if (info has :elapsedTime) {
         if (info.elapsedTime != null) {
-          elapsedTime = info.elapsedTime;
+          elapsedTime = info.elapsedTime as Number;
         } else {
-          elapsedTime = 0.0f;
+          elapsedTime = 0;
         }
       }
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(getCalories()); }
-    function getValue() { return getCalories(); }
-    function getFormattedValue() as Lang.String {
-      return getCalories().format("%.0f");
-    }
+    function getValue() as WhatValue { return getCalories(); }
+    function getFormattedValue() as String { return getCalories().format("%.0f"); }
     function getUnits() as String { return "kcal"; }
-    function getLabel() as Lang.String { return "Calories"; }
+    function getLabel() as String { return "Calories"; }
 
-    function getAltZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getAvgCaloriesPerMin());
-    }
-    function getAltValue() { return getAvgCaloriesPerMin(); }
-    function getAltFormattedValue() as Lang.String {
-      return getAvgCaloriesPerMin().format("%.0f");
-    }
+    function getAltZoneInfo() as ZoneInfo { return _getZoneInfo(getAvgCaloriesPerMin()); }
+    function getAltValue() as WhatValue { return getAvgCaloriesPerMin(); }
+    function getAltFormattedValue() as String { return getAvgCaloriesPerMin().format("%.0f"); }
     function getAltUnits() as String { return "kcal/min"; }
-    function getAltLabel() as Lang.String { return "Calories"; }
+    function getAltLabel() as String { return "Calories"; }
 
-    function getCalories() {
+    function getCalories() as Number {
       if (calories == null) {
         return 0;
       }
@@ -57,9 +49,9 @@ module WhatAppBase {
     }
 
     // @@ TODO see getAltZoneInfo colors/target
-    function getAvgCaloriesPerMin() {
+    function getAvgCaloriesPerMin() as Float {
       if (elapsedTime == null || elapsedTime == 0) {
-        return 0;
+        return 0.0f;
       }
       return calories / (elapsedTime * 1000.0 * 60.0);
     }
@@ -72,7 +64,7 @@ module WhatAppBase {
     // (3.098 x height in cm) - (4.330 x age in years) Women: Average BMR 1,400
     // calories per day Men: Average BMR just over 1,600 calories per day
     // --> percof chart
-    function _getZoneInfo(cal) {
+    function _getZoneInfo(cal as Numeric) as ZoneInfo {
       var label = "Calories";
       if (cal == null || cal == 0) {
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,

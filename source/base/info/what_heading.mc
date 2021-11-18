@@ -4,21 +4,21 @@ import Toybox.Activity;
 import Toybox.Position;
 module WhatAppBase {
   class WhatHeading extends WhatInfoBase {
-    hidden var calculatedHeadingGPS = null as Lang.Float;
-    hidden var currentHeading = 0.0f as Lang.Float;
-    hidden var track = 0.0f as Lang.Float;
+    hidden var calculatedHeadingGPS as Float?;
+    hidden var currentHeading as Float = 0.0f;
+    hidden var track as Float = 0.0f;
 
-    hidden var previousDegrees = 0 as Lang.Number;
+    hidden var previousDegrees as Number = 0;
 
-    hidden var previousLocation = null as Position.Location;
-    hidden var currentLocation = null as Position.Location;
-    hidden var currentLocationAccuracy = 0 as Lang.Number;
-    hidden var minimalLocationAccuracy = 0 as Lang.Number;
+    hidden var previousLocation as Position.Location?;
+    hidden var currentLocation as Position.Location?;
+    hidden var currentLocationAccuracy as Number = Position.QUALITY_NOT_AVAILABLE;
+    hidden var minimalLocationAccuracy as Number = Position.QUALITY_NOT_AVAILABLE;
 
-    hidden var previousElapsedDistance = 0.0f;
-    hidden var elapsedDistance = 0.0f;
-    hidden var currentElapsedDistanceInMeters = 0.0f;
-    hidden var minimalElapsedDistanceInMeters = 0.0f;
+    hidden var previousElapsedDistance as Float = 0.0f;
+    hidden var elapsedDistance as Float = 0.0f;
+    hidden var currentElapsedDistanceInMeters as Float = 0.0f;
+    hidden var minimalElapsedDistanceInMeters as Number = 0;
 
     function initialize() {
       WhatInfoBase.initialize();
@@ -26,110 +26,76 @@ module WhatAppBase {
     }
 
     // Set to 0 to disable custom GPS calculation
-    function setMinimalLocationAccuracy(minimalLocationAccuracy) {
+    function setMinimalLocationAccuracy(minimalLocationAccuracy as Number) as Void {
       self.minimalLocationAccuracy = minimalLocationAccuracy;
     }
     // Set to 0 to disable custom GPS calculation
-    function setMinimalElapsedDistanceInMeters(minimalElapsedDistanceInMeters) {
+    function setMinimalElapsedDistanceInMeters(minimalElapsedDistanceInMeters as Number) as Void {
       self.minimalElapsedDistanceInMeters = minimalElapsedDistanceInMeters;
     }
 
     function updateInfo(info as Activity.Info) as Void {
-      if (info has : currentHeading) {
+      if (info has :currentHeading) {
         // currentHeading is Compass
         if (info.currentHeading != null && info.currentHeading != 0.0f) {
-          currentHeading = info.currentHeading;
+          currentHeading = info.currentHeading as Float;
         }
         System.println("currentHeading Compass: " + currentHeading);
       }
 
-      if (info has : track) {
+      if (info has :track) {
         // track is GPS or Compass
         if (info.track != null && info.track != 0.0f) {
-          track = info.track;
+          track = info.track as Float;
         }
         System.println("track GPS/Compass: " + track);
       }
 
-      if (info has : currentLocation) {
+      if (info has :currentLocation) {
         if (info.currentLocation != null) {
           previousLocation = currentLocation;
-          currentLocation = info.currentLocation;
+          currentLocation = info.currentLocation as Location;
           System.println("currentLocation: " + currentLocation.toDegrees());
         }
       }
 
-      if (info has : currentLocationAccuracy) {
+      if (info has :currentLocationAccuracy) {
         currentLocationAccuracy = 0;
         if (info.currentLocationAccuracy != null) {
-          currentLocationAccuracy = info.currentLocationAccuracy;
-        }
-        // System.println("currentLocationAccuracy: " +
-        // currentLocationAccuracy);
+          currentLocationAccuracy = info.currentLocationAccuracy as Number;
+        }        
       }
 
-      if (info has : elapsedDistance) {
+      if (info has :elapsedDistance) {
         previousElapsedDistance = elapsedDistance;
         if (info.elapsedDistance != null) {
-          elapsedDistance = info.elapsedDistance;
+          elapsedDistance = info.elapsedDistance as Float;
         } else {
           elapsedDistance = 0.0f;
         }
         // Distance between the two gps locations
-        currentElapsedDistanceInMeters =
-            elapsedDistance - previousElapsedDistance;
+        currentElapsedDistanceInMeters = elapsedDistance - previousElapsedDistance;
       }
     }
 
-    function getZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getCurrentHeadingInDegrees());
-    }
-    function getValue() { return getCurrentHeadingInDegrees(); }
-    function getFormattedValue() as Lang.String {
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getCurrentHeadingInDegrees()); }
+    
+    function getFormattedValue() as String {
       var degrees = getCurrentHeadingInDegrees();
-      if (degrees == null) {
-        return "";
-      }
-      return Utils.getCompassDirection(degrees);
+      if (degrees == null) { return ""; }      
+      return Utils.getCompassDirection(degrees as Number);
     }
     function getUnits() as String { return ""; }
-    function getLabel() as Lang.String { return "Heading"; }
+    function getLabel() as String { return "Heading"; }
 
-    // --
-    // function getUnits() as String {
-    //   var info = "";
-    //   if (mDebug) {
-    //     if (currentLocationAccuracy != null) {
-    //       info = info + "gps[" + currentLocationAccuracy.format("%0.0f") +
-    //       "]";
-    //     }
-    //     if (currentElapsedDistanceInMeters > 0) {
-    //       info = info + "m[" + currentElapsedDistanceInMeters.format("%0.1f")
-    //       +
-    //              "]";
-    //     }
-    //     if (track != null) {
-    //       // ?? always 0 on simulator?
-    //       info = info + "\ntrk[" + Utils.rad2deg(track).format("%0.0f") +
-    //       "]";
-    //     }
-
-    //     if (currentHeading != null) {
-    //       info = info + " hdg[" +
-    //              Utils.rad2deg(currentHeading).format("%0.0f") + "]";
-    //     }
-    //   }
-    //   return info;
-    // }
-
-    hidden function validGPS() as Lang.Boolean {
+    hidden function validGPS() as Boolean {
       return (minimalLocationAccuracy > 0 &&
               minimalElapsedDistanceInMeters > 0 &&
               currentLocationAccuracy >= minimalLocationAccuracy &&
               currentElapsedDistanceInMeters > minimalElapsedDistanceInMeters);
     }
 
-    hidden function getCurrentHeadingInDegrees() as Lang.Number {
+    hidden function getCurrentHeadingInDegrees() as Number? {
       var degrees = null;
       if (validGPS()) {
         degrees = getCalculatedHeading();
@@ -141,37 +107,28 @@ module WhatAppBase {
       if (degrees == null) {
         degrees = previousDegrees;
       }
-      previousDegrees = degrees;
+      previousDegrees = degrees as Number;
       return degrees;
     }
 
-    hidden function convertToDisplayFormat(value, fieldType) as Lang.String {
-      var degrees = value;
-
-      if (degrees == null) {
-        return "";
-      }
-
-      return Utils.getCompassDirection(degrees);
-    }
-
     // Heading in degrees
-    function getCalculatedHeading() {
+    function getCalculatedHeading() as Number? {
       if (previousLocation == null || currentLocation == null) {
         return null;
       }
-
-      var llFrom = previousLocation.toDegrees() as Lang.Array<Lang.Double>;
+      var prevLocation = previousLocation as Location;
+      var llFrom = prevLocation.toDegrees() as Array<Double>;
       var lat1 = llFrom[0];
       var lon1 = llFrom[1];
-      var llTo = currentLocation.toDegrees() as Lang.Array<Lang.Double>;
+      var curLocation = currentLocation as Location;
+      var llTo = curLocation.toDegrees() as Array<Double>;
       var lat2 = llTo[0];
       var lon2 = llTo[1];
       return Utils.getRhumbLineBearing(lat1, lon1, lat2, lon2);
     }
 
     // @@ TODO
-    function _getZoneInfo(degrees) as ZoneInfo {
+    function _getZoneInfo(degrees as Number?) as ZoneInfo {
       return new ZoneInfo(0, "Heading", Graphics.COLOR_WHITE,
                           Graphics.COLOR_BLACK, 0, null);
     }

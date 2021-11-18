@@ -3,19 +3,19 @@ import Toybox.System;
 import Toybox.Activity;
 module WhatAppBase {
   class WhatSpeed extends WhatInfoBase {
-    hidden var currentSpeed = 0;
-    hidden var avarageSpeed = 0;
-    hidden var maxSpeed = 0;
-    hidden var targetSpeed = 30;
+    hidden var currentSpeed as Float = 0.0f;
+    hidden var avarageSpeed as Float = 0.0f;
+    hidden var maxSpeed as Float = 0.0f;
+    hidden var targetSpeed as Float = 30.0f;
 
     function initialize() { WhatInfoBase.initialize(); }
 
-    function setTargetSpeed(targetSpeed) { self.targetSpeed = targetSpeed; }
+    function setTargetSpeed(targetSpeed as Float) as Void { self.targetSpeed = targetSpeed; }
 
-    function updateInfo(info as Activity.Info) {
+    function updateInfo(info as Activity.Info) as Void {
       mAvailable = false;
       mActivityPaused = activityIsPaused(info);
-      if (info has : currentSpeed) {
+      if (info has :currentSpeed) {
         mAvailable = true;
         if (info.currentSpeed != null) {
           // speed is in meters per second
@@ -25,14 +25,14 @@ module WhatAppBase {
         }
       }
 
-      if (info has : averageSpeed) {
+      if (info has :averageSpeed) {
         if (info.averageSpeed != null) {
           avarageSpeed = Utils.mpsToKmPerHour(info.averageSpeed);
         } else {
           avarageSpeed = 0.0f;
         }
       }
-      if (info has : maxSpeed) {
+      if (info has :maxSpeed) {
         if (info.maxSpeed != null) {
           maxSpeed = Utils.mpsToKmPerHour(info.maxSpeed);
         } else {
@@ -44,8 +44,8 @@ module WhatAppBase {
     function getZoneInfo() as ZoneInfo {
       return _getZoneInfo(getCurrentSpeed(), true);
     }
-    function getValue() { return convertToMetricOrStatute(getCurrentSpeed()); }
-    function getFormattedValue() as Lang.String {
+    function getValue() as WhatValue { return convertToMetricOrStatute(getCurrentSpeed()); }
+    function getFormattedValue() as String {
       return convertToMetricOrStatute(getCurrentSpeed()).format("%.1f");
     }
     function getUnits() as String {
@@ -55,59 +55,59 @@ module WhatAppBase {
         return "km/h";
       }
     }
-    function getLabel() as Lang.String { return "Speed"; }
+    function getLabel() as String { return "Speed"; }
 
     function getAltZoneInfo() as ZoneInfo {
       return _getZoneInfo(getAverageSpeed(), false);
     }
-    function getAltValue() {
+    function getAltValue() as WhatValue {
       return convertToMetricOrStatute(getAverageSpeed());
     }
-    function getAltFormattedValue() as Lang.String {
+    function getAltFormattedValue() as String {
       return convertToMetricOrStatute(getAverageSpeed()).format("%.1f");
     }
     function getAltUnits() as String { return getUnits(); }
-    function getAltLabel() as Lang.String { return "Avg speed"; }
+    function getAltLabel() as String { return "Avg speed"; }
 
-    function getMaxValue() { return getMaxSpeed(); }
+    function getMaxValue() as WhatValue { return getMaxSpeed(); }
     function getMaxZoneInfo() as ZoneInfo {
       return _getZoneInfo(getMaxSpeed(), false);
     }
 
     // --
-    hidden function getAverageSpeed() {
+    hidden function getAverageSpeed() as Float {
       if (avarageSpeed == null) {
-        return 0;
+        return 0.0f;
       }
       return self.avarageSpeed;
     }
 
-    hidden function getMaxSpeed() {
+    hidden function getMaxSpeed() as Float {
       if (maxSpeed == null) {
-        return 0;
+        return 0.0f;
       }
       return self.maxSpeed;
     }
 
-    hidden function getCurrentSpeed() {
+    hidden function getCurrentSpeed() as Float {
       if (mActivityPaused) {
         return getAverageSpeed();
       }
 
       if (currentSpeed == null) {
-        return 0;
+        return 0.0f;
       }
       return self.currentSpeed;
     }
 
-    hidden function convertToMetricOrStatute(value) {
+    hidden function convertToMetricOrStatute(value as Float) as Float {
       if (mDevSettings.distanceUnits == System.UNIT_STATUTE) {
         value = Utils.kilometerToMile(value);
       }
       return value;
     }
 
-    hidden function _getZoneInfo(speed, showAverageWhenPaused) {
+    hidden function _getZoneInfo(speed as Float, showAverageWhenPaused as Boolean) as ZoneInfo {
       if (showAverageWhenPaused && mActivityPaused) {
         return new ZoneInfo(0, "Avg. Speed", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);

@@ -1,27 +1,29 @@
-using Toybox.System;
-using Toybox.Math;
-using Toybox.Lang;
+import Toybox.System;
+import Toybox.Math;
+import Toybox.Lang;
+
 module WhatAppBase {
-  ( : Utils) module Utils {
-    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-      if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) {
-        return 0;
+  (:Utils) 
+  module Utils {
+    function getDistanceFromLatLonInKm(latFrom as Numeric, lonFrom as Numeric, latTo as Numeric, lonTo as Numeric) as Float {
+      if (latFrom == null || lonFrom == null || latTo == null || lonTo == null) {
+        return 0.0f;
       }
 
       var R = 6371;                     // Radius of the earth in km
-      var dLat = deg2rad(lat2 - lat1);  // deg2rad below
-      var dLon = deg2rad(lon2 - lon1);
+      var dLat = deg2rad(latTo - latFrom);  // deg2rad below
+      var dLon = deg2rad(lonTo - lonFrom);
       var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+              Math.cos(deg2rad(latFrom)) * Math.cos(deg2rad(latTo)) *
                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
       var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       var d = R * c;  // Distance in km
       return d;
     }
 
-    function deg2rad(deg) { return deg * (Math.PI / 180); }
+    function deg2rad(deg as Numeric) as Double or Float { return deg * (Math.PI / 180); }
 
-    function rad2deg(rad) {
+    function rad2deg(rad as Numeric) as Double or Float {
       var deg = rad * 180 / Math.PI;
       if (deg < 0) {
         deg += 360.0;
@@ -30,16 +32,16 @@ module WhatAppBase {
     }
 
     // http://www.dougv.com/2009/07/13/calculating-the-bearing-and-compass-rose-direction-between-two-latitude-longitude-coordinates-in-php/
-    function getRhumbLineBearing(lat1, lon1, lat2, lon2) {
-      if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) {
+    function getRhumbLineBearing(latFrom as Numeric, lonFrom as Numeric, latTo as Numeric, lonTo as Numeric) as Number {
+      if (latFrom == null || lonFrom == null || latTo == null || lonTo == null) {
         return 0;
       }
 
       // difference in longitudinal coordinates
-      var dLon = deg2rad(lon2) - deg2rad(lon1);
+      var dLon = deg2rad(lonTo) - deg2rad(lonFrom);
       // difference in the phi of latitudinal coordinates
-      var dPhi = Math.log(Math.tan(deg2rad(lat2) / 2 + Math.PI / 4) /
-                              Math.tan(deg2rad(lat1) / 2 + Math.PI / 4),
+      var dPhi = Math.log(Math.tan(deg2rad(latTo) / 2 + Math.PI / 4) /
+                              Math.tan(deg2rad(latFrom) / 2 + Math.PI / 4),
                           Math.E);
 
       // we need to recalculate dLon if it is greater than pi
@@ -57,7 +59,7 @@ module WhatAppBase {
     }
 
     // bearing in degrees
-    function getCompassDirection(bearing) {
+    function getCompassDirection(bearing as Numeric) as String {
       var direction = "";
       // Round and convert to number (1.00000 -> 1)
       switch (Math.round(bearing / 22.5).toNumber()) {

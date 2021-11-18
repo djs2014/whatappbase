@@ -3,7 +3,7 @@ import Toybox.Lang;
 import Toybox.System;
 // using WhatAppBase.Types;
 module WhatAppBase {
-  enum {
+  enum ShowInfo {
     ShowInfoNothing = 0,
     ShowInfoPower = 1,
     ShowInfoHeartrate = 2,
@@ -27,51 +27,50 @@ module WhatAppBase {
   }
 
   class BaseFactory {
-    hidden var mwPower = null as WhatPower;
-    hidden var mwPowerPerWeight = null as WhatPower;  // @@ Needed?
-    hidden var mwHeartrate = null as WhatHeartrate;
-    hidden var mwCadence = null as WhatCadence;
-    hidden var mwGrade = null as WhatGrade;
-    hidden var mwDistance = null as WhatDistance;
-    hidden var mwAltitude = null as WhatAltitude;
-    hidden var mwSpeed = null as WhatSpeed;
-    hidden var mwPressure = null as WhatPressure;
-    // hidden var mwTemperature = null as WhatTemperature; //@@ show current
-    // weather
-    hidden var mwCalories = null as WhatCalories;
-    hidden var mwTrainingEffect = null as WhatTrainingEffect;
-    hidden var mwTime = null as WhatTime;
-    // hidden var mwTimer = null as WhatTime;
-    hidden var mwHeading = null as WhatHeading;
-    hidden var mwEngergyExpenditure = null as WhatEnergyExpenditure;
-    hidden var mwTestField = null as WhatTestField;
+    hidden var mwPower as WhatPower? = null;
+    hidden var mwPowerPerWeight as WhatPower? = null;  // @@ Needed?
+    hidden var mwHeartrate as WhatHeartrate? = null;
+    hidden var mwCadence as WhatCadence? = null;
+    hidden var mwGrade as WhatGrade? = null;
+    hidden var mwDistance as WhatDistance? = null;
+    hidden var mwAltitude as WhatAltitude? = null;
+    hidden var mwSpeed as WhatSpeed? = null;
+    hidden var mwPressure as WhatPressure? = null;
+    // hidden var mwTemperature as WhatTemperature; //@@ TODO show current weather in datafield
+    hidden var mwCalories as WhatCalories? = null;
+    hidden var mwTrainingEffect as WhatTrainingEffect? = null;
+    hidden var mwTime as WhatTime? = null;
+    hidden var mwHeading as WhatHeading? = null;
+    hidden var mwEngergyExpenditure as WhatEnergyExpenditure? = null;
+    hidden var mwTestField as WhatTestField? = null;
 
-    hidden var mTop = ShowInfoNothing;
-    hidden var mLeft = ShowInfoNothing;
-    hidden var mRight = ShowInfoNothing;
-    hidden var mBottom = ShowInfoNothing;
+    hidden var mTop as ShowInfo = ShowInfoNothing;
+    hidden var mLeft as ShowInfo = ShowInfoNothing;
+    hidden var mRight as ShowInfo = ShowInfoNothing;
+    hidden var mBottom as ShowInfo = ShowInfoNothing;
 
-    hidden var mHrFallback = ShowInfoNothing;
-    hidden var mTrainingEffectFallback = ShowInfoNothing;
+    hidden var mHrFallback as ShowInfo = ShowInfoNothing;
+    hidden var mTrainingEffectFallback as ShowInfo = ShowInfoNothing;
 
-    hidden var mInfo = null as Activity.Info;
-    hidden var mDebug = false;
+    hidden var mInfo as Activity.Info? = null;
+    hidden var mDebug as Boolean = false;
+
     function initialize() {}
 
-    function setDebug(debug as Lang.Boolean) { mDebug = debug; }
-    function isDebug() { return mDebug; }
-    function setInfo(info as Activity.Info) { mInfo = info; }
+    function setDebug(debug as Boolean) as Void { mDebug = debug; }
+    function isDebug() as Boolean { return mDebug; }
+    function setInfo(info as Activity.Info?) as Void { mInfo = info; }
 
-    function setFields(top, left, right, bottom) {
+    function setFields(top as ShowInfo, left as ShowInfo, right as ShowInfo, bottom as ShowInfo) as Void {
       mTop = top;
       mLeft = left;
       mRight = right;
       mBottom = bottom;
     }
 
-    function setHrFallback(hrFallback) { mHrFallback = hrFallback; }
+    function setHrFallback(hrFallback as ShowInfo) as Void { mHrFallback = hrFallback; }
 
-    function setTrainingEffectFallback(trainingEffectFallback) {
+    function setTrainingEffectFallback(trainingEffectFallback as ShowInfo) as Void {
       mTrainingEffectFallback = trainingEffectFallback;
     }
 
@@ -81,44 +80,42 @@ module WhatAppBase {
     function getWI_Bottom() as WhatInformation { return getWI(mBottom); }
 
     function infoSettings() as Void {
-      System.println("mTop[" + mTop + "] mLeft[" + mLeft + "] mRight[" +
-                     mRight + "] mBottom[" + mBottom + "] mHrFallback[" +
-                     mHrFallback + "] mTrainingEffectFallback[" +
-                     mTrainingEffectFallback + "]");
+      // @@ depricated
+      // System.println("mTop[" + mTop + "] mLeft[" + mLeft + "] mRight[" +
+      //                mRight + "] mBottom[" + mBottom + "] mHrFallback[" +
+      //                mHrFallback + "] mTrainingEffectFallback[" +
+      //                mTrainingEffectFallback + "]");
     }
 
-    function getWI(showInfo) as WhatInformation {
-      var instance =
-          _getInstance(showInfo, mHrFallback, mTrainingEffectFallback);
-      if (instance == null) {
-        // var nope = null as WhatInformation;
-        return null as WhatInformation;
-      }
+    function getWI(showInfo as ShowInfo) as WhatInformation {
+      var instance = _getInstance(showInfo, mHrFallback, mTrainingEffectFallback);
+      if (instance == null) { return null as WhatInformation; }
+
       var wi = new WhatInformation(instance);
       // Additional overrules
       switch (showInfo) {
         case ShowInfoPowerPerBodyWeight:
           if (wi.getObject() instanceof WhatPower) {
             // zone info is the same
-            wi.setCallback(cbFormattedValue, : getPPWFormattedValue);
-            wi.setCallback(cbUnits, : getPPWUnits);
-            wi.setCallback(cbLabel, : getPPWLabel);
+            wi.setCallback(cbFormattedValue, :getPPWFormattedValue);
+            wi.setCallback(cbUnits, :getPPWUnits);
+            wi.setCallback(cbLabel, :getPPWLabel);
           }
           break;
         case ShowInfoElapsedTime:
           if (wi.getObject() instanceof WhatTime) {
-            wi.setCallback(cbZoneInfo, : getElapsedZoneInfo);
-            wi.setCallback(cbFormattedValue, : getElapsedFormattedValue);
-            wi.setCallback(cbUnits, : getElapsedUnits);
-            wi.setCallback(cbLabel, : getElapsedLabel);
+            wi.setCallback(cbZoneInfo, :getElapsedZoneInfo);
+            wi.setCallback(cbFormattedValue, :getElapsedFormattedValue);
+            wi.setCallback(cbUnits, :getElapsedUnits);
+            wi.setCallback(cbLabel, :getElapsedLabel);
           }
           break;
         case ShowInfoTimer:
           if (wi.getObject() instanceof WhatTime) {
-            wi.setCallback(cbZoneInfo, : getTimerZoneInfo);
-            wi.setCallback(cbFormattedValue, : getTimerFormattedValue);
-            wi.setCallback(cbUnits, : getTimerUnits);
-            wi.setCallback(cbLabel, : getTimerLabel);
+            wi.setCallback(cbZoneInfo, :getTimerZoneInfo);
+            wi.setCallback(cbFormattedValue, :getTimerFormattedValue);
+            wi.setCallback(cbUnits, :getTimerUnits);
+            wi.setCallback(cbLabel, :getTimerLabel);
           }
           break;
         default:
@@ -127,15 +124,12 @@ module WhatAppBase {
       return wi;
     }
 
-    function getInstance(showInfo) as WhatInfoBase {
+    function getInstance(showInfo as ShowInfo) as WhatInfoBase {
       return _getInstance(showInfo, mHrFallback, mTrainingEffectFallback);
     }
 
-    function _getInstance(showInfo, hrFallback,
-                          trainingEffectFallback) as WhatInfoBase {
-      //   if (mDebug) {
-      //     System.println("_getInstance showInfo: " + showInfo);
-      //   }
+    function _getInstance(showInfo  as ShowInfo, hrFallback  as ShowInfo,
+                          trainingEffectFallback as ShowInfo) as WhatInfoBase {      
       switch (showInfo) {
         case ShowInfoPower:
           if (mwPower == null) {
@@ -148,8 +142,9 @@ module WhatAppBase {
             mwHeartrate = new WhatHeartrate();
           }
           if (mInfo != null) {
-            mwHeartrate.updateInfo(mInfo);
-            if (!mwHeartrate.isAvailable() && hrFallback != ShowInfoNothing) {
+            var hr =  mwHeartrate as WhatHeartrate;
+            hr.updateInfo(mInfo);
+            if (!hr.isAvailable() && hrFallback != ShowInfoNothing) {
               return _getInstance(hrFallback, ShowInfoNothing, ShowInfoNothing);
             }
           }
@@ -219,9 +214,9 @@ module WhatAppBase {
           }
 
           if (mInfo != null) {
-            mwTrainingEffect.updateInfo(mInfo);
-            if (!mwTrainingEffect.isAvailable() &&
-                trainingEffectFallback != ShowInfoNothing) {
+            var te =  mwTrainingEffect as WhatTrainingEffect;
+            te.updateInfo(mInfo);
+            if (!te.isAvailable() && trainingEffectFallback != ShowInfoNothing) {
               return _getInstance(trainingEffectFallback, ShowInfoNothing,
                                   ShowInfoNothing);
             }
@@ -254,13 +249,8 @@ module WhatAppBase {
 
         case ShowInfoNothing:
         default:
-          //   var nope = null as WhatInfoBase;
           return null as WhatInfoBase;
       }
     }
   }
 }
-
-// @@ factory
-// - load settings / get active instance
-// - detect only updateInfo once! if same instance

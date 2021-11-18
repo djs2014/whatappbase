@@ -4,44 +4,43 @@ import Toybox.System;
 import Toybox.Activity;
 module WhatAppBase {
   class WhatHeartrate extends WhatInfoBase {
-    hidden var currentHeartRate = 0;
-    hidden var avarageHeartrate = 0;
-    hidden var maxHeartRate = 0;
-    hidden var heartRateZones = null;
+    hidden var currentHeartRate as Number = 0;
+    hidden var avarageHeartrate as Number  = 0;
+    hidden var maxHeartRate as Number  = 0;
+    hidden var heartRateZones as Array<Lang.Number>?;
 
     function initialize() { WhatInfoBase.initialize(); }
 
-    function initZones() {
-      heartRateZones =
-          UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_BIKING);
+    function initZones() as Void {
+      heartRateZones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_BIKING);
       // for (var i = 0; i < hrZones.size(); i++) {
       //   System.println(hrZones[i]);
       // }
     }
-    function updateInfo(info as Activity.Info) {
+    function updateInfo(info as Activity.Info) as Void {
       mAvailable = false;
-      if (info has : currentHeartRate) {
-        if (info.currentHeartRate) {
-          currentHeartRate = info.currentHeartRate;
+      if (info has :currentHeartRate) {
+        if (info.currentHeartRate != null) {
+          currentHeartRate = info.currentHeartRate  as Number;
           mAvailable = true;
         } else {
-          currentHeartRate = 0.0f;
+          currentHeartRate = 0;
         }
       }
 
-      if (info has : averageHeartRate) {
-        if (info.averageHeartRate) {
-          avarageHeartrate = info.averageHeartRate;
+      if (info has :averageHeartRate) {
+        if (info.averageHeartRate != null) {
+          avarageHeartrate = info.averageHeartRate as Number;
         } else {
-          avarageHeartrate = 0.0f;
+          avarageHeartrate = 0;
         }
       }
 
-      if (info has : maxHeartRate) {
-        if (info.maxHeartRate) {
-          maxHeartRate = info.maxHeartRate;
+      if (info has :maxHeartRate) {
+        if (info.maxHeartRate != null) {
+          maxHeartRate = info.maxHeartRate as Number;
         } else {
-          maxHeartRate = 0.0f;
+          maxHeartRate = 0;
         }
       }
     }
@@ -49,52 +48,44 @@ module WhatAppBase {
     function getZoneInfo() as ZoneInfo {
       return _getZoneInfo(getCurrentHeartrate());
     }
-    function getValue() { return getCurrentHeartrate(); }
-    function getFormattedValue() as Lang.String {
-      return getCurrentHeartrate().format("%.0f");
-    }
+    function getValue() as WhatValue { return getCurrentHeartrate(); }
+    function getFormattedValue() as String { return getCurrentHeartrate().format("%.0f"); }
     function getUnits() as String { return "bpm"; }
-    function getLabel() as Lang.String { return "Heartrate"; }
+    function getLabel() as String { return "Heartrate"; }
 
-    function getAltZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getAverageHeartrate());
-    }
-    function getAltValue() { return getAverageHeartrate(); }
-    function getAltFormattedValue() as Lang.String {
-      return getAverageHeartrate().format("%.0f");
-    }
+    function getAltZoneInfo() as ZoneInfo { return _getZoneInfo(getAverageHeartrate()); }
+    function getAltValue() as WhatValue { return getAverageHeartrate(); }
+    function getAltFormattedValue() as String { return getAverageHeartrate().format("%.0f"); }
     function getAltUnits() as String { return "bpm"; }
-    function getAltLabel() as Lang.String { return "Avg heartrate"; }
+    function getAltLabel() as String { return "Avg heartrate"; }
 
-    function getMaxValue() { return getMaxHeartrate(); }
-    function getMaxZoneInfo() as ZoneInfo {
-      return _getZoneInfo(getMaxHeartrate());
-    }
+    function getMaxValue() as WhatValue { return getMaxHeartrate(); }
+    function getMaxZoneInfo() as ZoneInfo { return _getZoneInfo(getMaxHeartrate()); }
 
     // --
-    hidden function getAverageHeartrate() {
+    hidden function getAverageHeartrate() as Number {
       if (avarageHeartrate == null) {
         return 0;
       }
       return self.avarageHeartrate;
     }
 
-    hidden function getMaxHeartrate() {
+    hidden function getMaxHeartrate() as Number {
       if (maxHeartRate == null) {
         return 0;
       }
       return maxHeartRate;
     }
 
-    hidden function getCurrentHeartrate() {
+    hidden function getCurrentHeartrate() as Number {
       if (currentHeartRate == null) {
-        return 0.0f;
+        return 0;
       }
       return currentHeartRate;
     }
 
-    function _getZoneInfo(hr) as ZoneInfo {
-      var hrZones = heartRateZones as Lang.Array<Lang.Number>;
+    function _getZoneInfo(hr as Number) as ZoneInfo {
+      var hrZones = heartRateZones as Array<Number>;
 
       if (hrZones == null || hrZones.size() == 0 || hr == 0 ||
           hr < hrZones[0]) {

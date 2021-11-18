@@ -1,44 +1,43 @@
 import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.System;
-using Toybox.Time.Gregorian as Calendar;
+import Toybox.Time;
+import Toybox.Time.Gregorian;
+
 module WhatAppBase {
   class WhatTime extends WhatInfoBase {
-    hidden var now;
-    hidden var elapsedTime = 0.0f;  // msec
-    hidden var timerTime = 0.0f;    // msec
-    hidden var targetTimeMinutes = 0.0f;
+    hidden var elapsedTime as Float = 0.0f;  // msec
+    hidden var timerTime as Float = 0.0f;    // msec
+    hidden var targetTimeMinutes as Number = 0;
 
     function initialize() {
-      WhatInfoBase.initialize();
-      now = Calendar.info(Time.now(), Time.FORMAT_SHORT);
+      WhatInfoBase.initialize();      
     }
 
-    function setTargetTime(targetTimeMinutes) {
+    function setTargetTime(targetTimeMinutes as Number) as Void {
       self.targetTimeMinutes = targetTimeMinutes;
     }
 
-    function updateInfo(info as Activity.Info) {
-      if (info has : elapsedTime) {
+    function updateInfo(info as Activity.Info) as Void {
+      if (info has :elapsedTime) {
         if (info.elapsedTime != null) {
-          elapsedTime = info.elapsedTime;
+          elapsedTime = info.elapsedTime as Float;
         } else {
           elapsedTime = 0.0f;
         }
       }
-      if (info has : timerTime) {
+      if (info has :timerTime) {
         if (info.timerTime != null) {
-          timerTime = info.timerTime;
+          timerTime = info.timerTime as Float;
         } else {
           timerTime = 0.0f;
         }
       }
     }
 
-    function getZoneInfo() as ZoneInfo { return _getZoneInfo(now); }
-    function getValue() { return now; }
-    function getFormattedValue() as Lang.String {
-      now = Calendar.info(Time.now(), Time.FORMAT_SHORT);
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(); }    
+    function getFormattedValue() as String {
+      var now = Gregorian.info(Time.now(), Time.FORMAT_SHORT);
       var nowMin = now.min;
       var nowHour = now.hour;
       if (!mDevSettings.is24Hour) {
@@ -48,6 +47,7 @@ module WhatAppBase {
     }
     function getUnits() as String {
       if (!mDevSettings.is24Hour) {
+        var now = Gregorian.info(Time.now(), Time.FORMAT_SHORT);
         var nowHour = now.hour;
         if (nowHour > 12) {
           return "pm";
@@ -58,7 +58,7 @@ module WhatAppBase {
 
       return "";
     }
-    function getLabel() as Lang.String { return "Time of day"; }
+    function getLabel() as String { return "Time of day"; }
 
     // Timer
     function getTimerZoneInfo() as ZoneInfo {
@@ -67,7 +67,7 @@ module WhatAppBase {
       return new ZoneInfo(0, label, Graphics.COLOR_WHITE, Graphics.COLOR_BLACK,
                           percentage, null);
     }
-    function getTimerFormattedValue() as Lang.String {
+    function getTimerFormattedValue() as String {
       if (timerTime == null) {
         return "";
       }
@@ -91,7 +91,7 @@ module WhatAppBase {
       return new ZoneInfo(0, label, Graphics.COLOR_WHITE, Graphics.COLOR_BLACK,
                           percentage, null);
     }
-    function getElapsedFormattedValue() as Lang.String {
+    function getElapsedFormattedValue() as String {
       if (elapsedTime == null) {
         return "";
       }
@@ -109,9 +109,10 @@ module WhatAppBase {
 
     function getElapsedLabel() as String { return "Elapsed"; }
     // --
-    hidden function getTime() { return Time.now(); }
+    hidden function getTime() as Time.Moment { return Time.now(); }
 
-    hidden function _getZoneInfo(value) as ZoneInfo {
+    hidden function _getZoneInfo() as ZoneInfo {
+      var now = Gregorian.info(Time.now(), Time.FORMAT_SHORT);
       var label = now.day + "-" + now.month;
       var percentage = 0;
       return new ZoneInfo(0, label, Graphics.COLOR_WHITE, Graphics.COLOR_BLACK,
