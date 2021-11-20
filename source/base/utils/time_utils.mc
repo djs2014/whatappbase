@@ -15,7 +15,7 @@ module WhatAppBase {
         return false;
       }
 
-      if (timevalue instanceof Number) {
+      if (timevalue instanceof Lang.Number) {
         return (Time.now().value() - timevalue) > (minutesDelayed * 60);
       } else if (timevalue instanceof Time.Moment) {
         return Time.now().compare(timevalue) > (minutesDelayed * 60);
@@ -66,7 +66,7 @@ module WhatAppBase {
 
     // template: "{h}:{m}:{s}"
     function millisecondsToShortTimeString(totalMilliSeconds as Number, template as String) as String {
-      if (totalMilliSeconds != null && totalMilliSeconds instanceof Number) {
+      if (totalMilliSeconds != null && totalMilliSeconds instanceof Lang.Number) {
         var hours = (totalMilliSeconds / (1000.0 * 60 * 60)).toNumber() % 24;
         var minutes = (totalMilliSeconds / (1000.0 * 60.0)).toNumber() % 60;
         var seconds = (totalMilliSeconds / 1000.0).toNumber() % 60;
@@ -84,7 +84,7 @@ module WhatAppBase {
     }
     // template: "{h}:{m}:{s}"
     function secondsToShortTimeString(totalSeconds as Number, template as String) as String {
-      if (totalSeconds != null && totalSeconds instanceof Number) {
+      if (totalSeconds != null && totalSeconds instanceof Lang.Number) {
         var hours = (totalSeconds / (60 * 60)).toNumber() % 24;
         var minutes = (totalSeconds / 60.0).toNumber() % 60;
         var seconds = (totalSeconds.toNumber() % 60);

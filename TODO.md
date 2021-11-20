@@ -1,7 +1,10 @@
 # Todo:
-cleanup object if not shown ->whatinf..
+cleanup object if not shown ->whatinf..=null
 watch air quality
-
+cleanup whatdisplay code
+loop 3 time bottom rectangle -> black on red or purple?
+timer start automatic 
+one screen: show stats when paused
 
 air quality data?
 Test app:
