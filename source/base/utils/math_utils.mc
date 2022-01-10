@@ -34,7 +34,7 @@ module WhatAppBase {
       if (value == null || max == null) {
         return 0.0f;
       }
-      if (max < 0) { return 0.0f; }
+      if (max <= 0) { return 0.0f; }
       return value / (max / 100.0);
     }
 

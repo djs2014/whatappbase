@@ -336,7 +336,7 @@ module WhatAppBase {
                           mFontLabelAdditional, label, mFontLabelAdditional,
                           percentage);
 
-      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
+      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);      
     }
 
     function drawRightInfo(label as String, value as String, units as String, 

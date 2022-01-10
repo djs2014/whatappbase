@@ -1,9 +1,13 @@
 # Todo:
+loop 3 time bottom rectangle -> black on red or purple?
+timer start automatic 30-60 beep - 1-5min rest HR normal + count #hit + calc vo2max approx score
+    ftp > x for x seconds period + beep
+    stop: ftp < x for x seconds + beep
+    + count # of hitt
+    
 cleanup object if not shown ->whatinf..=null
 watch air quality
 cleanup whatdisplay code
-loop 3 time bottom rectangle -> black on red or purple?
-timer start automatic 
 one screen: show stats when paused
 
 air quality data?

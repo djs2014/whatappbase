@@ -97,7 +97,7 @@ module WhatAppBase {
         return degrees[0] != currentDegrees[0] && degrees[1] != currentDegrees[1];        
       }
 
-      function getRelativeToObservation(latObservation as Float, lonObservation as Float) as String {
+      function getRelativeToObservation(latObservation as Double, lonObservation as Double) as String {
         if (!hasLocation() || latObservation == 0.0 || lonObservation == 0.0 ) {
           return "";
         }
