@@ -99,6 +99,21 @@ module WhatAppBase {
       return "";
     }
 
+    // 1:40 or 150:40 
+    function secondsToCompactTimeString(totalSeconds as Number, template as String) as String {
+      if (totalSeconds != null && totalSeconds instanceof Lang.Number) {
+        var minutes = (totalSeconds / 60.0).toNumber();
+        var seconds = (totalSeconds.toNumber() % 60);
+
+        if (template == null) { template = "{h}:{m}:{s}"; }
+        var time = stringReplace(template,"{m}", minutes.format("%01d"));
+        time = stringReplace(time,"{s}", seconds.format("%02d"));
+
+        return time;  
+      }
+      return "";
+    }
+
     
   }
 }

@@ -1,10 +1,24 @@
 # Todo:
-loop 3 time bottom rectangle -> black on red or purple?
-timer start automatic 30-60 beep - 1-5min rest HR normal + count #hit + calc vo2max approx score
-    ftp > x for x seconds period + beep
-    stop: ftp < x for x seconds + beep
-    + count # of hitt
+- enable hit
+- start on perc
+- stop on perc 
+- 30-60 / 1-5
+
+- calc vo2 score during hit / power graph?
+- no power use speed
+- display start/ stop text
+- font bigger
+- no speed or no rpm > 5 sec -> inactive
+
     
+lat/lng - double ipv float
+
+- sep class for Hit   
+  - create when enabled
+  - update/monitor 
+  - display -> starting / stopping / active = 30-60 seconds : stopped => 1: 6 min => 
+
+loop 3 time bottom rectangle -> black on red or purple?
 cleanup object if not shown ->whatinf..=null
 watch air quality
 cleanup whatdisplay code
