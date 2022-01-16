@@ -232,20 +232,21 @@ module WhatAppBase {
       if (hitPerformed > 0) { text = text + hitPerformed.format("%01d"); }
     
       // @@ Nice to have transparent text (rgba)
-      var hitElapsed = hit.getHitElapsedSeconds();
-      if (hitElapsed > 0) {
-        text = Utils.secondsToCompactTimeString(hitElapsed, "{m}:{s}");
-        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-        var yOf = dc.getHeight() / 8;
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 + yOf, Graphics.FONT_SYSTEM_NUMBER_HOT, text, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);        
-      }
-
       var counter = hit.getCounter();      
       if (counter > 0 ) {
         var countdown = counter.format("%01d");
         dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_SYSTEM_NUMBER_THAI_HOT, countdown, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);
+      } else {
+        var hitElapsed = hit.getHitElapsedSeconds();
+        if (hitElapsed > 0) {
+          text = Utils.secondsToCompactTimeString(hitElapsed, "{m}:{s}");
+          dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+          var yOf = dc.getHeight() / 8;
+          dc.drawText(dc.getWidth()/2, dc.getHeight()/2 + yOf, Graphics.FONT_SYSTEM_NUMBER_HOT, text, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);        
+        }
       }
+
       
       var hitRecovery = hit.getRecoveryElapsedSeconds();
       if (hitRecovery > 0) {
