@@ -222,15 +222,7 @@ module WhatAppBase {
       var hit = mHit as WhatAppHit;
       if (!hit.isEnabled()) { return;}
       
-      var text = "H";
-      var font = Graphics.FONT_MEDIUM;
-      var x = 1;
-      var y = dc.getHeight() - dc.getFontHeight(font);
 
-      dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-      var hitPerformed = hit.getNumberOfHits();
-      if (hitPerformed > 0) { text = text + hitPerformed.format("%01d"); }
-    
       // @@ Nice to have transparent text (rgba)
       var counter = hit.getCounter();      
       if (counter > 0 ) {
@@ -240,14 +232,21 @@ module WhatAppBase {
       } else {
         var hitElapsed = hit.getHitElapsedSeconds();
         if (hitElapsed > 0) {
-          text = Utils.secondsToCompactTimeString(hitElapsed, "{m}:{s}");
+          var elapsed = Utils.secondsToCompactTimeString(hitElapsed, "{m}:{s}");
           dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
           var yOf = dc.getHeight() / 8;
-          dc.drawText(dc.getWidth()/2, dc.getHeight()/2 + yOf, Graphics.FONT_SYSTEM_NUMBER_HOT, text, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);        
+          dc.drawText(dc.getWidth()/2, dc.getHeight()/2 + yOf, Graphics.FONT_SYSTEM_NUMBER_HOT, elapsed, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);        
         }
       }
 
       
+      var font = Graphics.FONT_MEDIUM;
+      var x = 1;
+      var y = dc.getHeight() - dc.getFontHeight(font);
+      var text = "H";
+      var hitPerformed = hit.getNumberOfHits();
+      if (hitPerformed > 0) { text = text + hitPerformed.format("%01d"); }
+    
       var hitRecovery = hit.getRecoveryElapsedSeconds();
       if (hitRecovery > 0) {
         text = text + ": " + Utils.secondsToCompactTimeString(hitRecovery, "{m}:{s}");        
