@@ -5,7 +5,9 @@ import Toybox.System;
 import Toybox.Graphics;
 using Toybox.UserProfile;
 module WhatAppBase {
+
   // ( : Info) module Info {
+  
   class WhatPower extends WhatInfoBase {
     hidden var perSec as Number = 3;
     hidden var ftp as Number = 250;
@@ -16,7 +18,7 @@ module WhatAppBase {
     hidden var userWeightKg as Float = 0.0f;
 
     hidden var lastCheck as Number = 0;
-
+  
     function initialize() { WhatInfoBase.initialize(); }
 
     function initWeight() as Void {
@@ -29,7 +31,7 @@ module WhatAppBase {
 
     function setFtp(ftp as Number) as Void { self.ftp = ftp; }
     function setPerSec(perSec as Number) as Void { self.perSec = perSec; }
-
+   
     // Must be called once per second
     function updateInfo(info as Activity.Info) as Void {
       mAvailable = false;
@@ -61,6 +63,7 @@ module WhatAppBase {
           maxPower = info.maxPower as Number;
         }
       }
+      
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(powerPerX(), true); }
@@ -111,6 +114,11 @@ module WhatAppBase {
       }
     }
 
+    //
+    function getPercOfTarget() as Numeric {
+      return Utils.percentageOf(powerPerX(), ftp);
+    }
+    
     // --
 
     hidden function convertToMetricOrStatute(value as Numeric) as Numeric {
@@ -236,5 +244,7 @@ module WhatAppBase {
       return new ZoneInfo(7, "Neuromuscular", color, Graphics.COLOR_BLACK,
                           percOfTarget, color100perc);
     }
+
+   
   }
 }

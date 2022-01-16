@@ -8,6 +8,8 @@ module WhatAppBase {
     var appName as String = "";
     var mFactory as BaseFactory = new BaseFactory();
     var mDebug as Boolean = false;
+
+    var mHit as WhatAppHit = new WhatAppHit();
     // const FIVE_MINUTES = new Time.Duration(5 * 60);
 
     var _showInfoLayout as LayoutMiddle = LayoutMiddleCircle;
@@ -53,6 +55,10 @@ module WhatAppBase {
 
         _showInfoLayout = Utils.getApplicationProperty("showInfoLayout", LayoutMiddleCircle) as LayoutMiddle;
 
+        mHit.setEnabled(Utils.getApplicationProperty("hitEnabled", false) as Boolean);
+        mHit.setStartOnPerc(Utils.getApplicationProperty("hitStartOnPerc", 150) as Number);
+        mHit.setStopOnPerc(Utils.getApplicationProperty("hitStopOnPerc", 100) as Number);
+              
         System.println("Settings loaded");
         if (mFactory.isDebug()) {
           mFactory.infoSettings();
@@ -72,7 +78,7 @@ module WhatAppBase {
 
       if (obj instanceof WhatPower) {
         obj.setFtp(Utils.getApplicationProperty("ftpValue", 200) as Number);
-        obj.setPerSec(Utils.getApplicationProperty("powerPerSecond", 3) as Number);
+        obj.setPerSec(Utils.getApplicationProperty("powerPerSecond", 3) as Number);        
         obj.initWeight();
       } else if (obj instanceof WhatPressure) {
         obj.setShowSeaLevelPressure(Utils.getApplicationProperty("showSeaLevelPressure", true) as Boolean);

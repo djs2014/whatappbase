@@ -12,6 +12,8 @@ module WhatAppBase {
     hidden var mWD as WhatDisplay = new WhatDisplay();
     hidden var mFactory as BaseFactory;
     hidden var mShowAppName as Boolean = false;
+    
+    hidden var mHit as WhatAppHit?;
 
     hidden var mWiTop as WhatInformation?;
     hidden var mWiLeft as WhatInformation?;
@@ -22,8 +24,9 @@ module WhatAppBase {
       DataField.initialize();
       mApp = whatApp;
       mFactory = mApp.mFactory;
+      mHit = mApp.mHit;      
     }
-
+  
     // Set your layout here. Anytime the size of obscurity of
     // the draw context is changed this will be called.
     // @@ Detect radar icon in right upper corner
@@ -55,10 +58,26 @@ module WhatAppBase {
         mWiBottom.updateInfo(info);
       }
 
+      processHit(info);
+
       mShowAppName = true;
       if (info has : timerState) {
         mShowAppName = (info.timerState != Activity.TIMER_STATE_ON);
       }
+    }
+
+    function processHit(info as Activity.Info) as Void {
+      var hit = mHit as WhatAppHit;
+      if (!hit.isEnabled()) { return;}
+      
+      var wP = mFactory.getPowerInstance();
+      if (wP == null) {
+        hit.setEnabled(false);
+        return;
+      }
+      
+      var pot = (wP as WhatPower).getPercOfTarget();      
+      hit.monitorHit(info, pot);
     }
 
     // Display the value you computed here. This will be called
@@ -102,6 +121,8 @@ module WhatAppBase {
         dc.drawText(0, 0, Graphics.FONT_XTINY, app.appName,
                     Graphics.TEXT_JUSTIFY_LEFT);
       }
+
+      drawHit(dc);
     }
      
     function drawLeftInfo(dc as Dc) as Void {
@@ -195,6 +216,45 @@ module WhatAppBase {
       var altZone = wi.getAltZoneInfo();
       var maxZone = wi.getMaxZoneInfo();
       mWD.drawBottomInfoFG(label, value, units, zone, altZone, maxZone);
+    }
+
+    function drawHit(dc as Dc) as Void {
+      var hit = mHit as WhatAppHit;
+      if (!hit.isEnabled()) { return;}
+      
+      var text = "H";
+      var font = Graphics.FONT_MEDIUM;
+      var x = 1;
+      var y = dc.getHeight() - dc.getFontHeight(font);
+
+      dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+      var hitPerformed = hit.getNumberOfHits();
+      if (hitPerformed > 0) { text = text + hitPerformed.format("%01d"); }
+    
+
+      var hitElapsed = hit.getHitElapsedSeconds();
+      if (hitElapsed > 0) {
+        text = Utils.secondsToShortTimeString(hitElapsed, "{m}:{s}");
+        dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_WHITE);
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2, font, text, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);        
+      }
+
+      var counter = hit.getCounter();      
+      if (counter > 0 ) {
+        var countdown = counter.format("%01d");
+        dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_WHITE);
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_NUMBER_HOT, countdown, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);
+      }
+      
+      var hitRecovery = hit.getRecoveryElapsedSeconds();
+      if (hitRecovery > 0) {
+        text = text + ": " + Utils.secondsToShortTimeString(hitRecovery, "{m}:{s}");        
+      }
+
+      if (hitPerformed > 0 || hitRecovery > 0 ) {
+        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, font, text, Graphics.TEXT_JUSTIFY_LEFT);
+      }
     }
   }
 }

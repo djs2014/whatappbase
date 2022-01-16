@@ -64,7 +64,7 @@ module WhatAppBase {
        return "";
     }
 
-    // template: "{h}:{m}:{s}"
+    // template: "{h}:{m}:{s}:{ms}"
     function millisecondsToShortTimeString(totalMilliSeconds as Number, template as String) as String {
       if (totalMilliSeconds != null && totalMilliSeconds instanceof Lang.Number) {
         var hours = (totalMilliSeconds / (1000.0 * 60 * 60)).toNumber() % 24;

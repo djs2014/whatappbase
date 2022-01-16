@@ -54,7 +54,7 @@ module WhatAppBase {
 
     hidden var mInfo as Activity.Info? = null;
     hidden var mDebug as Boolean = false;
-
+  
     function initialize() {}
 
     function setDebug(debug as Boolean) as Void { mDebug = debug; }
@@ -122,6 +122,13 @@ module WhatAppBase {
       }
 
       return wi;
+    }
+
+
+    function getPowerInstance() as WhatPower {
+       if (mwPower != null) { return mwPower;}
+       if (ShowInfoPowerPerBodyWeight != null) { return mwPowerPerWeight;}
+       return null as WhatPower;
     }
 
     function getInstance(showInfo as ShowInfo) as WhatInfoBase {
@@ -238,7 +245,7 @@ module WhatAppBase {
         case ShowInfoPowerPerBodyWeight:
           if (mwPowerPerWeight == null) {
             mwPowerPerWeight = new WhatPower();
-          }
+          }          
           return mwPowerPerWeight;
 
         case ShowInfoTestField:
