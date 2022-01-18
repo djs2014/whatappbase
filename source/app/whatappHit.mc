@@ -56,8 +56,14 @@ module WhatAppBase {
       
       updateMetrics(info);
       updateRecoveryTime();     
-     
-      System.println(percOfTarget);
+      if (activityPaused) {
+        hitStatus = InActive;
+        hitCounter = 0;  
+        hitElapsedRecoveryTime = null;
+        hitElapsedTime = null;
+        return;
+      }
+      //System.println(percOfTarget);
 
       switch (hitStatus) {
         case InActive:
