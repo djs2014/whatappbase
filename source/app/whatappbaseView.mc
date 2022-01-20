@@ -270,7 +270,7 @@ module WhatAppBase {
         var wVo2mText = dc.getTextWidthInPixels(vo2mText, font);
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth(), y, font, vo2mText, Graphics.TEXT_JUSTIFY_RIGHT);
-        dc.drawText(dc.getWidth() - wVo2mText + 1, yLabel, fontLabel, "vO2:", Graphics.TEXT_JUSTIFY_RIGHT);
+        dc.drawText(dc.getWidth() - wVo2mText + 1, yLabel, fontLabel, "v:", Graphics.TEXT_JUSTIFY_RIGHT);
       //}
     }
   }
