@@ -22,13 +22,15 @@ module WhatAppBase {
     ShowInfoTemperature = 15,  // @@ not working yet
     ShowInfoEnergyExpenditure = 16,
     ShowInfoPowerPerBodyWeight = 17,
-    ShowInfoTestField = 18
+    ShowInfoTestField = 18,
+    ShowInfoPowerVo2Max = 19
     // @@ TODO ShowInfoAscentDescentcombine ascent/descent
   }
 
   class BaseFactory {
     hidden var mwPower as WhatPower? = null;
-    hidden var mwPowerPerWeight as WhatPower? = null;  // @@ Needed?
+    hidden var mwPowerPerWeight as WhatPower? = null;  
+    hidden var mwVo2Max as WhatVo2Max? = null;  
     hidden var mwHeartrate as WhatHeartrate? = null;
     hidden var mwCadence as WhatCadence? = null;
     hidden var mwGrade as WhatGrade? = null;
@@ -102,6 +104,7 @@ module WhatAppBase {
             wi.setCallback(cbLabel, :getPPWLabel);
           }
           break;
+        
         case ShowInfoElapsedTime:
           if (wi.getObject() instanceof WhatTime) {
             wi.setCallback(cbZoneInfo, :getElapsedZoneInfo);
@@ -124,10 +127,10 @@ module WhatAppBase {
       return wi;
     }
 
-
     function getPowerInstance() as WhatPower {
        if (mwPower != null) { return mwPower;}
-       if (ShowInfoPowerPerBodyWeight != null) { return mwPowerPerWeight;}
+       if (mwPowerPerWeight != null) { return mwPowerPerWeight; }
+       //if (mwVo2Max != null) { return mwVo2Max; }
        return null as WhatPower;
     }
 
@@ -247,6 +250,12 @@ module WhatAppBase {
             mwPowerPerWeight = new WhatPower();
           }          
           return mwPowerPerWeight;
+
+        case ShowInfoPowerVo2Max:
+          if (mwVo2Max == null) {
+            mwVo2Max = new WhatVo2Max();
+          }               
+          return mwVo2Max;
 
         case ShowInfoTestField:
           if (mwTestField == null) {

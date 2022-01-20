@@ -80,6 +80,9 @@ module WhatAppBase {
         obj.setFtp(Utils.getApplicationProperty("ftpValue", 200) as Number);
         obj.setPerSec(Utils.getApplicationProperty("powerPerSecond", 3) as Number);        
         obj.initWeight();
+      } else if (obj instanceof WhatVo2Max) {
+        obj.setFtp(Utils.getApplicationProperty("ftpValue", 200) as Number);
+        obj.initWeight();
       } else if (obj instanceof WhatPressure) {
         obj.setShowSeaLevelPressure(Utils.getApplicationProperty("showSeaLevelPressure", true) as Boolean);
         obj.setPerMin(Utils.getApplicationProperty("calcAvgPressurePerMinute", 30) as Number);

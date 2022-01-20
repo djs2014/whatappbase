@@ -1,22 +1,19 @@
 # Todo:
-- enable hit
-- start on perc
-- stop on perc 
-- 30-60 / 1-5
-
-- calc vo2 score during hit / power graph?
+-x if paused -> stop hit
+- calc vo2 score during/after hit / power graph?
 - no power use speed
-- display start/ stop text
-- font bigger
-- no speed or no rpm > 5 sec -> inactive
+- lat/lng - double ipv float
+- calc avg power 
+vo2max = ((6min power * 10.8) / weight) + 7 --> create what_power instance
+    -> cycle hit for 6 min => then calculate vo2max
 
-    
-lat/lng - double ipv float
+HIIT ipv HIT
 
-- sep class for Hit   
-  - create when enabled
-  - update/monitor 
-  - display -> starting / stopping / active = 30-60 seconds : stopped => 1: 6 min => 
+SIT = 30-60  sec
+- afzien => beep when power < % FTP
+HITT = longer yust under anaerobe threshold.
+
+
 
 loop 3 time bottom rectangle -> black on red or purple?
 cleanup object if not shown ->whatinf..=null

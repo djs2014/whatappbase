@@ -41,6 +41,8 @@ module WhatAppBase {
     hidden var stoppingCountDownSeconds as Number = 5;
     hidden var stoppingTime as Time.Moment?;
 
+    hidden var wVo2Max as WhatVo2Max?;
+
     function initialize() {}
 
     // function setFtp(ftp as Number) as Void { self.ftp = ftp; }
@@ -91,6 +93,7 @@ module WhatAppBase {
               hitElapsedTime = Time.now();
               hitElapsedRecoveryTime = null;
               hitAttentionStart();
+              if ( wVo2Max!= null) { (wVo2Max as WhatVo2Max).clearData(); }              
             }
           }
         break;
@@ -168,6 +171,13 @@ module WhatAppBase {
       } else {
         activityPaused = false;
       }
+
+      if (wVo2Max == null) {
+        wVo2Max = new WhatVo2Max();
+        (wVo2Max as WhatVo2Max).initWeight();       
+      }
+      (wVo2Max as WhatVo2Max).updateInfo(info);
+
     }
 
     function stopping() as Boolean {
@@ -225,6 +235,10 @@ module WhatAppBase {
       return hitCounter;
     }
 
+    function getVo2Max() as Float {
+      if (wVo2Max == null) { return 0.0f; }
+      return (wVo2Max as WhatVo2Max).getValue();
+    }
     // @@ settings, no sound
     // @@ countdown on display (progressbar) -> or integrated in circle of FTP/Speed ..
 

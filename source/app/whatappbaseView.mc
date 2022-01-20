@@ -224,14 +224,17 @@ module WhatAppBase {
       
 
       // @@ Nice to have transparent text (rgba)
+      var showVo2Max = false;
       var counter = hit.getCounter();      
       if (counter > 0 ) {
+        showVo2Max = true;
         var countdown = counter.format("%01d");
         dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_SYSTEM_NUMBER_THAI_HOT, countdown, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);
       } else {
         var hitElapsed = hit.getHitElapsedSeconds();
         if (hitElapsed > 0) {
+          showVo2Max = true;
           var elapsed = Utils.secondsToCompactTimeString(hitElapsed, "{m}:{s}");
           dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
           var yOf = dc.getHeight() / 8;
@@ -239,23 +242,36 @@ module WhatAppBase {
         }
       }
 
-      
+      var fontLabel = Graphics.FONT_SMALL;
       var font = Graphics.FONT_MEDIUM;
       var x = 1;
+      var yLabel = dc.getHeight() - dc.getFontHeight(fontLabel);
       var y = dc.getHeight() - dc.getFontHeight(font);
       var text = "H";
       var hitPerformed = hit.getNumberOfHits();
       if (hitPerformed > 0) { text = text + hitPerformed.format("%01d"); }
     
+      var wText = dc.getTextWidthInPixels(text, fontLabel);
       var hitRecovery = hit.getRecoveryElapsedSeconds();
-      if (hitRecovery > 0) {
-        text = text + ": " + Utils.secondsToCompactTimeString(hitRecovery, "{m}:{s}");        
-      }
 
       if (hitPerformed > 0 || hitRecovery > 0 ) {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x, y, font, text, Graphics.TEXT_JUSTIFY_LEFT);
+        dc.drawText(x, yLabel, fontLabel, text, Graphics.TEXT_JUSTIFY_LEFT);
+        if (hitRecovery > 0) {
+          showVo2Max = true;
+          text = Utils.secondsToCompactTimeString(hitRecovery, "{m}:{s}");   
+          dc.drawText(x + wText + 1, y, font, text, Graphics.TEXT_JUSTIFY_LEFT);     
+        }
       }
+
+      // @@ small label
+      //if (showVo2Max) {
+        var vo2mText = hit.getVo2Max().format("%0.1f");
+        var wVo2mText = dc.getTextWidthInPixels(vo2mText, font);
+        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(dc.getWidth(), y, font, vo2mText, Graphics.TEXT_JUSTIFY_RIGHT);
+        dc.drawText(dc.getWidth() - wVo2mText + 1, yLabel, fontLabel, "vO2:", Graphics.TEXT_JUSTIFY_RIGHT);
+      //}
     }
   }
 }
