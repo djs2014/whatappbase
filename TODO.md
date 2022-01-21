@@ -1,6 +1,10 @@
 # Todo:
 -x if paused -> stop hit
+- hit label smaller 
+- hit only line on small field
 - calc vo2 score during/after hit / power graph?
+- hide on small screen
+- no vo2max display if <= 7
 - no power use speed
 - lat/lng - double ipv float
 - calc avg power 

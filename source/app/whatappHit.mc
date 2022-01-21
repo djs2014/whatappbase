@@ -42,6 +42,7 @@ module WhatAppBase {
     hidden var stoppingTime as Time.Moment?;
 
     hidden var wVo2Max as WhatVo2Max?;
+    hidden var calcVo2Max as Boolean = false;
 
     function initialize() {}
 
@@ -56,6 +57,7 @@ module WhatAppBase {
     function monitorHit(info as Activity.Info, percOfTarget as Numeric) as Void {
       if (!hitEnabled) { return; }
       
+      calcVo2Max = ((hitStatus as HitStatus)== Active);
       updateMetrics(info);
       updateRecoveryTime();     
       if (activityPaused) {
@@ -92,7 +94,7 @@ module WhatAppBase {
               hitStatus = Active;
               hitElapsedTime = Time.now();
               hitElapsedRecoveryTime = null;
-              hitAttentionStart();
+              hitAttentionStart();              
               if ( wVo2Max!= null) { (wVo2Max as WhatVo2Max).clearData(); }              
             }
           }
@@ -176,7 +178,9 @@ module WhatAppBase {
         wVo2Max = new WhatVo2Max();
         (wVo2Max as WhatVo2Max).initWeight();       
       }
-      (wVo2Max as WhatVo2Max).updateInfo(info);
+      if (calcVo2Max) {
+        (wVo2Max as WhatVo2Max).updateInfo(info);
+      }
 
     }
 
