@@ -50,6 +50,7 @@ module WhatAppBase {
 
     function initialize() {}
 
+    function isHiddenField() as Boolean { return fieldType == Types.HiddenField; }
     function isSmallField() as Boolean { return fieldType == Types.SmallField; }
     function isWideField() as Boolean { return fieldType == Types.WideField; }
     function isLargeField() as Boolean { return fieldType == Types.LargeField; }

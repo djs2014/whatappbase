@@ -221,31 +221,47 @@ module WhatAppBase {
     function drawHit(dc as Dc) as Void {
       var hit = mHit as WhatAppHit;
       if (!hit.isEnabled()) { return;}
-      
+      hit.setPaused(mWD.isHiddenField());
 
       // @@ Nice to have transparent text (rgba)
       var counter = hit.getCounter();      
       if (counter > 0 ) {
         var countdown = counter.format("%01d");
         dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_SYSTEM_NUMBER_THAI_HOT, countdown, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_SYSTEM_NUMBER_THAI_HOT, countdown, 
+          Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
       } else {
         var hitElapsed = hit.getHitElapsedSeconds();
         if (hitElapsed > 0) {
+
+          var yHeight = dc.getFontHeight(Graphics.FONT_SYSTEM_NUMBER_HOT);
+          if(mWD.isLargeField()) {            
+            var vo2max = hit.getVo2Max();
+            if (vo2max > 7) {
+              var vo2mText = vo2max.format("%0.1f");
+              var yHeightVo2 = dc.getFontHeight(Graphics.FONT_SYSTEM_NUMBER_MILD);
+              dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_TRANSPARENT);
+              dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - yHeightVo2/3, Graphics.FONT_SYSTEM_NUMBER_MILD, vo2mText, 
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);                                
+            }
+          } else {
+            yHeight = 0;
+          }
+
           var elapsed = Utils.secondsToCompactTimeString(hitElapsed, "{m}:{s}");
-          dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-          var yOf = dc.getHeight() / 8;
-          dc.drawText(dc.getWidth()/2, dc.getHeight()/2 + yOf, Graphics.FONT_SYSTEM_NUMBER_HOT, elapsed, Graphics.TEXT_JUSTIFY_CENTER| Graphics.TEXT_JUSTIFY_VCENTER);        
+          dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);          
+          dc.drawText(dc.getWidth()/2, dc.getHeight()/2 + yHeight/2, Graphics.FONT_SYSTEM_NUMBER_HOT, elapsed,
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);        
         }
       }
 
-      var fontHitInfo = Graphics.FONT_SYSTEM_TINY;
-      if (mWD.isSmallField()) { 
-        fontHitInfo = Graphics.FONT_SYSTEM_XTINY;
-      }
+      var fontHitInfo = Graphics.FONT_SYSTEM_XTINY;
+      if (mWD.isLargeField()) { fontHitInfo = Graphics.FONT_SYSTEM_TINY; }
 
-      var x = 1;
-      var yHitInfo = dc.getHeight() - dc.getFontHeight(fontHitInfo);
+      var offset = 0;
+      if (hit.isActivityPaused() && mWD.isLargeField()) { offset = 3; }
+      var x = 1 + offset;
+      var yHitInfo = dc.getHeight() - dc.getFontHeight(fontHitInfo) - offset;
       var hitInfo = "H";
       var hitPerformed = hit.getNumberOfHits();
       if (hitPerformed > 0) { hitInfo = hitInfo + hitPerformed.format("%01d"); }    
@@ -257,21 +273,37 @@ module WhatAppBase {
         dc.drawText(x, yHitInfo, fontHitInfo, hitInfo, Graphics.TEXT_JUSTIFY_LEFT);        
         x = x + wHitInfo + 1;
 
-        var vo2max = hit.getVo2Max();
-        if (vo2max > 7) {
-          var vo2mText = vo2max.format("%0.1f");
-          var wVo2mText = dc.getTextWidthInPixels(vo2mText, fontHitInfo);
+        var scores = hit.getHitScores();
+        var startIdxOnlyLast = Utils.max(0, scores.size() - 3);        
+        for (var sIdx = startIdxOnlyLast; sIdx < scores.size(); sIdx++) {  
+          var score = scores[sIdx] as Float;              
+          //var scoreText = score.format("%0.1f");
+          var scoreText = score.format("%0.0f");
+          var wScoreText = dc.getTextWidthInPixels(scoreText, fontHitInfo);
           dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-          dc.drawText(x, yHitInfo, fontHitInfo, vo2mText, Graphics.TEXT_JUSTIFY_LEFT);              
-          x = x + wVo2mText + 1;
+          dc.drawText(x, yHitInfo, fontHitInfo, scoreText, Graphics.TEXT_JUSTIFY_LEFT);              
+          x = x + wScoreText + 1;          
         }
 
         if (hitRecovery > 0) {
           var recovery = Utils.secondsToCompactTimeString(hitRecovery, "({m}:{s})");   
           dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
-          dc.drawText(x, yHitInfo, fontHitInfo, recovery, Graphics.TEXT_JUSTIFY_LEFT);     
+          dc.drawText(dc.getWidth(), yHitInfo, fontHitInfo, recovery, Graphics.TEXT_JUSTIFY_RIGHT);     
         }
-      }        
+      } 
+
+      // @@ TODO 
+      // if (hit.isActivityPaused() && hitPerformed > 0) {
+      //   // @@ Display hit scores
+      //   var scores = hit.getHitScores();
+      //   var total = scores.size();
+      //   var w = dc.getWidth() - based on duraction
+      // 
+      //   for (var x = 0; x < scores.size(); x++) {
+      //     var 
+      //     ppx = ppx + perSec[x];
+      //   }
+      // }      
     }
     
   }

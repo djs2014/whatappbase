@@ -19,6 +19,7 @@ module WhatAppBase {
     enum HitStatus { InActive = 0, WarmingUp = 1, CoolingDown = 2, Active = 3  }     
 
     hidden var hitEnabled as Boolean = false;
+    hidden var hitPaused as Boolean = false;
     hidden var hitPerformed as Number = 0;
     hidden var hitStatus as HitStatus = InActive;
     hidden var hitStartOnPerc as Number = 150; 
@@ -43,24 +44,37 @@ module WhatAppBase {
 
     hidden var wVo2Max as WhatVo2Max?;
     hidden var calcVo2Max as Boolean = false;
+    hidden var soundEnabled as Boolean = true;
+    hidden var playTone as Boolean = true;
+
+    hidden var hitScores as Array = []; //[50.5,30.5,60.4,50.4,60.4]; // @@ TEST
+    hidden var hitDurations as Array = []; //[30,31,30,35,40]; // @@ TEST
+    hidden var currentDuration as Number = 0;
+    hidden var currentScore as Float = 0.0f;
 
     function initialize() {}
 
     // function setFtp(ftp as Number) as Void { self.ftp = ftp; }
     function setEnabled(hitEnabled as Boolean) as Void { self.hitEnabled = hitEnabled; }
+    function setPaused(hitPaused as Boolean) as Void { self.hitPaused = hitPaused; }
+    function setSoundEnabled(soundEnabled as Boolean) as Void { self.soundEnabled = soundEnabled; }
 
     function setStartOnPerc(hitStartOnPerc as Number) as Void { self.hitStartOnPerc = hitStartOnPerc; }
     function setStopOnPerc(hitStartOnPerc as Number) as Void { self.hitStopOnPerc = hitStopOnPerc; }
 
     function isEnabled() as Boolean { return hitEnabled; }
+    function isActivityPaused() as Boolean { return activityPaused; }
+
+    function getHitScores() as Array { return hitScores; }
+    function getHitDurations() as Array { return hitDurations; }
 
     function monitorHit(info as Activity.Info, percOfTarget as Numeric) as Void {
       if (!hitEnabled) { return; }
-      
+            
       calcVo2Max = ((hitStatus as HitStatus)== Active);
       updateMetrics(info);
       updateRecoveryTime();     
-      if (activityPaused) {
+      if (activityPaused || hitPaused) {
         hitStatus = InActive;
         hitCounter = 0;  
         hitElapsedRecoveryTime = null;
@@ -75,13 +89,14 @@ module WhatAppBase {
           if (percOfTarget >= hitStartOnPerc) {
             // Start warming up for x seconds
             hitStatus = WarmingUp;  
-            hitCounter = hitStartCountDownSeconds;            
+            hitCounter = hitStartCountDownSeconds; 
+            playTone = soundEnabled;           
           }
         break;
         case WarmingUp:
           System.println("Warming up");
           hitCounter = hitCounter - 1;
-          hitAttentionWarmingUp();
+          hitAttentionWarmingUp(playTone);
 
           if (percOfTarget < hitStartOnPerc) {
             // Stop warming up
@@ -91,18 +106,20 @@ module WhatAppBase {
           else {
             if (hitCounter == 0) {
               // End of warming up, start HIT
-              hitStatus = Active;
-              hitElapsedTime = Time.now();
-              hitElapsedRecoveryTime = null;
-              hitAttentionStart();              
               if ( wVo2Max!= null) { (wVo2Max as WhatVo2Max).clearData(); }              
+              hitStatus = Active;
+              hitElapsedRecoveryTime = null;
+              currentDuration = 0;
+              currentScore = 0.0f;
+              hitElapsedTime = Time.now();
+              hitAttentionStart();              
             }
           }
         break;
         case CoolingDown:
           System.println("Cooling down");
           hitCounter = hitCounter - 1;
-          hitAttentionCoolingdown();
+          hitAttentionCoolingdown(playTone);
           
           if (percOfTarget >= hitStopOnPerc) {
             // Stop cooling down
@@ -113,15 +130,19 @@ module WhatAppBase {
               hitStatus = InActive;
               hitAttentionStop();
               
-              if ((getHitElapsedSeconds() - hitStopCountDownSeconds) >= minimalElapsedSeconds) { 
-                // Proper HIT :-) @@Check FTP 
+              if (currentDuration >= minimalElapsedSeconds) { 
+                // Proper HIT :-) 
                 hitPerformed = hitPerformed + 1;
-                hitElapsedRecoveryTime = Time.now();
+                hitElapsedRecoveryTime = Time.now();  
+                hitScores.add(currentScore);
+                hitDurations.add(currentDuration);
               } else {
                 // No proper HIT 
                 hitStatus = InActive;       
                 hitCounter = 0;  
-                hitElapsedRecoveryTime = null;
+                hitElapsedRecoveryTime = null;  
+                currentScore = 0.0f;
+                currentDuration = 0;              
               }
               hitElapsedTime = null;
             }
@@ -132,6 +153,9 @@ module WhatAppBase {
           if (percOfTarget < hitStopOnPerc) {
             hitStatus = CoolingDown;  
             hitCounter = hitStopCountDownSeconds;
+            playTone = soundEnabled && (getHitElapsedSeconds() > 11);  
+            currentDuration = getHitElapsedSeconds();
+            currentScore = getVo2Max();              
           }  
         break;
       }
@@ -188,14 +212,14 @@ module WhatAppBase {
       return activityPaused || (hasSpeed && currentSpeed == 0.0f) || (hasCadence && currentCadence == 0);
     }
 
-    function hitAttentionWarmingUp() as Void {
-      if (Attention has :playTone) {
+    function hitAttentionWarmingUp(playTone as Boolean) as Void {
+      if (Attention has :playTone && soundEnabled && playTone) {
         Attention.playTone(Attention.TONE_LOUD_BEEP);
       }
     } 
 
-    function hitAttentionCoolingdown() as Void {
-      if (Attention has :playTone) {
+    function hitAttentionCoolingdown(playTone as Boolean) as Void {
+      if (Attention has :playTone && soundEnabled && playTone) {
         Attention.playTone(Attention.TONE_LOUD_BEEP);
       }
     } 
@@ -243,6 +267,7 @@ module WhatAppBase {
       if (wVo2Max == null) { return 0.0f; }
       return (wVo2Max as WhatVo2Max).getValue();
     }
+    
     // @@ settings, no sound
     // @@ countdown on display (progressbar) -> or integrated in circle of FTP/Speed ..
 

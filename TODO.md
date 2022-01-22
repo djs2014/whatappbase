@@ -1,4 +1,8 @@
 # Todo:
+- elapsed < 10 no sound
+- display not visible width==0? no sound/ inactive
+- #hits>=7 -> no sound
+- array of vo2max per hit -> in paused show graph + width is relative duration
 -x if paused -> stop hit
 - hit label smaller 
 - hit only line on small field

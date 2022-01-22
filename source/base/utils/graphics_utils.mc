@@ -6,6 +6,7 @@ import Toybox.Math;
 module WhatAppBase {
   (:Utils)
   module Utils {
+    function isHiddenField(dc as Dc) as Boolean { return getFieldType(dc) == Types.HiddenField; }
     function isSmallField(dc as Dc) as Boolean { return getFieldType(dc) == Types.SmallField; }
     function isWideField(dc as Dc) as Boolean { return getFieldType(dc) == Types.WideField; }
     function isLargeField(dc as Dc) as Boolean { return getFieldType(dc) == Types.LargeField; }
@@ -19,7 +20,9 @@ module WhatAppBase {
       var height = dc.getHeight();
       var fieldType = Types.SmallField;
 
-      if (width >= 246) {
+      if (width == 0) {
+        fieldType = Types.HiddenField;        
+      } else if (width >= 246) {
         fieldType = Types.WideField;
         if (height >= 100) {
           fieldType = Types.LargeField;
