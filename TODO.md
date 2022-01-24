@@ -1,4 +1,9 @@
 # Todo:
+
+setting enable sound
+hx (vo2 current) xx  xx  xx
+vo2 current gray
+
 - elapsed < 10 no sound
 - display not visible width==0? no sound/ inactive
 - #hits>=7 -> no sound

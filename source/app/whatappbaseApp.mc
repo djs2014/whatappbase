@@ -58,6 +58,9 @@ module WhatAppBase {
         mHit.setEnabled(Utils.getApplicationProperty("hitEnabled", false) as Boolean);
         mHit.setStartOnPerc(Utils.getApplicationProperty("hitStartOnPerc", 150) as Number);
         mHit.setStopOnPerc(Utils.getApplicationProperty("hitStopOnPerc", 100) as Number);
+        mHit.setSoundEnabled(Utils.getApplicationProperty("hitSoundEnabled", false) as Boolean);
+        mHit.setStartCountDownSeconds(Utils.getApplicationProperty("hitStartCountDownSeconds", 5) as Number);
+        mHit.setStopCountDownSeconds(Utils.getApplicationProperty("hitStopCountDownSeconds", 10) as Number);
               
         System.println("Settings loaded");
         if (mFactory.isDebug()) {

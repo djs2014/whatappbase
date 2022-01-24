@@ -221,7 +221,7 @@ module WhatAppBase {
     function drawHit(dc as Dc) as Void {
       var hit = mHit as WhatAppHit;
       if (!hit.isEnabled()) { return;}
-      hit.setPaused(mWD.isHiddenField());
+      // @@ TODO hit.setPaused(mWD.isHiddenField());
 
       // @@ Nice to have transparent text (rgba)
       var counter = hit.getCounter();      
@@ -240,7 +240,7 @@ module WhatAppBase {
             if (vo2max > 7) {
               var vo2mText = vo2max.format("%0.1f");
               var yHeightVo2 = dc.getFontHeight(Graphics.FONT_SYSTEM_NUMBER_MILD);
-              dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_TRANSPARENT);
+              dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
               dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - yHeightVo2/3, Graphics.FONT_SYSTEM_NUMBER_MILD, vo2mText, 
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);                                
             }
@@ -282,7 +282,7 @@ module WhatAppBase {
           var wScoreText = dc.getTextWidthInPixels(scoreText, fontHitInfo);
           dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
           dc.drawText(x, yHitInfo, fontHitInfo, scoreText, Graphics.TEXT_JUSTIFY_LEFT);              
-          x = x + wScoreText + 1;          
+          x = x + wScoreText + 3;          
         }
 
         if (hitRecovery > 0) {
@@ -292,6 +292,14 @@ module WhatAppBase {
         }
       } 
 
+      if (hitRecovery == 0) {
+        var vo2m = hit.getVo2Max();
+        if (vo2m > 7) {
+          var vo2mT = "(" + vo2m.format("%0.0f") + ")";
+          dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+          dc.drawText(dc.getWidth(), yHitInfo, fontHitInfo, vo2mT, Graphics.TEXT_JUSTIFY_RIGHT);     
+        }
+      }
       // @@ TODO 
       // if (hit.isActivityPaused() && hitPerformed > 0) {
       //   // @@ Display hit scores

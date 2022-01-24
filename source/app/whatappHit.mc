@@ -61,6 +61,8 @@ module WhatAppBase {
 
     function setStartOnPerc(hitStartOnPerc as Number) as Void { self.hitStartOnPerc = hitStartOnPerc; }
     function setStopOnPerc(hitStartOnPerc as Number) as Void { self.hitStopOnPerc = hitStopOnPerc; }
+    function setStartCountDownSeconds(hitStartCountDownSeconds as Number) as Void { self.hitStartCountDownSeconds = hitStartCountDownSeconds; }
+    function setStopCountDownSeconds(hitStopCountDownSeconds as Number) as Void { self.hitStopCountDownSeconds = hitStopCountDownSeconds; }
 
     function isEnabled() as Boolean { return hitEnabled; }
     function isActivityPaused() as Boolean { return activityPaused; }
