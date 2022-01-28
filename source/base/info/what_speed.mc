@@ -74,6 +74,12 @@ module WhatAppBase {
       return _getZoneInfo(getMaxSpeed(), false);
     }
 
+    //
+
+    function getPercOfTarget() as Numeric {
+      return Utils.percentageOf(getCurrentSpeed(), targetSpeed);
+    }
+    
     // --
     hidden function getAverageSpeed() as Float {
       if (avarageSpeed == null) {

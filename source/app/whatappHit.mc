@@ -44,7 +44,7 @@ module WhatAppBase {
 
     hidden var wVo2Max as WhatVo2Max?;
     hidden var calcVo2Max as Boolean = false;
-    hidden var soundEnabled as Boolean = true;
+    hidden var soundEnabled as Boolean = false;
     hidden var playTone as Boolean = true;
 
     hidden var hitScores as Array = []; //[50.5,30.5,60.4,50.4,60.4]; // @@ TEST
@@ -81,6 +81,7 @@ module WhatAppBase {
         hitCounter = 0;  
         hitElapsedRecoveryTime = null;
         hitElapsedTime = null;
+        playTone = soundEnabled;  
         return;
       }
       //System.println(percOfTarget);
@@ -130,16 +131,16 @@ module WhatAppBase {
           } else {      
             if (hitCounter == 0) {
               hitStatus = InActive;
-              hitAttentionStop();
               
               if (currentDuration >= minimalElapsedSeconds) { 
+                hitAttentionStop();
                 // Proper HIT :-) 
                 hitPerformed = hitPerformed + 1;
                 hitElapsedRecoveryTime = Time.now();  
                 hitScores.add(currentScore);
                 hitDurations.add(currentDuration);
               } else {
-                // No proper HIT 
+                // No proper HIT (no sound)
                 hitStatus = InActive;       
                 hitCounter = 0;  
                 hitElapsedRecoveryTime = null;  
@@ -216,25 +217,58 @@ module WhatAppBase {
 
     function hitAttentionWarmingUp(playTone as Boolean) as Void {
       if (Attention has :playTone && soundEnabled && playTone) {
-        Attention.playTone(Attention.TONE_LOUD_BEEP);
+        if (Attention has :ToneProfile) {
+          var toneProfile = [ new Attention.ToneProfile( 250, 250)] as Lang.Array<Attention.ToneProfile>;
+          Attention.playTone({:toneProfile=>toneProfile});
+        } else {
+          Attention.playTone(Attention.TONE_LOUD_BEEP);
+        }
       }
     } 
 
     function hitAttentionCoolingdown(playTone as Boolean) as Void {
       if (Attention has :playTone && soundEnabled && playTone) {
-        Attention.playTone(Attention.TONE_LOUD_BEEP);
+        if (Attention has :ToneProfile) {
+          var toneProfile =
+          [
+              new Attention.ToneProfile( 250, 150)              
+          ] as Lang.Array<Attention.ToneProfile>;
+          Attention.playTone({:toneProfile=>toneProfile});
+        } else {
+          Attention.playTone(Attention.TONE_LOUD_BEEP);
+        }     
       }
     } 
 
     function hitAttentionStart() as Void {
       if (Attention has :playTone) {
-        Attention.playTone(Attention.TONE_ALERT_HI);
+        // if (Attention has :ToneProfile) {
+        //     var toneProfile =
+        //     [
+        //         new Attention.ToneProfile( 50, 150),
+        //         new Attention.ToneProfile( 250, 350),
+        //         new Attention.ToneProfile( 250, 550)                
+        //     ] as Lang.Array<Attention.ToneProfile>;
+        //     Attention.playTone({:toneProfile=>toneProfile});
+        // } else {
+          Attention.playTone(Attention.TONE_ALERT_HI);
+        // }
       }
     } 
 
     function hitAttentionStop() as Void {
       if (Attention has :playTone) {
-        Attention.playTone(Attention.TONE_ALERT_LO);
+        if (Attention has :ToneProfile) {
+            var toneProfile =
+            [
+                new Attention.ToneProfile( 250, 250),                
+                new Attention.ToneProfile( 250, 150),
+                new Attention.ToneProfile( 50, 50)
+            ] as Lang.Array<Attention.ToneProfile>;
+            Attention.playTone({:toneProfile=>toneProfile});
+        } else {
+          Attention.playTone(Attention.TONE_ALERT_LO);
+        }
       }
     } 
 

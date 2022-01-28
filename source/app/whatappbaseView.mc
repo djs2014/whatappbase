@@ -71,13 +71,21 @@ module WhatAppBase {
       if (!hit.isEnabled()) { return;}
       
       var wP = mFactory.getPowerInstance();
-      if (wP == null) {
-        hit.setEnabled(false);
+      if (wP != null) {
+        var pot = (wP as WhatPower).getPercOfTarget();      
+        hit.monitorHit(info, pot);
         return;
       }
       
-      var pot = (wP as WhatPower).getPercOfTarget();      
-      hit.monitorHit(info, pot);
+      var wS = mFactory.getSpeedInstance();
+      if (wS != null) {
+        var pots = (wS as WhatSpeed).getPercOfTarget();      
+        hit.monitorHit(info, pots);
+        return;
+      }
+
+      hit.setEnabled(false);
+      return;
     }
 
     // Display the value you computed here. This will be called
@@ -240,7 +248,7 @@ module WhatAppBase {
             if (vo2max > 7) {
               var vo2mText = vo2max.format("%0.1f");
               var yHeightVo2 = dc.getFontHeight(Graphics.FONT_SYSTEM_NUMBER_MILD);
-              dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+              dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
               dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - yHeightVo2/3, Graphics.FONT_SYSTEM_NUMBER_MILD, vo2mText, 
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);                                
             }

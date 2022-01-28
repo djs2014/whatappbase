@@ -1,10 +1,17 @@
 # Todo:
+TEST: sound disabled!! debug property
 
-setting enable sound
-hx (vo2 current) xx  xx  xx
-vo2 current gray
+no sound when stopped / only start - or small sound
+minimized mode -> not center screen counter/timer
+    - show right bottom corner
+    - option to show in bw (sunny day)
+    - show for x seconds score when proper hit 
+x setting enable sound
+x hx (vo2 current) xx  xx  xx
+x vo2 current gray
+if no whatp use whatspeed
 
-- elapsed < 10 no sound
+x - elapsed < 10 no sound
 - display not visible width==0? no sound/ inactive
 - #hits>=7 -> no sound
 - array of vo2max per hit -> in paused show graph + width is relative duration

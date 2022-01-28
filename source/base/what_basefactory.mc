@@ -134,6 +134,11 @@ module WhatAppBase {
        return null as WhatPower;
     }
 
+    function getSpeedInstance() as WhatSpeed {
+       if (mwSpeed != null) { return mwSpeed;}
+       return null as WhatSpeed;
+    }
+
     function getInstance(showInfo as ShowInfo) as WhatInfoBase {
       return _getInstance(showInfo, mHrFallback, mTrainingEffectFallback);
     }
