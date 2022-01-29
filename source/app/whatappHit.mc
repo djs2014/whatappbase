@@ -121,8 +121,8 @@ module WhatAppBase {
         break;
         case CoolingDown:
           System.println("Cooling down");
-          hitCounter = hitCounter - 1;
           hitAttentionCoolingdown(playTone);
+          hitCounter = hitCounter - 1;
           
           if (percOfTarget >= hitStopOnPerc) {
             // Stop cooling down
@@ -156,7 +156,9 @@ module WhatAppBase {
           if (percOfTarget < hitStopOnPerc) {
             hitStatus = CoolingDown;  
             hitCounter = hitStopCountDownSeconds;
-            playTone = soundEnabled && (getHitElapsedSeconds() > 11);  
+            hitAttentionWarn();
+            // only sound when proper hit
+            playTone = soundEnabled && (getHitElapsedSeconds() >= minimalElapsedSeconds);  
             currentDuration = getHitElapsedSeconds();
             currentScore = getVo2Max();              
           }  
@@ -218,8 +220,8 @@ module WhatAppBase {
     function hitAttentionWarmingUp(playTone as Boolean) as Void {
       if (Attention has :playTone && soundEnabled && playTone) {
         if (Attention has :ToneProfile) {
-          var toneProfile = [ new Attention.ToneProfile( 250, 250)] as Lang.Array<Attention.ToneProfile>;
-          Attention.playTone({:toneProfile=>toneProfile});
+          var toneProfileBeeps = [ new Attention.ToneProfile( 1500, 50) ] as Lang.Array<Attention.ToneProfile>;
+          Attention.playTone({:toneProfile=>toneProfileBeeps});
         } else {
           Attention.playTone(Attention.TONE_LOUD_BEEP);
         }
@@ -228,44 +230,47 @@ module WhatAppBase {
 
     function hitAttentionCoolingdown(playTone as Boolean) as Void {
       if (Attention has :playTone && soundEnabled && playTone) {
-        if (Attention has :ToneProfile) {
-          var toneProfile =
-          [
-              new Attention.ToneProfile( 250, 150)              
-          ] as Lang.Array<Attention.ToneProfile>;
-          Attention.playTone({:toneProfile=>toneProfile});
+        if (Attention has :ToneProfile) { 
+          var toneProfileBeeps = [ new Attention.ToneProfile( 1000, 50) ] as Lang.Array<Attention.ToneProfile>;      
+          Attention.playTone({:toneProfile=>toneProfileBeeps});
         } else {
           Attention.playTone(Attention.TONE_LOUD_BEEP);
         }     
       }
     } 
 
+    function hitAttentionWarn() as Void {
+      if (Attention has :playTone) {
+       if (Attention has :ToneProfile) { 
+          var toneProfileBeeps = [ 
+            new Attention.ToneProfile( 1000, 40),
+            new Attention.ToneProfile( 1500, 100),
+          ] as Lang.Array<Attention.ToneProfile>;      
+          Attention.playTone({:toneProfile=>toneProfileBeeps});
+        }  
+      }
+    } 
+
     function hitAttentionStart() as Void {
       if (Attention has :playTone) {
-        // if (Attention has :ToneProfile) {
-        //     var toneProfile =
-        //     [
-        //         new Attention.ToneProfile( 50, 150),
-        //         new Attention.ToneProfile( 250, 350),
-        //         new Attention.ToneProfile( 250, 550)                
-        //     ] as Lang.Array<Attention.ToneProfile>;
-        //     Attention.playTone({:toneProfile=>toneProfile});
-        // } else {
-          Attention.playTone(Attention.TONE_ALERT_HI);
-        // }
+        if (Attention has :ToneProfile) { 
+          var toneProfileBeeps = [ new Attention.ToneProfile( 1100, 150) ] as Lang.Array<Attention.ToneProfile>;      
+          Attention.playTone({:toneProfile=>toneProfileBeeps});
+        } else {
+          Attention.playTone(Attention.TONE_ALERT_HI);        
+        }
       }
     } 
 
     function hitAttentionStop() as Void {
       if (Attention has :playTone) {
-        if (Attention has :ToneProfile) {
-            var toneProfile =
-            [
-                new Attention.ToneProfile( 250, 250),                
-                new Attention.ToneProfile( 250, 150),
-                new Attention.ToneProfile( 50, 50)
-            ] as Lang.Array<Attention.ToneProfile>;
-            Attention.playTone({:toneProfile=>toneProfile});
+        if (Attention has :ToneProfile) {            
+            var toneProfileBeeps = [ 
+              new Attention.ToneProfile( 1100, 100), 
+              new Attention.ToneProfile( 800, 80), 
+              new Attention.ToneProfile( 500, 30) 
+              ] as Lang.Array<Attention.ToneProfile>;
+            Attention.playTone({:toneProfile=>toneProfileBeeps});
         } else {
           Attention.playTone(Attention.TONE_ALERT_LO);
         }
