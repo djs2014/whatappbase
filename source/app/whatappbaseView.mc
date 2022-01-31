@@ -255,8 +255,12 @@ module WhatAppBase {
       if (counter > 0 ) {
         var countdown = counter.format("%01d");
         dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_SYSTEM_NUMBER_THAI_HOT, countdown, 
-          Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        if (minimal) {          
+          dc.drawText(dc.getWidth() - vo2mTWidth - 1, yHitInfo, fontHitInfo, countdown, Graphics.TEXT_JUSTIFY_RIGHT);         
+        } else {
+          dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_SYSTEM_NUMBER_THAI_HOT, countdown, 
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
       } else {
         var hitElapsed = hit.getHitElapsedSeconds();
         if (hitElapsed > 0) {          
