@@ -17,8 +17,13 @@ module WhatAppBase {
   class WhatAppHit {
     
     enum HitStatus { InActive = 0, WarmingUp = 1, CoolingDown = 2, Active = 3  }     
+    enum HitMode { HitDisabled = 0, HitMinimal = 1, HitNormal = 2  }     
+    enum HitSound { NoSound = 0, StartOnlySound = 1, LowNoise = 2, LoudNoise = 3  }     
 
-    hidden var hitEnabled as Boolean = false;
+    hidden var hitMode as HitMode = HitDisabled;
+    hidden var hitSound as HitSound = LowNoise;
+    hidden var soundEnabled as Boolean = false;
+    
     hidden var hitPaused as Boolean = false;
     hidden var hitPerformed as Number = 0;
     hidden var hitStatus as HitStatus = InActive;
@@ -44,7 +49,6 @@ module WhatAppBase {
 
     hidden var wVo2Max as WhatVo2Max?;
     hidden var calcVo2Max as Boolean = false;
-    hidden var soundEnabled as Boolean = false;
     hidden var playTone as Boolean = true;
 
     hidden var hitScores as Array = []; //[50.5,30.5,60.4,50.4,60.4]; // @@ TEST
@@ -54,24 +58,28 @@ module WhatAppBase {
 
     function initialize() {}
 
-    // function setFtp(ftp as Number) as Void { self.ftp = ftp; }
-    function setEnabled(hitEnabled as Boolean) as Void { self.hitEnabled = hitEnabled; }
+    function setMode(hitMode as HitMode) as Void { self.hitMode = hitMode; }
+    function setSound(hitSound as HitSound) as Void { 
+      self.hitSound = hitSound;
+      soundEnabled = (self.hitSound as HitSound) != NoSound;
+    }
+        
     function setPaused(hitPaused as Boolean) as Void { self.hitPaused = hitPaused; }
-    function setSoundEnabled(soundEnabled as Boolean) as Void { self.soundEnabled = soundEnabled; }
 
     function setStartOnPerc(hitStartOnPerc as Number) as Void { self.hitStartOnPerc = hitStartOnPerc; }
     function setStopOnPerc(hitStartOnPerc as Number) as Void { self.hitStopOnPerc = hitStopOnPerc; }
     function setStartCountDownSeconds(hitStartCountDownSeconds as Number) as Void { self.hitStartCountDownSeconds = hitStartCountDownSeconds; }
     function setStopCountDownSeconds(hitStopCountDownSeconds as Number) as Void { self.hitStopCountDownSeconds = hitStopCountDownSeconds; }
 
-    function isEnabled() as Boolean { return hitEnabled; }
+    function isEnabled() as Boolean { return (self.hitMode as HitMode) != HitDisabled; }
+    function isMinimal() as Boolean { return (self.hitMode as HitMode) == HitMinimal; }
     function isActivityPaused() as Boolean { return activityPaused; }
-
+    
     function getHitScores() as Array { return hitScores; }
     function getHitDurations() as Array { return hitDurations; }
 
     function monitorHit(info as Activity.Info, percOfTarget as Numeric) as Void {
-      if (!hitEnabled) { return; }
+      if (!isEnabled()) { return; }
             
       calcVo2Max = ((hitStatus as HitStatus)== Active);
       updateMetrics(info);
@@ -218,7 +226,7 @@ module WhatAppBase {
     }
 
     function hitAttentionWarmingUp(playTone as Boolean) as Void {
-      if (Attention has :playTone && soundEnabled && playTone) {
+      if (Attention has :playTone && soundEnabled && playTone ) {
         if (Attention has :ToneProfile) {
           var toneProfileBeeps = [ new Attention.ToneProfile( 1500, 50) ] as Lang.Array<Attention.ToneProfile>;
           Attention.playTone({:toneProfile=>toneProfileBeeps});
@@ -229,8 +237,8 @@ module WhatAppBase {
     } 
 
     function hitAttentionCoolingdown(playTone as Boolean) as Void {
-      if (Attention has :playTone && soundEnabled && playTone) {
-        if (Attention has :ToneProfile) { 
+      if (Attention has :playTone && soundEnabled && playTone && (hitSound != StartOnlySound)) {
+        if (Attention has :ToneProfile && (hitSound == LowNoise)) { 
           var toneProfileBeeps = [ new Attention.ToneProfile( 1000, 50) ] as Lang.Array<Attention.ToneProfile>;      
           Attention.playTone({:toneProfile=>toneProfileBeeps});
         } else {
@@ -240,7 +248,7 @@ module WhatAppBase {
     } 
 
     function hitAttentionWarn() as Void {
-      if (Attention has :playTone) {
+      if (Attention has :playTone && soundEnabled) {
        if (Attention has :ToneProfile) { 
           var toneProfileBeeps = [ 
             new Attention.ToneProfile( 1000, 40),
@@ -252,8 +260,8 @@ module WhatAppBase {
     } 
 
     function hitAttentionStart() as Void {
-      if (Attention has :playTone) {
-        if (Attention has :ToneProfile) { 
+      if (Attention has :playTone && soundEnabled) {
+        if (Attention has :ToneProfile && (hitSound == LowNoise)) { 
           var toneProfileBeeps = [ new Attention.ToneProfile( 1100, 150) ] as Lang.Array<Attention.ToneProfile>;      
           Attention.playTone({:toneProfile=>toneProfileBeeps});
         } else {
@@ -263,8 +271,8 @@ module WhatAppBase {
     } 
 
     function hitAttentionStop() as Void {
-      if (Attention has :playTone) {
-        if (Attention has :ToneProfile) {            
+      if (Attention has :playTone && soundEnabled && (hitSound != StartOnlySound)) {
+        if (Attention has :ToneProfile && (hitSound == LowNoise)) {            
             var toneProfileBeeps = [ 
               new Attention.ToneProfile( 1100, 100), 
               new Attention.ToneProfile( 800, 80), 

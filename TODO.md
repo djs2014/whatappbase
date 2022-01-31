@@ -1,5 +1,9 @@
 # Todo:
-TEST: sound disabled!! debug property
+- hitt: no, minimal, normal
+  - setEnabled -> mode
+    - no and normal, minimal -> no center timer/counter -> is located right bottom
+- sound: no, start/stop, quiet, loud
+- 
 
 no sound when stopped / only start - or small sound
 minimized mode -> not center screen counter/timer
