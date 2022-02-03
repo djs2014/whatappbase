@@ -1,6 +1,8 @@
 import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
+import Toybox.Time;
+import Toybox.Background;
 using WhatAppBase.Utils as Utils;
 
 module WhatAppBase {
@@ -10,7 +12,7 @@ module WhatAppBase {
     var mDebug as Boolean = false;
 
     var mHit as WhatAppHit = new WhatAppHit();
-    // const FIVE_MINUTES = new Time.Duration(5 * 60);
+    const FIVE_MINUTES as Time.Duration = new Time.Duration(5 * 60);
 
     var _showInfoLayout as LayoutMiddle = LayoutMiddleCircle;
 
@@ -29,6 +31,11 @@ module WhatAppBase {
     function getInitialView() as Array<Views or InputDelegates> ? {
       loadUserSettings();
       return [new WhatAppView(self)] as Array < Views or InputDelegates > ;
+    }
+
+    function onBackgroundData(data as Application.PersistableType) as Void {
+      // Only temperature for now
+      Application.Storage.setValue("Temperature", data);
     }
 
     function onSettingsChanged() as Void { loadUserSettings(); }
@@ -112,12 +119,13 @@ module WhatAppBase {
         obj.setTargetValue(Utils.getApplicationProperty("targetTestValue", 100) as Number);
         obj.setValue(Utils.getApplicationProperty("testValue", 145));
         obj.setAltValue(Utils.getApplicationProperty("testAltValue", 80) as Number);
-      // } else if (obj instanceof WhatTemperature) {
-      //   if (System has : ServiceDelegate) {
-      //     Background.registerForTemporalEvent(FIVE_MINUTES);
-      //   } else {
-      //     System.println("**** background not available on this device ****");
-      //   }
+      } else if (obj instanceof WhatTemperature) {
+        obj.startBGservice(FIVE_MINUTES);
+        if (System has : ServiceDelegate) {
+          Background.registerForTemporalEvent(FIVE_MINUTES);
+        } else {
+          System.println("**** background not available on this device ****");
+        }
       }
     }
   }

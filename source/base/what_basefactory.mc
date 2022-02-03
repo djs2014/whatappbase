@@ -20,7 +20,7 @@ module WhatAppBase {
     ShowInfoElapsedTime = 12,
     ShowInfoTimer = 13,
     ShowInfoTrainingEffect = 14,
-    ShowInfoTemperature = 15,  // @@ not working yet
+    ShowInfoTemperature = 15,
     ShowInfoEnergyExpenditure = 16,
     ShowInfoPowerPerBodyWeight = 17,
     ShowInfoTestField = 18,
@@ -39,7 +39,7 @@ module WhatAppBase {
     hidden var mwAltitude as WhatAltitude? = null;
     hidden var mwSpeed as WhatSpeed? = null;
     hidden var mwPressure as WhatPressure? = null;
-    // hidden var mwTemperature as WhatTemperature; //@@ TODO show current weather in datafield
+    hidden var mwTemperature as WhatTemperature? = null; 
     hidden var mwCalories as WhatCalories? = null;
     hidden var mwTrainingEffect as WhatTrainingEffect? = null;
     hidden var mwTime as WhatTime? = null;
@@ -254,11 +254,11 @@ module WhatAppBase {
           }
           return mwTrainingEffect;
 
-          // case ShowInfoTemperature:
-          //   if (mwTemperature == null && createIfNotExists) {
-          //     mwTemperature = new WhatTemperature();
-          //   }
-          //   return mwTemperature;
+        case ShowInfoTemperature:
+          if (mwTemperature == null && createIfNotExists) {
+            mwTemperature = new WhatTemperature();
+          }
+          return mwTemperature;
 
         case ShowInfoEnergyExpenditure:
           if (mwEngergyExpenditure == null && createIfNotExists) {
@@ -342,11 +342,12 @@ module WhatAppBase {
           mwTrainingEffect = null;
           break;
 
-          // case ShowInfoTemperature:
-          //   if (mwTemperature == null && createIfNotExists) {
-          //     mwTemperature = new WhatTemperature();
-          //   }
-          //   return mwTemperature;
+        case ShowInfoTemperature:
+          if (mwTemperature != null) {
+            mwTemperature.stopBGservice();
+          }
+          mwTemperature = null;
+          break;
 
         case ShowInfoEnergyExpenditure:
           mwEngergyExpenditure = null;
