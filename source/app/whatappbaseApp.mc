@@ -59,14 +59,12 @@ module WhatAppBase {
         mHit.setMode(Utils.getApplicationProperty("hitMode", WhatAppHit.HitDisabled) as WhatAppHit.HitMode);
         mHit.setSound(Utils.getApplicationProperty("hitSound", WhatAppHit.LowNoise) as WhatAppHit.HitSound);
 
-       // mHit.setEnabled(Utils.getApplicationProperty("hitEnabled", false) as Boolean);
-       // mHit.setSoundEnabled(Utils.getApplicationProperty("hitSoundEnabled", false) as Boolean);
-
         mHit.setStartOnPerc(Utils.getApplicationProperty("hitStartOnPerc", 150) as Number);
         mHit.setStopOnPerc(Utils.getApplicationProperty("hitStopOnPerc", 100) as Number);
         mHit.setStartCountDownSeconds(Utils.getApplicationProperty("hitStartCountDownSeconds", 5) as Number);
         mHit.setStopCountDownSeconds(Utils.getApplicationProperty("hitStopCountDownSeconds", 10) as Number);
               
+        mFactory.cleanUp();      
         System.println("Settings loaded");
         if (mFactory.isDebug()) {
           mFactory.infoSettings();
