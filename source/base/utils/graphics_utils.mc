@@ -6,6 +6,7 @@ import Toybox.Math;
 module WhatAppBase {
   (:Utils)
   module Utils {
+    function isHiddenField(dc as Dc) as Boolean { return getFieldType(dc) == Types.HiddenField; }
     function isSmallField(dc as Dc) as Boolean { return getFieldType(dc) == Types.SmallField; }
     function isWideField(dc as Dc) as Boolean { return getFieldType(dc) == Types.WideField; }
     function isLargeField(dc as Dc) as Boolean { return getFieldType(dc) == Types.LargeField; }
@@ -19,7 +20,9 @@ module WhatAppBase {
       var height = dc.getHeight();
       var fieldType = Types.SmallField;
 
-      if (width >= 246) {
+      if (width == 0) {
+        fieldType = Types.HiddenField;        
+      } else if (width >= 246) {
         fieldType = Types.WideField;
         if (height >= 100) {
           fieldType = Types.LargeField;
@@ -98,7 +101,7 @@ module WhatAppBase {
     }
 
     function drawPercentagePointerOnCircle(dc as Dc, x as Number, y as Number, radius as Number, perc as Numeric, penWidth as Number, 
-      loopIndicator as Number) as Void {
+      indicatorOffset as Float) as Void {
       if (perc == null || perc == 0) {
         return;
       }
@@ -112,15 +115,21 @@ module WhatAppBase {
       dc.setPenWidth(penWidth);
       dc.drawArc(x, y, radius, Graphics.ARC_CLOCKWISE, degreeStart, degreeEnd);
       
-      if (loops > 0 && loopIndicator != 0) {
+      if (loops > 0) {
         // lines        
         dc.setPenWidth(1.0);
-        var x1 = x + radius * loopIndicator;
+        var x1 = x + indicatorOffset; 
         var y1 = y - 2;
         var x2 = x1;
         var y2 = y + 2;
         while (loops > 0 ){
-          x1 = x1 + 1 * (-1 * loopIndicator);
+          if (indicatorOffset > 0) {
+            // draw next left
+            x1 = x1 -2;
+          } else {
+            // draw next right
+            x1 = x1 + 2;
+          }
           x2 = x1;
           dc.drawLine(x1, y1, x2, y2);
           loops = loops - 1;          

@@ -1,7 +1,51 @@
 # Todo:
-cleanup object if not shown ->whatinf..
-watch air quality
+max for other info* ..
+avg ??
+x - hitt: no, minimal, normal
+x  - setEnabled -> mode
+x    - no and normal, minimal -> no center timer/counter -> is located right bottom
+x- sound: no, start/stop, quiet, loud
+- 
 
+no sound when stopped / only start - or small sound
+minimized mode -> not center screen counter/timer
+    - show right bottom corner
+    - option to show in bw (sunny day)
+    - show for x seconds score when proper hit 
+x setting enable sound
+x hx (vo2 current) xx  xx  xx
+x vo2 current gray
+if no whatp use whatspeed
+
+x - elapsed < 10 no sound
+- display not visible width==0? no sound/ inactive
+- #hits>=7 -> no sound
+- array of vo2max per hit -> in paused show graph + width is relative duration
+-x if paused -> stop hit
+- hit label smaller 
+- hit only line on small field
+- calc vo2 score during/after hit / power graph?
+- hide on small screen
+- no vo2max display if <= 7
+- no power use speed
+- lat/lng - double ipv float
+- calc avg power 
+vo2max = ((6min power * 10.8) / weight) + 7 --> create what_power instance
+    -> cycle hit for 6 min => then calculate vo2max
+
+HIIT ipv HIT
+
+SIT = 30-60  sec
+- afzien => beep when power < % FTP
+HITT = longer yust under anaerobe threshold.
+
+
+
+loop 3 time bottom rectangle -> black on red or purple?
+cleanup object if not shown ->whatinf..=null
+watch air quality
+cleanup whatdisplay code
+one screen: show stats when paused
 
 air quality data?
 Test app:

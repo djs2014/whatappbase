@@ -48,13 +48,9 @@ module WhatAppBase {
     var fieldCenterX as Number = 0;
     var fieldType as Types.FieldType = Types.SmallField;
 
-    function initialize() {
-      // mFontsBottomValue[0] = Graphics.FONT_TINY;
-      // mFontsBottomValue[1] = Graphics.FONT_SYSTEM_SMALL;
-      // mFontsBottomValue[2] = Graphics.FONT_SYSTEM_MEDIUM;
-      // mFontsBottomValue[3] = Graphics.FONT_SYSTEM_LARGE;
-    }
+    function initialize() {}
 
+    function isHiddenField() as Boolean { return fieldType == Types.HiddenField; }
     function isSmallField() as Boolean { return fieldType == Types.SmallField; }
     function isWideField() as Boolean { return fieldType == Types.WideField; }
     function isLargeField() as Boolean { return fieldType == Types.LargeField; }
@@ -333,7 +329,7 @@ module WhatAppBase {
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc, outlinePerc, outlineColor, altZone.color100perc);
 
-      drawMaxInfo(barX, mRadiusInfoField, maxPercentage, -2);
+      drawMaxInfo(barX, mRadiusInfoField, maxPercentage, -1);
 
       var fontValue = Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
       // @@ determine labelFont??//
@@ -341,7 +337,7 @@ module WhatAppBase {
                           mFontLabelAdditional, label, mFontLabelAdditional,
                           percentage);
 
-      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
+      drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);      
     }
 
     function drawRightInfo(label as String, value as String, units as String, 
@@ -358,7 +354,7 @@ module WhatAppBase {
       // circle
       drawAdditonalInfoBG(barX, mRadiusInfoField, backColor, percentage,
                           color100perc, outlinePerc, outlineColor, altZone.color100perc);
-      drawMaxInfo(barX, mRadiusInfoField, maxPercentage, 2);
+      drawMaxInfo(barX, mRadiusInfoField, maxPercentage, 1);
 
       // units + value
       var fontValue = Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
@@ -411,7 +407,9 @@ module WhatAppBase {
       var w = width - outlineWidth / 2;
       var y = fieldCenterY;
       dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-      Utils.drawPercentagePointerOnCircle(dc, barX, y, w, maxPercentage, outlineWidth, loopIndicator);
+      // width of avg-outline is 1/8
+      var indicatorOffset = width * 7/8.0 * loopIndicator;
+      Utils.drawPercentagePointerOnCircle(dc, barX, y, w, maxPercentage, outlineWidth, indicatorOffset);
     }
 
     hidden function drawAdditonalInfoFG(x as Number, color as ColorType, value as String, fontValue as FontType, units as String,

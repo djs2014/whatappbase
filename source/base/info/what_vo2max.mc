@@ -8,8 +8,8 @@ module WhatAppBase {
 
   // ( : Info) module Info {
   
-  class WhatPower extends WhatInfoBase {
-    hidden var perSec as Number = 3;
+  class WhatVo2Max extends WhatInfoBase {
+    hidden var perSec as Number = 360; // 6min
     hidden var ftp as Number = 250;
     hidden var dataPerSec as Array = [];
 
@@ -29,6 +29,10 @@ module WhatAppBase {
       userWeightKg = weight / 1000.0;
     }
 
+    function clearData() as Void {
+      dataPerSec = [];
+    }
+    
     function setFtp(ftp as Number) as Void { self.ftp = ftp; }
     function setPerSec(perSec as Number) as Void { self.perSec = perSec; }
    
@@ -67,12 +71,12 @@ module WhatAppBase {
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(powerPerX(), true); }
-    function getValue() as WhatValue { return powerPerX(); }
+    function getValue() as WhatValue { return getVo2Max(); }
     function getFormattedValue() as String {
-      return powerPerX().format("%.0f");
+      return getVo2Max().format("%.1f");
     }
-    function getUnits() as String { return "w"; }
-    function getLabel() as String { return "Power (" + perSec + "sec)"; }
+    function getUnits() as String { return "Vo2Max"; }
+    function getLabel() as String { return "Vo2Max"; }
 
     function getAltZoneInfo() as ZoneInfo {
       return _getZoneInfo(getAveragePower(), false);
@@ -88,32 +92,15 @@ module WhatAppBase {
     function getMaxZoneInfo() as ZoneInfo {
       return _getZoneInfo(getMaxPower(), false);
     }
+      
+    // vo2max = ((6min pow er * 10.8) / weight) + 7    
+    hidden function getVo2Max() as Float {
+      if (userWeightKg == 0.0f) { return 0.0; }
+      var pp6min = powerPerX();
+      System.println(pp6min);
+      return ((pp6min * 10.8) / userWeightKg) + 7;
+    }
 
-    // Power per weight
-    // function getPPWZoneInfo() as ZoneInfo {
-    //   return _getZoneInfo(powerPerX()); 
-    // }
-    function getPPWValue() as Number {
-      return convertToMetricOrStatute(powerPerWeight());
-    }
-    function getPPWFormattedValue() as String {
-      return convertToMetricOrStatute(powerPerWeight()).format("%.1f");
-    }
-    function getPPWUnits() as String {
-      if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
-        return "w/lbs";  // watt per pounds
-      } else {
-        return "w/kg";
-      }
-    }
-    function getPPWLabel() as String {
-      if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
-        return "Avg power/lbs";
-      } else {
-        return "Avg power/kg";
-      }
-    }
-        
     //
     function getPercOfTarget() as Numeric {
       return Utils.percentageOf(powerPerX(), ftp);

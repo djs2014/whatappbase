@@ -12,6 +12,8 @@ module WhatAppBase {
     hidden var mWD as WhatDisplay = new WhatDisplay();
     hidden var mFactory as BaseFactory;
     hidden var mShowAppName as Boolean = false;
+    
+    hidden var mHit as WhatAppHit?;
 
     hidden var mWiTop as WhatInformation?;
     hidden var mWiLeft as WhatInformation?;
@@ -22,8 +24,9 @@ module WhatAppBase {
       DataField.initialize();
       mApp = whatApp;
       mFactory = mApp.mFactory;
+      mHit = mApp.mHit;      
     }
-
+  
     // Set your layout here. Anytime the size of obscurity of
     // the draw context is changed this will be called.
     // @@ Detect radar icon in right upper corner
@@ -55,10 +58,34 @@ module WhatAppBase {
         mWiBottom.updateInfo(info);
       }
 
+      processHit(info);
+
       mShowAppName = true;
       if (info has : timerState) {
         mShowAppName = (info.timerState != Activity.TIMER_STATE_ON);
       }
+    }
+
+    function processHit(info as Activity.Info) as Void {
+      var hit = mHit as WhatAppHit;
+      if (!hit.isEnabled()) { return;}
+      
+      var wP = mFactory.getPowerInstance();
+      if (wP != null) {
+        var pot = (wP as WhatPower).getPercOfTarget();      
+        hit.monitorHit(info, pot);
+        return;
+      }
+      
+      var wS = mFactory.getSpeedInstance();
+      if (wS != null) {
+        var pots = (wS as WhatSpeed).getPercOfTarget();      
+        hit.monitorHit(info, pots);
+        return;
+      }
+
+      hit.setMode(WhatAppHit.HitDisabled);
+      return;
     }
 
     // Display the value you computed here. This will be called
@@ -102,6 +129,8 @@ module WhatAppBase {
         dc.drawText(0, 0, Graphics.FONT_XTINY, app.appName,
                     Graphics.TEXT_JUSTIFY_LEFT);
       }
+
+      drawHit(dc);
     }
      
     function drawLeftInfo(dc as Dc) as Void {
@@ -196,5 +225,118 @@ module WhatAppBase {
       var maxZone = wi.getMaxZoneInfo();
       mWD.drawBottomInfoFG(label, value, units, zone, altZone, maxZone);
     }
+
+    function drawHit(dc as Dc) as Void {
+      var hit = mHit as WhatAppHit;
+      if (!hit.isEnabled()) { return;}
+      var minimal = hit.isMinimal();
+
+      // @@ TODO hit.setPaused(mWD.isHiddenField());
+
+      // @@ Nice to have transparent text (rgba)
+      var hitRecovery = hit.getRecoveryElapsedSeconds();
+      var fontHitInfo = Graphics.FONT_SYSTEM_XTINY;
+      if (mWD.isLargeField()) { fontHitInfo = Graphics.FONT_SYSTEM_TINY; }
+      var offset = 0;
+      if (hit.isActivityPaused() && mWD.isLargeField()) { offset = 3; }
+      var yHitInfo = dc.getHeight() - dc.getFontHeight(fontHitInfo) - offset;
+      var vo2mTWidth = 0;
+      if (hitRecovery == 0) {
+        var vo2m = hit.getVo2Max();
+        if (vo2m > 7) {
+          var vo2mT = "(" + vo2m.format("%0.0f") + ")";
+          vo2mTWidth = dc.getTextWidthInPixels(vo2mT, fontHitInfo);
+          dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+          dc.drawText(dc.getWidth(), yHitInfo, fontHitInfo, vo2mT, Graphics.TEXT_JUSTIFY_RIGHT);     
+        }
+      }
+
+      var counter = hit.getCounter();      
+      if (counter > 0 ) {
+        var countdown = counter.format("%01d");
+        dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
+        if (minimal) {          
+          dc.drawText(dc.getWidth() - vo2mTWidth - 1, yHitInfo, fontHitInfo, countdown, Graphics.TEXT_JUSTIFY_RIGHT);         
+        } else {
+          dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_SYSTEM_NUMBER_THAI_HOT, countdown, 
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
+      } else {
+        var hitElapsed = hit.getHitElapsedSeconds();
+        if (hitElapsed > 0) {          
+          var elapsed = Utils.secondsToCompactTimeString(hitElapsed, "{m}:{s}");
+          if (minimal) {
+            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);          
+            dc.drawText(dc.getWidth() - vo2mTWidth - 1, yHitInfo, fontHitInfo, elapsed, Graphics.TEXT_JUSTIFY_RIGHT);        
+          } else {
+            var fontElapsed = Graphics.FONT_SYSTEM_NUMBER_HOT;
+            var yHeight = dc.getFontHeight(fontElapsed);
+            if(mWD.isLargeField()) {            
+              var vo2max = hit.getVo2Max();
+              if (vo2max > 7) {
+                var vo2mText = vo2max.format("%0.1f");
+                var yHeightVo2 = dc.getFontHeight(Graphics.FONT_SYSTEM_NUMBER_MILD);
+                dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+                dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - yHeightVo2/3, Graphics.FONT_SYSTEM_NUMBER_MILD, vo2mText, 
+                  Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);                                
+              }
+            } else {
+              yHeight = 0;
+            }
+            dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);          
+            dc.drawText(dc.getWidth()/2, dc.getHeight()/2 + yHeight/2, fontElapsed, elapsed,
+              Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);        
+          }
+        }
+      }
+
+     
+
+      var x = 1 + offset;
+      var hitInfo = "H";
+      var hitPerformed = hit.getNumberOfHits();
+      if (hitPerformed > 0) { hitInfo = hitInfo + hitPerformed.format("%01d"); }    
+      
+
+      if (hitPerformed > 0 || hitRecovery > 0 ) {
+        var wHitInfo = dc.getTextWidthInPixels(hitInfo, fontHitInfo);
+        dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, yHitInfo, fontHitInfo, hitInfo, Graphics.TEXT_JUSTIFY_LEFT);        
+        x = x + wHitInfo + 1;
+
+        var scores = hit.getHitScores();
+        var startIdxOnlyLast = Utils.max(0, scores.size() - 3);        
+        for (var sIdx = startIdxOnlyLast; sIdx < scores.size(); sIdx++) {  
+          var score = scores[sIdx] as Float;              
+          //var scoreText = score.format("%0.1f");
+          var scoreText = score.format("%0.0f");
+          var wScoreText = dc.getTextWidthInPixels(scoreText, fontHitInfo);
+          dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+          dc.drawText(x, yHitInfo, fontHitInfo, scoreText, Graphics.TEXT_JUSTIFY_LEFT);              
+          x = x + wScoreText + 3;          
+        }
+
+        if (hitRecovery > 0) {
+          var recovery = Utils.secondsToCompactTimeString(hitRecovery, "({m}:{s})");   
+          dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
+          dc.drawText(dc.getWidth(), yHitInfo, fontHitInfo, recovery, Graphics.TEXT_JUSTIFY_RIGHT);     
+        }
+      } 
+
+      
+      // @@ TODO 
+      // if (hit.isActivityPaused() && hitPerformed > 0) {
+      //   // @@ Display hit scores
+      //   var scores = hit.getHitScores();
+      //   var total = scores.size();
+      //   var w = dc.getWidth() - based on duraction
+      // 
+      //   for (var x = 0; x < scores.size(); x++) {
+      //     var 
+      //     ppx = ppx + perSec[x];
+      //   }
+      // }      
+    }
+    
   }
 }

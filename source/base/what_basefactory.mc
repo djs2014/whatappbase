@@ -3,6 +3,7 @@ import Toybox.Lang;
 import Toybox.System;
 // using WhatAppBase.Types;
 module WhatAppBase {
+  var gShowInfoMax as Number = 19;
   enum ShowInfo {
     ShowInfoNothing = 0,
     ShowInfoPower = 1,
@@ -22,13 +23,15 @@ module WhatAppBase {
     ShowInfoTemperature = 15,  // @@ not working yet
     ShowInfoEnergyExpenditure = 16,
     ShowInfoPowerPerBodyWeight = 17,
-    ShowInfoTestField = 18
+    ShowInfoTestField = 18,
+    ShowInfoPowerVo2Max = 19
     // @@ TODO ShowInfoAscentDescentcombine ascent/descent
   }
 
   class BaseFactory {
     hidden var mwPower as WhatPower? = null;
-    hidden var mwPowerPerWeight as WhatPower? = null;  // @@ Needed?
+    hidden var mwPowerPerWeight as WhatPower? = null;  
+    hidden var mwVo2Max as WhatVo2Max? = null;  
     hidden var mwHeartrate as WhatHeartrate? = null;
     hidden var mwCadence as WhatCadence? = null;
     hidden var mwGrade as WhatGrade? = null;
@@ -54,7 +57,7 @@ module WhatAppBase {
 
     hidden var mInfo as Activity.Info? = null;
     hidden var mDebug as Boolean = false;
-
+  
     function initialize() {}
 
     function setDebug(debug as Boolean) as Void { mDebug = debug; }
@@ -88,7 +91,7 @@ module WhatAppBase {
     }
 
     function getWI(showInfo as ShowInfo) as WhatInformation {
-      var instance = _getInstance(showInfo, mHrFallback, mTrainingEffectFallback);
+      var instance = _getInstance(showInfo, mHrFallback, mTrainingEffectFallback, true);
       if (instance == null) { return null as WhatInformation; }
 
       var wi = new WhatInformation(instance);
@@ -102,6 +105,7 @@ module WhatAppBase {
             wi.setCallback(cbLabel, :getPPWLabel);
           }
           break;
+        
         case ShowInfoElapsedTime:
           if (wi.getObject() instanceof WhatTime) {
             wi.setCallback(cbZoneInfo, :getElapsedZoneInfo);
@@ -124,70 +128,98 @@ module WhatAppBase {
       return wi;
     }
 
+    function cleanUp() as Void {
+      var test = 0;
+      for (var x = 0; x <= gShowInfoMax; x++) {
+        var si = x as ShowInfo;
+        if (!isVisible(si)) { 
+          System.println("Cleanup WhatInfo: " + si);
+          _removeInstance(si);          
+        }        
+      }        
+    } 
+
+    hidden function isVisible(showInfo as ShowInfo) as Boolean {
+      return showInfo == mTop || showInfo == mLeft || showInfo == mRight || showInfo == mBottom 
+        || showInfo == mHrFallback || showInfo == mTrainingEffectFallback;
+    }
+
+    function getPowerInstance() as WhatPower {
+       if (mwPower != null) { return mwPower;}
+       if (mwPowerPerWeight != null) { return mwPowerPerWeight; }
+       //if (mwVo2Max != null) { return mwVo2Max; }
+       return null as WhatPower;
+    }
+
+    function getSpeedInstance() as WhatSpeed {
+       if (mwSpeed != null) { return mwSpeed;}
+       return null as WhatSpeed;
+    }
+
     function getInstance(showInfo as ShowInfo) as WhatInfoBase {
-      return _getInstance(showInfo, mHrFallback, mTrainingEffectFallback);
+      return _getInstance(showInfo, mHrFallback, mTrainingEffectFallback, true);
     }
 
     function _getInstance(showInfo  as ShowInfo, hrFallback  as ShowInfo,
-                          trainingEffectFallback as ShowInfo) as WhatInfoBase {      
+                          trainingEffectFallback as ShowInfo, createIfNotExists as Boolean) as WhatInfoBase {      
       switch (showInfo) {
         case ShowInfoPower:
-          if (mwPower == null) {
+          if (mwPower == null && createIfNotExists) {
             mwPower = new WhatPower();
           }
           return mwPower;
 
         case ShowInfoHeartrate:
-          if (mwHeartrate == null) {
+          if (mwHeartrate == null && createIfNotExists) {
             mwHeartrate = new WhatHeartrate();
           }
-          if (mInfo != null) {
+          if (mInfo != null && mwHeartrate != null) {
             var hr =  mwHeartrate as WhatHeartrate;
             hr.updateInfo(mInfo);
             if (!hr.isAvailable() && hrFallback != ShowInfoNothing) {
-              return _getInstance(hrFallback, ShowInfoNothing, ShowInfoNothing);
+              return _getInstance(hrFallback, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
             }
           }
           return mwHeartrate;
 
         case ShowInfoSpeed:
-          if (mwSpeed == null) {
+          if (mwSpeed == null && createIfNotExists) {
             mwSpeed = new WhatSpeed();
           }
           return mwSpeed;
 
         case ShowInfoCadence:
-          if (mwCadence == null) {
+          if (mwCadence == null && createIfNotExists) {
             mwCadence = new WhatCadence();
           }
           return mwCadence;
 
         case ShowInfoAltitude:
-          if (mwAltitude == null) {
+          if (mwAltitude == null && createIfNotExists) {
             mwAltitude = new WhatAltitude();
           }
           return mwAltitude;
 
         case ShowInfoGrade:
-          if (mwGrade == null) {
+          if (mwGrade == null && createIfNotExists) {
             mwGrade = new WhatGrade();
           }
           return mwGrade;
 
         case ShowInfoHeading:
-          if (mwHeading == null) {
+          if (mwHeading == null && createIfNotExists) {
             mwHeading = new WhatHeading();
           }
           return mwHeading;
 
         case ShowInfoDistance:
-          if (mwDistance == null) {
+          if (mwDistance == null && createIfNotExists) {
             mwDistance = new WhatDistance();
           }
           return mwDistance;
 
         case ShowInfoAmbientPressure:
-          if (mwPressure == null) {
+          if (mwPressure == null && createIfNotExists) {
             mwPressure = new WhatPressure();
           }
           return mwPressure;
@@ -195,13 +227,13 @@ module WhatAppBase {
         case ShowInfoTimeOfDay:
         case ShowInfoElapsedTime:
         case ShowInfoTimer:
-          if (mwTime == null) {
+          if (mwTime == null && createIfNotExists) {
             mwTime = new WhatTime();
           }
           return mwTime;
 
         case ShowInfoCalories:
-          if (mwCalories == null) {
+          if (mwCalories == null && createIfNotExists) {
             mwCalories = new WhatCalories();
           }
           return mwCalories;
@@ -209,40 +241,45 @@ module WhatAppBase {
           //   case ShowInfoTotalDescent:
           //     return new WhatInformation(mwAltitude);
         case ShowInfoTrainingEffect:
-          if (mwTrainingEffect == null) {
+          if (mwTrainingEffect == null && createIfNotExists) {
             mwTrainingEffect = new WhatTrainingEffect();
           }
 
-          if (mInfo != null) {
+          if (mInfo != null && mwTrainingEffect != null) {
             var te =  mwTrainingEffect as WhatTrainingEffect;
             te.updateInfo(mInfo);
             if (!te.isAvailable() && trainingEffectFallback != ShowInfoNothing) {
-              return _getInstance(trainingEffectFallback, ShowInfoNothing,
-                                  ShowInfoNothing);
+              return _getInstance(trainingEffectFallback, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
             }
           }
           return mwTrainingEffect;
 
           // case ShowInfoTemperature:
-          //   if (mwTemperature == null) {
+          //   if (mwTemperature == null && createIfNotExists) {
           //     mwTemperature = new WhatTemperature();
           //   }
           //   return mwTemperature;
 
         case ShowInfoEnergyExpenditure:
-          if (mwEngergyExpenditure == null) {
+          if (mwEngergyExpenditure == null && createIfNotExists) {
             mwEngergyExpenditure = new WhatEnergyExpenditure();
           }
           return mwEngergyExpenditure;
 
         case ShowInfoPowerPerBodyWeight:
-          if (mwPowerPerWeight == null) {
+          if (mwPowerPerWeight == null && createIfNotExists) {
             mwPowerPerWeight = new WhatPower();
-          }
+          }          
           return mwPowerPerWeight;
 
+        case ShowInfoPowerVo2Max:
+          if (mwVo2Max == null && createIfNotExists) {
+            mwVo2Max = new WhatVo2Max();
+          }               
+          return mwVo2Max;
+
         case ShowInfoTestField:
-          if (mwTestField == null) {
+          if (mwTestField == null && createIfNotExists) {
             mwTestField = new WhatTestField();
           }
           return mwTestField;
@@ -252,5 +289,86 @@ module WhatAppBase {
           return null as WhatInfoBase;
       }
     }
+
+    function _removeInstance(showInfo  as ShowInfo) as Void {      
+      switch (showInfo) {
+        case ShowInfoPower:
+          mwPower = null;
+          break;
+
+        case ShowInfoHeartrate:
+          mwHeartrate = null;
+          break;
+
+        case ShowInfoSpeed:
+          mwSpeed = null;
+          break;
+
+        case ShowInfoCadence:
+          mwCadence = null;
+          break;
+
+        case ShowInfoAltitude:
+          mwAltitude = null;
+          break;
+
+        case ShowInfoGrade:
+          mwGrade = null;
+          break;
+
+        case ShowInfoHeading:
+          mwHeading = null;
+          break;
+
+        case ShowInfoDistance:
+          mwDistance = null;
+          break;
+
+        case ShowInfoAmbientPressure:
+          mwPressure = null;
+          break;
+
+        case ShowInfoTimeOfDay:
+        case ShowInfoElapsedTime:
+        case ShowInfoTimer:
+          // No, not unique
+          break;
+
+        case ShowInfoCalories:
+          mwCalories = null;
+          break;
+          
+        case ShowInfoTrainingEffect:
+          mwTrainingEffect = null;
+          break;
+
+          // case ShowInfoTemperature:
+          //   if (mwTemperature == null && createIfNotExists) {
+          //     mwTemperature = new WhatTemperature();
+          //   }
+          //   return mwTemperature;
+
+        case ShowInfoEnergyExpenditure:
+          mwEngergyExpenditure = null;
+          break;
+
+        case ShowInfoPowerPerBodyWeight:
+          mwPowerPerWeight = null;
+          break;
+
+        case ShowInfoPowerVo2Max:
+          mwVo2Max = null;
+          break;
+
+        case ShowInfoTestField:
+          mwTestField = null;
+          break;
+
+        case ShowInfoNothing:
+        default:
+          break;          
+      }
+    }
+
   }
 }

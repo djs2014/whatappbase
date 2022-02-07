@@ -13,7 +13,12 @@ module WhatAppBase {
 
       function initialize() {}
 
-      function hasLocation() as Boolean { return mLocation != null; } 
+      function hasLocation() as Boolean { 
+        if ( mLocation == null) { return false; }
+        var currentLocation = mLocation as Location;
+        var degrees = currentLocation.toDegrees();
+        return degrees[0] != 0.0 && degrees[1] != 0.0;
+      } 
 
       function infoLocation() as String {
         if (!hasLocation()) { return "No location"; }
@@ -92,8 +97,8 @@ module WhatAppBase {
         return degrees[0] != currentDegrees[0] && degrees[1] != currentDegrees[1];        
       }
 
-      function getRelativeToObservation(latObservation as Float, lonObservation as Float) as String {
-        if (!hasLocation()) {
+      function getRelativeToObservation(latObservation as Double, lonObservation as Double) as String {
+        if (!hasLocation() || latObservation == 0.0 || lonObservation == 0.0 ) {
           return "";
         }
 
@@ -103,8 +108,7 @@ module WhatAppBase {
         var lonCurrent = degrees[1];
 
         var distanceMetric = "km";
-        var distance =
-            Utils.getDistanceFromLatLonInKm(latCurrent, lonCurrent, latObservation, lonObservation);
+        var distance = Utils.getDistanceFromLatLonInKm(latCurrent, lonCurrent, latObservation, lonObservation);
 
         var deviceSettings = System.getDeviceSettings();
         if (deviceSettings.distanceUnits == System.UNIT_STATUTE) {
