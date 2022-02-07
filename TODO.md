@@ -1,8 +1,10 @@
 # Todo:
-- hitt: no, minimal, normal
-  - setEnabled -> mode
-    - no and normal, minimal -> no center timer/counter -> is located right bottom
-- sound: no, start/stop, quiet, loud
+max for other info* ..
+avg ??
+x - hitt: no, minimal, normal
+x  - setEnabled -> mode
+x    - no and normal, minimal -> no center timer/counter -> is located right bottom
+x- sound: no, start/stop, quiet, loud
 - 
 
 no sound when stopped / only start - or small sound
