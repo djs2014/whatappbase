@@ -1,6 +1,9 @@
 # Todo:
 max for other info* ..
 avg ??
+reset max etc when start activity
+docu for hitt/sit + screenshots
+
 x - hitt: no, minimal, normal
 x  - setEnabled -> mode
 x    - no and normal, minimal -> no center timer/counter -> is located right bottom

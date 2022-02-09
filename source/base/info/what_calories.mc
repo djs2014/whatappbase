@@ -3,16 +3,25 @@ import Toybox.System;
 import Toybox.Activity;
 module WhatAppBase {
   class WhatCalories extends WhatInfoBase {
-    hidden var calories as Number = 0;           // kcal
+    hidden var calories as Number = 0;           // kcal (total)
     hidden var targetCalories as Number = 2000;  // kcal
+    hidden var targetEngergyExpenditure as Float = 10.0f;  // kcal / min
 
-    hidden var elapsedTime as Number = 0;  // msec
+    hidden var ticks as Number = 0;
+    hidden var prevCalories as Number = 0;       // kcal 
+    hidden var avgCaloriesPerSec as Double = 0.0d;  
+    hidden var maxCaloriesPerSec as Float = 0.0f;
 
     function initialize() { WhatInfoBase.initialize(); }
 
     function setTargetCalories(targetCalories as Number) as Void { self.targetCalories = targetCalories; }
+    function setTargetEngergyExpenditure(targetEngergyExpenditure as Float) as Void {
+      self.targetEngergyExpenditure = targetEngergyExpenditure;
+    }
 
     function updateInfo(info as Activity.Info) as Void {
+      mActivityPaused = activityIsPaused(info);
+      
       if (info has :calories) {
         if (info.calories != null) {
           calories = info.calories as Number;
@@ -20,40 +29,52 @@ module WhatAppBase {
           calories = 0;
         }
       }
-      if (info has :elapsedTime) {
-        if (info.elapsedTime != null) {
-          elapsedTime = info.elapsedTime as Number;
-        } else {
-          elapsedTime = 0;
-        }
-      }
+            
+      var incCalories = calories - prevCalories;
+      ticks = ticks + 1;
+      var a = 1 / ticks.toDouble();
+      var b = 1 - a;
+      avgCaloriesPerSec = (a * incCalories) + b * avgCaloriesPerSec;
+      prevCalories = calories;
+      // System.println(avgCaloriesPerSec);
+      
+      maxCaloriesPerSec = Utils.max(maxCaloriesPerSec, avgCaloriesPerSec) as Float;
     }
 
-    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getCalories()); }
+    function getZoneInfo() as ZoneInfo { return _getZoneInfo(getCalories(), true, targetCalories); }
     function getValue() as WhatValue { return getCalories(); }
     function getFormattedValue() as String { return getCalories().format("%.0f"); }
     function getUnits() as String { return "kcal"; }
     function getLabel() as String { return "Calories"; }
 
-    function getAltZoneInfo() as ZoneInfo { return _getZoneInfo(getAvgCaloriesPerMin()); }
+    function getAltZoneInfo() as ZoneInfo { return _getZoneInfo(getAvgCaloriesPerMin(), false, targetEngergyExpenditure); }
     function getAltValue() as WhatValue { return getAvgCaloriesPerMin(); }
     function getAltFormattedValue() as String { return getAvgCaloriesPerMin().format("%.0f"); }
     function getAltUnits() as String { return "kcal/min"; }
     function getAltLabel() as String { return "Calories"; }
 
+    function getMaxValue() as WhatValue { return getMaxCaloriesPerMin(); }
+    function getMaxZoneInfo() as ZoneInfo { return _getZoneInfo(getMaxCaloriesPerMin(), false, targetEngergyExpenditure); }
+
     function getCalories() as Number {
+      if (mActivityPaused) {
+        return getAvgCaloriesPerMin().toNumber();
+      }
+
       if (calories == null) {
         return 0;
       }
       return self.calories;
     }
+ 
+    function getAvgCaloriesPerMin() as Double {
+      var avg = avgCaloriesPerSec * 60.0;
+      System.println("Avg Calories per min: " + avg);
+      return avg;
+    }
 
-    // @@ TODO see getAltZoneInfo colors/target
-    function getAvgCaloriesPerMin() as Float {
-      if (elapsedTime == null || elapsedTime == 0) {
-        return 0.0f;
-      }
-      return calories / (elapsedTime * 1000.0 * 60.0);
+    function getMaxCaloriesPerMin() as Float {  
+      return maxCaloriesPerSec * 60.0;
     }
 
     // @@TODO ->
@@ -64,14 +85,19 @@ module WhatAppBase {
     // (3.098 x height in cm) - (4.330 x age in years) Women: Average BMR 1,400
     // calories per day Men: Average BMR just over 1,600 calories per day
     // --> percof chart
-    function _getZoneInfo(cal as Numeric) as ZoneInfo {
+    function _getZoneInfo(cal as Numeric, showAverageWhenPaused as Boolean, targetValue as Numeric) as ZoneInfo {
+      if (showAverageWhenPaused && mActivityPaused) {
+        return new ZoneInfo(0, "Avg./min", Graphics.COLOR_WHITE,
+                            Graphics.COLOR_BLACK, 0, null);
+      }
+
       var label = "Calories";
       if (cal == null || cal == 0) {
         return new ZoneInfo(0, label, Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }
 
-      var percOfTarget = Utils.percentageOf(cal, targetCalories);
+      var percOfTarget = Utils.percentageOf(cal, targetValue);
       var color = percentageToColor(percOfTarget);
       var color100perc = null;
       if (percOfTarget > 100) {
