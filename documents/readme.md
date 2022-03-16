@@ -38,6 +38,22 @@ For some data a target can be specified. If so, then the background of that fiel
 - Top info: Training effect
 - Bottom info: Calories burned
 
+### Example Datafield `What distance`:
+
+- @@TODO
+
+### Field explanation
+![Layout](/documents/screenshots/explanation_field_01.png "Field explanation")
+
+What speed:
+1 Left field: Percentage of actual value (42.5) against target value (30.0).
+2 Left field: Circle border with the average value percentage
+3 Left field: Maximum indication
+What power:
+4 Bottom Field: Percentage border of actual value (1984) against target value (2000)  
+5 Bottom Field: Actual value
+6 Top Field: Actual value
+
 ![Layout](/documents/screenshots/9653.png "Activity paused")
 
 When activity is paused, some data will show the average value. Ex. `Speed` and `Power`.
@@ -45,3 +61,15 @@ When activity is paused, some data will show the average value. Ex. `Speed` and 
 ### Color scheme
 
 ![Percentage colors](/documents/percentagecolors.png "Color scheme")
+
+### HITT
+
+This option needs a powermeter.
+If enabled, when for 5 seconds (configuration) the power is above a threshold (x% of FTP) the HITT is started and a timer is shown.
+If power drops below (x% of FTP) for longer than 10 seconds (configuration) the HITT session is stopped.
+If the duration was longer than 30 seconds a 'vo2Max'-score is shown.
+VO2Max formula used `vo2max = ((6min pow er * 10.8) / weight) + 7`.
+(https://www.michael-konczer.com/en/training/calculators/calculate-vo2max)
+If the duration is 6 minutes, then the score is close to a 'real' vo2max.
+
+

@@ -94,6 +94,7 @@ module WhatAppBase {
     }
       
     // vo2max = ((6min pow er * 10.8) / weight) + 7    
+    // https://www.michael-konczer.com/en/training/calculators/calculate-vo2max
     hidden function getVo2Max() as Float {
       if (userWeightKg == 0.0f) { return 0.0; }
       var pp6min = powerPerX();

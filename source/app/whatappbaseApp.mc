@@ -23,6 +23,8 @@ module WhatAppBase {
 
     // onStop() is called when your application is exiting
     function onStop(state as Dictionary?) as Void {
+      mFactory.setFields(ShowInfoNothing,ShowInfoNothing,ShowInfoNothing,ShowInfoNothing);
+      mFactory.cleanUp();  
     }
 
     //! Return the initial view of your application here
@@ -103,8 +105,9 @@ module WhatAppBase {
         obj.setTargetDistance(Utils.getApplicationProperty("targetDistance", 150.0) as Float);
       } else if (obj instanceof WhatCalories) {
         obj.setTargetCalories(Utils.getApplicationProperty("targetCalories", 2000) as Number);
+        obj.setTargetEngergyExpenditure(Utils.getApplicationProperty("targetEnergyExpenditure", 15.0) as Float);
       } else if (obj instanceof WhatEnergyExpenditure) {
-        obj.setTargetEngergyExpenditure( Utils.getApplicationProperty("targetEnergyExpenditure", 15.0) as Float);
+        obj.setTargetEngergyExpenditure(Utils.getApplicationProperty("targetEnergyExpenditure", 15.0) as Float);
       } else if (obj instanceof WhatHeading) {
         obj.setMinimalLocationAccuracy(Utils.getApplicationProperty("minimalLocationAccuracy", 0) as Number);
         obj.setMinimalElapsedDistanceInMeters(Utils.getApplicationProperty("minimalElapsedDistanceInMeters", 0) as Number);

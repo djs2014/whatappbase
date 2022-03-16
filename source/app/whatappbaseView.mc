@@ -125,8 +125,8 @@ module WhatAppBase {
       drawBottomInfoFG(dc);
       // @@ callback option?
       if (mShowAppName && app.appName != null && app.appName.length() > 0) {
-        dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_BLACK);
-        dc.drawText(0, 0, Graphics.FONT_XTINY, app.appName,
+        dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_WHITE);
+        dc.drawText(0, 0, Graphics.FONT_TINY, app.appName,
                     Graphics.TEXT_JUSTIFY_LEFT);
       }
 
