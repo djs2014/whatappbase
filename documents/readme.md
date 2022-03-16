@@ -42,6 +42,18 @@ For some data a target can be specified. If so, then the background of that fiel
 
 - @@TODO
 
+### Field explanation
+![Layout](/documents/screenshots/explanation_field_01.png "Field explanation")
+
+What speed:
+1 Left field: Percentage of actual value (42.5) against target value (30.0).
+2 Left field: Circle border with the average value percentage
+3 Left field: Maximum indication
+What power:
+4 Bottom Field: Percentage border of actual value (1984) against target value (2000)  
+5 Bottom Field: Actual value
+6 Top Field: Actual value
+
 ![Layout](/documents/screenshots/9653.png "Activity paused")
 
 When activity is paused, some data will show the average value. Ex. `Speed` and `Power`.
