@@ -43,7 +43,7 @@ For some data a target can be specified. If so, then the background of that fiel
 - @@TODO
 
 ### Field explanation
-![Layout](/documents/screenshots/explanation_field_01.png "Field explanation")
+![Layout](/documents/explanation_field_01.png "Field explanation")
 
 What speed:
 1 Left field: Percentage of actual value (42.5) against target value (30.0).
