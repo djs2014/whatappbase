@@ -1,5 +1,8 @@
 # Todo:
+reset all when stop app
+pause text bigger/white box
 reset max etc when start activity
+
 docu for hitt/sit + screenshots
 -> option layout -> circle / show bottom on small field
    (allow for some like time/distance/etc...)  

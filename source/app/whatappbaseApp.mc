@@ -23,6 +23,8 @@ module WhatAppBase {
 
     // onStop() is called when your application is exiting
     function onStop(state as Dictionary?) as Void {
+      mFactory.setFields(ShowInfoNothing,ShowInfoNothing,ShowInfoNothing,ShowInfoNothing);
+      mFactory.cleanUp();  
     }
 
     //! Return the initial view of your application here
