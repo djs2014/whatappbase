@@ -11,7 +11,8 @@ module WhatAppBase {
     hidden var prevCalories as Number = 0;       // kcal 
     hidden var avgCaloriesPerSec as Double = 0.0d;  
     hidden var maxCaloriesPerSec as Float = 0.0f;
-
+    hidden var mShowAverageWhenPaused as Boolean = false;
+    
     function initialize() { WhatInfoBase.initialize(); }
 
     function setTargetCalories(targetCalories as Number) as Void { self.targetCalories = targetCalories; }
@@ -57,7 +58,7 @@ module WhatAppBase {
     function getMaxZoneInfo() as ZoneInfo { return _getZoneInfo(getMaxCaloriesPerMin(), false, targetEngergyExpenditure); }
 
     function getCalories() as Number {
-      if (mActivityPaused) {
+      if (mShowAverageWhenPaused && mActivityPaused) {
         return getAvgCaloriesPerMin().toNumber();
       }
 
@@ -86,7 +87,7 @@ module WhatAppBase {
     // calories per day Men: Average BMR just over 1,600 calories per day
     // --> percof chart
     function _getZoneInfo(cal as Numeric, showAverageWhenPaused as Boolean, targetValue as Numeric) as ZoneInfo {
-      if (showAverageWhenPaused && mActivityPaused) {
+      if (showAverageWhenPaused && mShowAverageWhenPaused && mActivityPaused) {
         return new ZoneInfo(0, "Avg./min", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }
