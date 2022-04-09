@@ -72,9 +72,12 @@ module WhatAppBase {
       
       var wP = mFactory.getPowerInstance();
       if (wP != null) {
-        var pot = (wP as WhatPower).getPercOfTarget();      
-        hit.monitorHit(info, pot);
-        return;
+        var p = wP as WhatPower; 
+        if (p.isAvailable()) {
+          var pot = p.getPercOfTarget();      
+          hit.monitorHit(info, pot);
+          return;
+        }
       }
       
       var wS = mFactory.getSpeedInstance();
