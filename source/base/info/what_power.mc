@@ -38,10 +38,10 @@ module WhatAppBase {
       mActivityPaused = activityIsPaused(info);
 
       if (info has :currentPower) {
-        mAvailable = true;
         var power = 0;
         if (info.currentPower != null) {
           power = info.currentPower as Number;
+          mAvailable = true;
         }
         if (Utils.ensureXSecondsPassed(lastCheck, 1)) {
           lastCheck = Time.now().value();
