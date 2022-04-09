@@ -1,7 +1,10 @@
 # Todo:
-no power input == null of 10 seconds 0 value -> go to alt, when power > 0 reset and display power
-disable avg cal for calories field on pause
-reset all when stop app
+-> option for Fallback power
+-> show version info when paused
+no power input == null of 10 seconds 0 value -> go to alt, when 
+power > 0 reset and display power
+
+
 pause text bigger/white box
 reset max etc when start activity
 

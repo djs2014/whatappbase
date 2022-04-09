@@ -54,6 +54,7 @@ module WhatAppBase {
 
     hidden var mHrFallback as ShowInfo = ShowInfoNothing;
     hidden var mTrainingEffectFallback as ShowInfo = ShowInfoNothing;
+    hidden var mPowerFallback as ShowInfo = ShowInfoNothing;
 
     hidden var mInfo as Activity.Info? = null;
     hidden var mDebug as Boolean = false;
@@ -72,10 +73,8 @@ module WhatAppBase {
     }
 
     function setHrFallback(hrFallback as ShowInfo) as Void { mHrFallback = hrFallback; }
-
-    function setTrainingEffectFallback(trainingEffectFallback as ShowInfo) as Void {
-      mTrainingEffectFallback = trainingEffectFallback;
-    }
+    function setPowerFallback(powerFallback as ShowInfo) as Void { mPowerFallback = powerFallback; }
+    function setTrainingEffectFallback(trainingEffectFallback as ShowInfo) as Void {      mTrainingEffectFallback = trainingEffectFallback; }
 
     function getWI_Top() as WhatInformation { return getWI(mTop); }
     function getWI_Left() as WhatInformation { return getWI(mLeft); }
@@ -91,7 +90,7 @@ module WhatAppBase {
     }
 
     function getWI(showInfo as ShowInfo) as WhatInformation {
-      var instance = _getInstance(showInfo, mHrFallback, mTrainingEffectFallback, true);
+      var instance = _getInstance(showInfo, mHrFallback, mPowerFallback, mTrainingEffectFallback, true);
       if (instance == null) { return null as WhatInformation; }
 
       var wi = new WhatInformation(instance);
@@ -157,16 +156,24 @@ module WhatAppBase {
     }
 
     function getInstance(showInfo as ShowInfo) as WhatInfoBase {
-      return _getInstance(showInfo, mHrFallback, mTrainingEffectFallback, true);
+      return _getInstance(showInfo, mHrFallback, mPowerFallback, mTrainingEffectFallback, true);
     }
 
-    function _getInstance(showInfo  as ShowInfo, hrFallback  as ShowInfo,
+    function _getInstance(showInfo  as ShowInfo, hrFallback as ShowInfo, powerFallback as ShowInfo, 
                           trainingEffectFallback as ShowInfo, createIfNotExists as Boolean) as WhatInfoBase {      
       switch (showInfo) {
         case ShowInfoPower:
           if (mwPower == null && createIfNotExists) {
             mwPower = new WhatPower();
           }
+          if (mInfo != null && mwPower != null) {
+            var pwr =  mwPower as WhatPower;
+            pwr.updateInfo(mInfo);
+            if (!pwr.isAvailable() && powerFallback != ShowInfoNothing) {
+              return _getInstance(powerFallback, ShowInfoNothing, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
+            }
+          }
+
           return mwPower;
 
         case ShowInfoHeartrate:
@@ -177,7 +184,7 @@ module WhatAppBase {
             var hr =  mwHeartrate as WhatHeartrate;
             hr.updateInfo(mInfo);
             if (!hr.isAvailable() && hrFallback != ShowInfoNothing) {
-              return _getInstance(hrFallback, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
+              return _getInstance(hrFallback, ShowInfoNothing, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
             }
           }
           return mwHeartrate;
@@ -249,7 +256,7 @@ module WhatAppBase {
             var te =  mwTrainingEffect as WhatTrainingEffect;
             te.updateInfo(mInfo);
             if (!te.isAvailable() && trainingEffectFallback != ShowInfoNothing) {
-              return _getInstance(trainingEffectFallback, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
+              return _getInstance(trainingEffectFallback, ShowInfoNothing, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
             }
           }
           return mwTrainingEffect;
@@ -269,7 +276,15 @@ module WhatAppBase {
         case ShowInfoPowerPerBodyWeight:
           if (mwPowerPerWeight == null && createIfNotExists) {
             mwPowerPerWeight = new WhatPower();
-          }          
+          }       
+          if (mInfo != null && mwPowerPerWeight != null) {
+            var pwr =  mwPowerPerWeight as WhatPower;
+            pwr.updateInfo(mInfo);
+            if (!pwr.isAvailable() && powerFallback != ShowInfoNothing) {
+              return _getInstance(powerFallback, ShowInfoNothing, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
+            }
+          }
+
           return mwPowerPerWeight;
 
         case ShowInfoPowerVo2Max:

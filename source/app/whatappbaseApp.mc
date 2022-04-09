@@ -43,9 +43,11 @@ module WhatAppBase {
         var showInfoBottom = Utils.getApplicationProperty("showInfoBottom", ShowInfoCalories) as ShowInfo;
         var showInfoHrFallback = Utils.getApplicationProperty("showInfoHrFallback", ShowInfoCadence) as ShowInfo;
         var showInfoTrainingEffectFallback = Utils.getApplicationProperty("showInfoTrainingEffectFallback", ShowInfoEnergyExpenditure) as ShowInfo;
+        var showInfoPowerFallback = Utils.getApplicationProperty("showInfoPowerFallback", ShowInfoAmbientPressure) as ShowInfo;
 
         mFactory.setFields(showInfoTop, showInfoLeft, showInfoRight, showInfoBottom);
         mFactory.setHrFallback(showInfoHrFallback);
+        mFactory.setPowerFallback(showInfoPowerFallback);
         mFactory.setTrainingEffectFallback(showInfoTrainingEffectFallback);
 
         setProperties(mFactory.getInstance(showInfoTop));

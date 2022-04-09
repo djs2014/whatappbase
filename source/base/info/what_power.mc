@@ -18,7 +18,9 @@ module WhatAppBase {
     hidden var userWeightKg as Float = 0.0f;
 
     hidden var lastCheck as Number = 0;
-  
+    hidden const SECONDS_TO_FALLBACK = 60;
+    hidden var counterToFallback as Number = SECONDS_TO_FALLBACK;
+
     function initialize() { WhatInfoBase.initialize(); }
 
     function initWeight() as Void {
@@ -36,12 +38,22 @@ module WhatAppBase {
     function updateInfo(info as Activity.Info) as Void {
       mAvailable = false;
       mActivityPaused = activityIsPaused(info);
+      var activityStarted = activityIsStarted(info);
 
       if (info has :currentPower) {
+        mAvailable = true;
         var power = 0;
         if (info.currentPower != null) {
           power = info.currentPower as Number;
-          mAvailable = true;
+          counterToFallback = SECONDS_TO_FALLBACK;
+        } else if (activityStarted && !mActivityPaused) {
+          // When activity not paused and no power for x seconds
+          if (counterToFallback < 0) {
+            mAvailable = false;
+          } else {
+            counterToFallback = counterToFallback - 1;
+            System.println("Power fallback: " + counterToFallback);
+          }
         }
         if (Utils.ensureXSecondsPassed(lastCheck, 1)) {
           lastCheck = Time.now().value();

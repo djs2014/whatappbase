@@ -31,6 +31,12 @@ module WhatAppBase {
       }
       return false;
     }
+    function activityIsStarted(info as Activity.Info) as Boolean {
+      if (info has :timerState) {
+        return info.timerState != Activity.TIMER_STATE_OFF;
+      }
+      return false;
+    }
     // function showAverageWhenPaused() {
     //   return showAverageWhenmActivityPaused && mActivityPaused;
     // }
