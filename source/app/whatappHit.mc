@@ -56,6 +56,8 @@ module WhatAppBase {
     hidden var currentDuration as Number = 0;
     hidden var currentScore as Float = 0.0f;
 
+    hidden var currentTimerState as Number = Activity.TIMER_STATE_OFF;
+
     function initialize() {}
 
     function setMode(hitMode as HitMode) as Void { self.hitMode = hitMode; }
@@ -75,6 +77,25 @@ module WhatAppBase {
     function isMinimal() as Boolean { return (self.hitMode as HitMode) == HitMinimal; }
     function isActivityPaused() as Boolean { return activityPaused; }
     
+    function reset() as Void {
+      hitScores = [];
+      hitDurations = [];
+      hitPerformed = 0;
+      currentDuration = 0;
+      currentScore = 0.0f;
+      hitCounter = 0;  
+      hitElapsedRecoveryTime = null;
+      hitElapsedTime = null;
+    }
+    private function ActivityStarted(timerState as Number?) as Boolean {
+      if (timerState == null) {return false;}
+
+      var started = (currentTimerState == Activity.TIMER_STATE_OFF) &&
+        (timerState == Activity.TIMER_STATE_ON);
+      currentTimerState = timerState;
+      return started;
+    }
+
     function getHitScores() as Array { return hitScores; }
     function getHitDurations() as Array { return hitDurations; }
 
@@ -206,6 +227,9 @@ module WhatAppBase {
       }
 
       if (info has :timerState) {
+        if (ActivityStarted(info.timerState)) {
+          reset();
+        }
         activityPaused =  info.timerState == Activity.TIMER_STATE_PAUSED;
       } else {
         activityPaused = false;

@@ -285,9 +285,10 @@ module WhatAppBase {
           return mwTestField;
 
         case ShowInfoNothing:
+          return null as WhatInfoBase;
         default:
           return null as WhatInfoBase;
-      }
+      }      
     }
 
     function _removeInstance(showInfo  as ShowInfo) as Void {      

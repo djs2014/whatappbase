@@ -145,9 +145,10 @@ module WhatAppBase {
         case Types.WideField:
           return "%.2f";
         case Types.SmallField:
+          return "%.0f";
         default:
           return "%.0f";
-      }
+      }      
     }
 
     // Create a method to get the SensorHistoryIterator object

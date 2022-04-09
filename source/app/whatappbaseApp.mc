@@ -18,13 +18,13 @@ module WhatAppBase {
 
     function setAppName(appName as String) as Void { self.appName = appName; }
     // onStart() is called on application start up
-    function onStart(state as Dictionary?) as Void {
+    function onStart(state as Dictionary?) as Void {    
     }
 
     // onStop() is called when your application is exiting
     function onStop(state as Dictionary?) as Void {
       mFactory.setFields(ShowInfoNothing,ShowInfoNothing,ShowInfoNothing,ShowInfoNothing);
-      mFactory.cleanUp();  
+      mFactory.cleanUp();        
     }
 
     //! Return the initial view of your application here
