@@ -3,31 +3,35 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 using WhatAppBase.Utils as Utils;
 
+(:typecheck(disableBackgroundCheck))
 module WhatAppBase {
+  var gWhatApp as WhatApp?;
+
   class WhatApp {
     var appName as String = "";
     var mFactory as BaseFactory = new BaseFactory();
     var mDebug as Boolean = false;
-
+    var mBGServiceHandler as BGServiceHandler?; 
     var mHit as WhatAppHit = new WhatAppHit();
     // const FIVE_MINUTES = new Time.Duration(5 * 60);
+
+    // Sensor info class?
+    var mTemperature as Float?;
 
     var _showInfoLayout as LayoutMiddle = LayoutMiddleCircle;
 
     function initialize() {}
 
     function setAppName(appName as String) as Void { self.appName = appName; }
-    // onStart() is called on application start up
+    
     function onStart(state as Dictionary?) as Void {    
     }
-
-    // onStop() is called when your application is exiting
+    
     function onStop(state as Dictionary?) as Void {
       mFactory.setFields(ShowInfoNothing,ShowInfoNothing,ShowInfoNothing,ShowInfoNothing);
       mFactory.cleanUp();        
     }
-
-    //! Return the initial view of your application here
+    
     function getInitialView() as Array<Views or InputDelegates> ? {
       loadUserSettings();
       return [new WhatAppView(self)] as Array < Views or InputDelegates > ;
@@ -58,8 +62,7 @@ module WhatAppBase {
         setProperties(mFactory.getInstance(showInfoTrainingEffectFallback));
 
         _showInfoLayout = Utils.getApplicationProperty("showInfoLayout", LayoutMiddleCircle) as LayoutMiddle;
-
-        // Settings
+        
         mHit.setMode(Utils.getApplicationProperty("hitMode", WhatAppHit.HitDisabled) as WhatAppHit.HitMode);
         mHit.setSound(Utils.getApplicationProperty("hitSound", WhatAppHit.LowNoise) as WhatAppHit.HitSound);
 
@@ -68,6 +71,14 @@ module WhatAppBase {
         mHit.setStartCountDownSeconds(Utils.getApplicationProperty("hitStartCountDownSeconds", 5) as Number);
         mHit.setStopCountDownSeconds(Utils.getApplicationProperty("hitStopCountDownSeconds", 10) as Number);
               
+        var bgHandler = getBGServiceHandler() as BGServiceHandler;
+        if (mFactory.needSensorData()) {
+          bgHandler.Enable(); 
+        } else {
+          bgHandler.Disable(); 
+        }
+        mBGServiceHandler = bgHandler;
+
         mFactory.cleanUp();      
         System.println("Settings loaded");
         if (mFactory.isDebug()) {
@@ -113,6 +124,10 @@ module WhatAppBase {
       } else if (obj instanceof WhatHeading) {
         obj.setMinimalLocationAccuracy(Utils.getApplicationProperty("minimalLocationAccuracy", 0) as Number);
         obj.setMinimalElapsedDistanceInMeters(Utils.getApplicationProperty("minimalElapsedDistanceInMeters", 0) as Number);
+      } else if (obj instanceof WhatGrade) {
+        obj.setTargetGrade(Utils.getApplicationProperty("targetGrade", 8) as Number);  
+      } else if (obj instanceof WhatTemperature) {
+        obj.setTargetTemperature(Utils.getApplicationProperty("targetTemperature", 20) as Number);  
       } else if (obj instanceof WhatTestField) {
         obj.setTargetValue(Utils.getApplicationProperty("targetTestValue", 100) as Number);
         obj.setValue(Utils.getApplicationProperty("testValue", 145));
@@ -125,5 +140,33 @@ module WhatAppBase {
       //   }
       }
     }
+        
+    function onBackgroundData(data as Application.PersistableType) as Void {
+        System.println("Background data recieved");
+        
+        if (data instanceof Dictionary) {
+          if (data.isEmpty()) { return; }
+         
+          if (data.hasKey("Temperature")) { 
+            var wt = mFactory.getTemperatureInstance();
+            if (wt != null) {
+              wt.setTemperature(data["Temperature"]);
+            }
+            //@@ remove mTemperature = data["Temperature"];                              
+          }
+
+        }
+    }
+
+    function getBGServiceHandler() as BGServiceHandler {
+      if (mBGServiceHandler == null) { mBGServiceHandler = new BGServiceHandler(); }
+      return mBGServiceHandler;
+    }
+
+    static function instance() as WhatApp {
+      if (gWhatApp == null) { gWhatApp = new WhatApp(); }
+      return gWhatApp;
+    }
+    
   }
 }

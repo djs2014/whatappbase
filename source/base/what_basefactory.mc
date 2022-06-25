@@ -39,7 +39,7 @@ module WhatAppBase {
     hidden var mwAltitude as WhatAltitude? = null;
     hidden var mwSpeed as WhatSpeed? = null;
     hidden var mwPressure as WhatPressure? = null;
-    // hidden var mwTemperature as WhatTemperature; //@@ TODO show current weather in datafield
+    hidden var mwTemperature as WhatTemperature? = null; 
     hidden var mwCalories as WhatCalories? = null;
     hidden var mwTrainingEffect as WhatTrainingEffect? = null;
     hidden var mwTime as WhatTime? = null;
@@ -81,6 +81,8 @@ module WhatAppBase {
     function getWI_Right() as WhatInformation { return getWI(mRight); }
     function getWI_Bottom() as WhatInformation { return getWI(mBottom); }
 
+    function needSensorData() as Boolean { return isVisible(ShowInfoTemperature); }
+    
     function infoSettings() as Void {
       // @@ depricated
       // System.println("mTop[" + mTop + "] mLeft[" + mLeft + "] mRight[" +
@@ -153,6 +155,11 @@ module WhatAppBase {
     function getSpeedInstance() as WhatSpeed {
        if (mwSpeed != null) { return mwSpeed;}
        return null as WhatSpeed;
+    }
+
+    function getTemperatureInstance() as WhatTemperature {
+       if (mwTemperature != null) { return mwTemperature;}
+       return null as WhatTemperature;
     }
 
     function getInstance(showInfo as ShowInfo) as WhatInfoBase {
@@ -261,11 +268,11 @@ module WhatAppBase {
           }
           return mwTrainingEffect;
 
-          // case ShowInfoTemperature:
-          //   if (mwTemperature == null && createIfNotExists) {
-          //     mwTemperature = new WhatTemperature();
-          //   }
-          //   return mwTemperature;
+        case ShowInfoTemperature:
+          if (mwTemperature == null && createIfNotExists) {
+            mwTemperature = new WhatTemperature();
+          }
+          return mwTemperature;
 
         case ShowInfoEnergyExpenditure:
           if (mwEngergyExpenditure == null && createIfNotExists) {
@@ -358,11 +365,9 @@ module WhatAppBase {
           mwTrainingEffect = null;
           break;
 
-          // case ShowInfoTemperature:
-          //   if (mwTemperature == null && createIfNotExists) {
-          //     mwTemperature = new WhatTemperature();
-          //   }
-          //   return mwTemperature;
+        case ShowInfoTemperature:
+          mwTemperature = null;
+          break;          
 
         case ShowInfoEnergyExpenditure:
           mwEngergyExpenditure = null;

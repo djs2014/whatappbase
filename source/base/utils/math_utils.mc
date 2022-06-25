@@ -19,6 +19,22 @@ module WhatAppBase {
         return b;
       }
     }
+    
+    function abs(a as Numeric) as Numeric {
+      if (a >= 0) {
+        return a;
+      } 
+      if (a instanceof Lang.Float) {
+        return (a * -1.0f) as Lang.Float;
+      } else if (a instanceof Lang.Double) {
+        return (a * -1.0d) as Lang.Double;
+      } else if (a instanceof Lang.Number) {
+        return (a * -1) as Lang.Number;
+      } else if (a instanceof Lang.Long) {
+        return (a * -1l) as Lang.Long;
+      } 
+      return (a * -1) as Lang.Number;       
+    }
 
     function compareTo(numberA as Numeric, numberB as Numeric) as Numeric{
       if (numberA > numberB) {

@@ -1,4 +1,13 @@
 # Todo:
+
+odometer + start km/mi
+odometer current year
+
+x grade <0 colors
+callback for display extra info in field
+power / left/right balance
+alt / total ascend/descend
+
 -> option for Fallback power
 -> show version info when paused
 no power input == null of 10 seconds 0 value -> go to alt, when 

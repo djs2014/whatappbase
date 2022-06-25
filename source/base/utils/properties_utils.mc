@@ -1,5 +1,6 @@
 import Toybox.Lang;
 import Toybox.Application;
+import Toybox.Application.Storage;
 import Toybox.System;
 module WhatAppBase {
   (:Utils) 
@@ -23,6 +24,16 @@ module WhatAppBase {
 
     function setProperty(key as PropertyKeyType, value as PropertyValueType) as Void {
       Application.Properties.setValue(key, value);
+    }
+
+    function getStorageValue(key as Application.PropertyKeyType, dflt as Application.PropertyValueType ) as Application.PropertyValueType {
+      try {
+        var val = Toybox.Application.Storage.getValue(key);
+        if (val != null) { return val; }
+      } catch (e) {
+        return dflt;
+      }
+      return dflt;
     }
   }
 }
