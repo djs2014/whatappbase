@@ -4,6 +4,7 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.System;
 // using WhatAppBase.Types;
+using Toybox.AntPlus;
 
 module WhatAppBase {
   class WhatAppView extends WatchUi.DataField {
@@ -11,6 +12,7 @@ module WhatAppBase {
     hidden var mNoInfo as Activity.Info?;
     hidden var mWD as WhatDisplay = new WhatDisplay();
     hidden var mFactory as BaseFactory;
+    hidden var mBgHandler as BGServiceHandler;
     hidden var mShowAppName as Boolean = false;
     
     hidden var mHit as WhatAppHit?;
@@ -18,13 +20,19 @@ module WhatAppBase {
     hidden var mWiTop as WhatInformation?;
     hidden var mWiLeft as WhatInformation?;
     hidden var mWiRight as WhatInformation?;
-    hidden var mWiBottom as WhatInformation?;
+    hidden var mWiBottom as WhatInformation?;    
 
+    // hidden var listener as MyBikePowerListener;
+    // hidden var bikePower as AntPlus.BikePower;
     function initialize(whatApp as WhatApp) {
       DataField.initialize();
       mApp = whatApp;
       mFactory = mApp.mFactory;
-      mHit = mApp.mHit;      
+      mHit = mApp.mHit;   
+      mBgHandler = mApp.getBGServiceHandler();         
+
+      // listener = new MyBikePowerListener();
+      // bikePower = new AntPlus.BikePower(listener);
     }
   
     // Set your layout here. Anytime the size of obscurity of
@@ -43,25 +51,22 @@ module WhatAppBase {
       mWiLeft = mFactory.getWI_Left();
       mWiRight = mFactory.getWI_Right();
       mWiBottom = mFactory.getWI_Bottom();
+      
+      if (mBgHandler!=null) {
+        mBgHandler.onCompute(info);
+        mBgHandler.autoScheduleService(); 
+      }
 
       // @@ TODO check same obj instance call updateInfo twice
-      if (mWiTop != null) {
-        mWiTop.updateInfo(info);
-      }
-      if (mWiLeft != null) {
-        mWiLeft.updateInfo(info);
-      }
-      if (mWiRight != null) {
-        mWiRight.updateInfo(info);
-      }
-      if (mWiBottom != null) {
-        mWiBottom.updateInfo(info);
-      }
+      if (mWiTop != null) { mWiTop.updateInfo(info); }
+      if (mWiLeft != null) { mWiLeft.updateInfo(info); }
+      if (mWiRight != null) { mWiRight.updateInfo(info); }
+      if (mWiBottom != null) { mWiBottom.updateInfo(info); }
 
       processHit(info);
 
-      mShowAppName = true;
-      if (info has : timerState) {
+      mShowAppName = false;
+      if (info has :timerState) {
         mShowAppName = (info.timerState != Activity.TIMER_STATE_ON);
       }
     }
