@@ -29,21 +29,29 @@ module WhatAppBase {
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(getTemperature()); }
-    function getValue() as WhatValue { return getTemperature(); }
+    function getValue() as WhatValue { return convertToMetricOrStatute(getTemperature()); }
     function getFormattedValue() as String { 
       if (temperature == null) { return "--"; }
-      return getTemperature().format(getFormatString()); 
+      return convertToMetricOrStatute(getTemperature()).format(getFormatString()); 
     }
-    function getUnits() as String { return "C"; } //@@ change C or F
+    function getUnits() as String { 
+      if (mDevSettings.temperatureUnits == System.UNIT_STATUTE) { return "°F"; }
+      return "°C"; 
+    } 
     function getLabel() as String {   
       return "Temperature";
     }
 
     function getTemperature() as Float {
-
-        //var tmp = whatApp.mTemperature; // Storage.getValue("Temperature"); // @@ use the mTemperature from app
         if (temperature == null) { return 0.0f;}
         return temperature;
+    }
+
+    hidden function convertToMetricOrStatute(value as Numeric) as Numeric {
+      if (mDevSettings.temperatureUnits == System.UNIT_STATUTE) {
+        value = Utils.celciusToFarenheit(value);
+      }
+      return value;
     }
 
     hidden function getFormatString() as String {
@@ -63,7 +71,6 @@ module WhatAppBase {
         return new ZoneInfo(0, "Temperature", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
       }
-      //var color = getGradeColor(grade);
       
       var percOfTarget = Utils.percentageOf(temperature, targetTemperature);
       var color = percentageToColor(percOfTarget);

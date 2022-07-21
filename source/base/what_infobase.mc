@@ -52,6 +52,7 @@ module WhatAppBase {
     function getFormattedValue() as String { return ""; }
     function getUnits() as String { return ""; }
     function getLabel() as String { return ""; }
+    function getInfo() as String { return ""; }
 
     function getAltZoneInfo() as ZoneInfo {
       return new ZoneInfo(0, "", Graphics.COLOR_WHITE, Graphics.COLOR_BLACK, 0,
@@ -61,6 +62,7 @@ module WhatAppBase {
     function getAltFormattedValue() as String { return ""; }
     function getAltUnits() as String { return getUnits(); }
     function getAltLabel() as String { return ""; }
+    function getAltInfo() as String { return ""; }
 
     function getMaxValue() as WhatValue { return 0.0f; }
     function getMaxZoneInfo() as ZoneInfo {

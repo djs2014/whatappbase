@@ -80,6 +80,7 @@ module WhatAppBase {
         mRadiusInfoField = 29;
         mFontValueStartIndex = 1;
         mFontBottomValueStartIndex = 1;
+        mFontLabelAdditional = Graphics.FONT_XTINY;
       } else if (isWideField()) {
         if (!showBottomInfo && !showTopInfo) {
           mRadiusInfoField = fieldWidth / 4;
@@ -139,6 +140,7 @@ module WhatAppBase {
       } else if (!isSmallField()) {
         var fontValue = Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
         drawAdditonalInfoFG(barX, color, value, fontValue, units,mFontLabelAdditional, label, mFontLabelAdditional,percentage);
+        drawAdditonalInfoFG_Info(barX, fontValue, units, mFontLabelAdditional);
       }
       // outline
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
@@ -315,7 +317,8 @@ module WhatAppBase {
       Utils.drawPercentageRectangle(dc, x, y, width, height, percentage,colorPercentageLine, lineWidth);    
     }
 
-    function drawLeftInfo(label as String, value as String, units as String, zone as ZoneInfo, altZone as ZoneInfo, maxZone as ZoneInfo) as Void {
+    function drawLeftInfo(label as String, value as String, units as String, info as String, 
+              zone as ZoneInfo, altZone as ZoneInfo, maxZone as ZoneInfo) as Void {
       var dc = mDc as Dc;
       var color = zone.fontColor;
       var backColor = zone.color;
@@ -333,14 +336,15 @@ module WhatAppBase {
 
       var fontValue = Utils.getMatchingFont(dc, mFontsValue, mRadiusInfoField * 2, value, mFontValueStartIndex);
       // @@ determine labelFont??//
-      drawAdditonalInfoFG(barX, color, value, fontValue, units,
-                          mFontLabelAdditional, label, mFontLabelAdditional,
-                          percentage);
+      drawAdditonalInfoFG(barX, color, value, fontValue, units, mFontLabelAdditional, label, mFontLabelAdditional, percentage);
+      if (!drawAdditonalInfoFG_Info(barX, fontValue, info, mFontLabelAdditional)) {
+        drawAdditonalInfoFG_Info(barX, fontValue, units, mFontLabelAdditional);
+      }
 
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);      
     }
 
-    function drawRightInfo(label as String, value as String, units as String, 
+    function drawRightInfo(label as String, value as String, units as String, info as String, 
               zone as ZoneInfo, altZone as ZoneInfo, maxZone as ZoneInfo) as Void {
       var dc = mDc as Dc;                
       var color = zone.fontColor;
@@ -361,6 +365,9 @@ module WhatAppBase {
 
       drawAdditonalInfoFG(barX, color, value, fontValue, units,
                           mFontLabelAdditional, label, mFontLabelAdditional, percentage);
+      if (!drawAdditonalInfoFG_Info(barX, fontValue, info, mFontLabelAdditional)) {
+        drawAdditonalInfoFG_Info(barX, fontValue, units, mFontLabelAdditional);
+      }
 
       // outline
       drawAdditonalInfoOutline(barX, mRadiusInfoField, outlineColor);
@@ -440,11 +447,22 @@ module WhatAppBase {
       }
 
       // units
+      // var ha = dc.getFontHeight(fontValue);
+      // if (units != null && units.length() != 0) {
+      //   var yUnits = fieldCenterY + ha / 2;
+      //   dc.drawText(x, yUnits, fontUnits, units, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+      // }
+    }
+
+    hidden function drawAdditonalInfoFG_Info(x as Number, fontValue as FontType, units as String, fontUnits as FontType) as Boolean {
+      // units or info
+      if (units.length() == 0) { return false; }
+
+      var dc = mDc as Dc;
       var ha = dc.getFontHeight(fontValue);
-      if (units != null && units.length() != 0) {
-        var yUnits = fieldCenterY + ha / 2;
-        dc.drawText(x, yUnits, fontUnits, units, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-      }
+      var yUnits = fieldCenterY + ha / 2;
+      dc.drawText(x, yUnits, fontUnits, units, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+      return true;
     }
 
     hidden function drawAdditonalInfoOutline(x as Number, width as Number, color as ColorType) as Void {

@@ -150,6 +150,7 @@ module WhatAppBase {
       var value = wi.getFormattedValue();
       var zone = wi.getZoneInfo();
       var units = wi.getUnits();
+      var info = wi.getInfo();
 
       var label = zone.name;
       if (wi.isLabelHidden()) {  // @@
@@ -157,7 +158,7 @@ module WhatAppBase {
       }
       var altZone = wi.getAltZoneInfo();
       var maxZone = wi.getMaxZoneInfo();
-      mWD.drawLeftInfo(label, value, units, zone, altZone, maxZone);
+      mWD.drawLeftInfo(label, value, units, info, zone, altZone, maxZone);
     }
     function drawTopInfo(dc as Dc) as Void {
       if (mWiTop == null) {
@@ -167,7 +168,7 @@ module WhatAppBase {
 
       var value = wi.getFormattedValue();
       var zone = wi.getZoneInfo();
-      var units = wi.getUnits();
+      var units = wi.getUnits();      
 
       var label = zone.name;
       if (wi.isLabelHidden()) {  // @@
@@ -187,6 +188,7 @@ module WhatAppBase {
       var value = wi.getFormattedValue();
       var zone = wi.getZoneInfo();
       var units = wi.getUnits();
+      var info = wi.getInfo();
 
       var label = zone.name;
       if (wi.isLabelHidden()) {  // @@
@@ -194,7 +196,7 @@ module WhatAppBase {
       }
       var altZone = wi.getAltZoneInfo();
       var maxZone = wi.getMaxZoneInfo();
-      mWD.drawRightInfo(label, value, units, zone, altZone, maxZone);
+      mWD.drawRightInfo(label, value, units, info, zone, altZone, maxZone);
     }
 
     function drawBottomInfoBG(dc as Dc) as Void {
