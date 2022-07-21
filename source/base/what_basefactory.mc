@@ -20,10 +20,10 @@ module WhatAppBase {
     ShowInfoElapsedTime = 12,
     ShowInfoTimer = 13,
     ShowInfoTrainingEffect = 14,
-    ShowInfoTemperature = 15,  // @@ not working yet
+    ShowInfoTemperature = 15,  
     ShowInfoEnergyExpenditure = 16,
     ShowInfoPowerPerBodyWeight = 17,
-    ShowInfoTestField = 18,
+    ShowInfoTestField = 18, // @@ Removed
     ShowInfoPowerVo2Max = 19
     // @@ TODO ShowInfoAscentDescentcombine ascent/descent
   }
@@ -45,8 +45,7 @@ module WhatAppBase {
     hidden var mwTime as WhatTime? = null;
     hidden var mwHeading as WhatHeading? = null;
     hidden var mwEngergyExpenditure as WhatEnergyExpenditure? = null;
-    hidden var mwTestField as WhatTestField? = null;
-
+    
     hidden var mTop as ShowInfo = ShowInfoNothing;
     hidden var mLeft as ShowInfo = ShowInfoNothing;
     hidden var mRight as ShowInfo = ShowInfoNothing;
@@ -103,6 +102,7 @@ module WhatAppBase {
             // zone info is the same
             wi.setCallback(cbFormattedValue, :getPPWFormattedValue);
             wi.setCallback(cbUnits, :getPPWUnits);
+            wi.setCallback(cbInfo, :getPPWInfo);
             wi.setCallback(cbLabel, :getPPWLabel);
           }
           break;
@@ -130,7 +130,6 @@ module WhatAppBase {
     }
 
     function cleanUp() as Void {
-      var test = 0;
       for (var x = 0; x <= gShowInfoMax; x++) {
         var si = x as ShowInfo;
         if (!isVisible(si)) { 
@@ -299,12 +298,7 @@ module WhatAppBase {
             mwVo2Max = new WhatVo2Max();
           }               
           return mwVo2Max;
-
-        case ShowInfoTestField:
-          if (mwTestField == null && createIfNotExists) {
-            mwTestField = new WhatTestField();
-          }
-          return mwTestField;
+       
 
         case ShowInfoNothing:
           return null as WhatInfoBase;
@@ -379,11 +373,7 @@ module WhatAppBase {
 
         case ShowInfoPowerVo2Max:
           mwVo2Max = null;
-          break;
-
-        case ShowInfoTestField:
-          mwTestField = null;
-          break;
+          break;        
 
         case ShowInfoNothing:
         default:

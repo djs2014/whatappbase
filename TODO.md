@@ -1,8 +1,13 @@
 # Todo:
-
 odometer + start km/mi
-odometer current year
+odometer current year / month / week
 
+diff callback for draw info data
+    -- weak object?
+    ex: l/r power balance with color
+    
+-- option to show top/bottom on small field (based on what_x field, like temp/pressure/heading/)
+ 
 x grade <0 colors
 callback for display extra info in field
 power / left/right balance

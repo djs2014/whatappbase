@@ -29,7 +29,7 @@ module WhatAppBase {
     
     function onStop(state as Dictionary?) as Void {
       mFactory.setFields(ShowInfoNothing,ShowInfoNothing,ShowInfoNothing,ShowInfoNothing);
-      mFactory.cleanUp();        
+      mFactory.cleanUp();    
     }
     
     function getInitialView() as Array<Views or InputDelegates> ? {
@@ -128,16 +128,9 @@ module WhatAppBase {
         obj.setTargetGrade(Utils.getApplicationProperty("targetGrade", 8) as Number);  
       } else if (obj instanceof WhatTemperature) {
         obj.setTargetTemperature(Utils.getApplicationProperty("targetTemperature", 20) as Number);  
-      } else if (obj instanceof WhatTestField) {
-        obj.setTargetValue(Utils.getApplicationProperty("targetTestValue", 100) as Number);
-        obj.setValue(Utils.getApplicationProperty("testValue", 145));
-        obj.setAltValue(Utils.getApplicationProperty("testAltValue", 80) as Number);
-      // } else if (obj instanceof WhatTemperature) {
-      //   if (System has : ServiceDelegate) {
-      //     Background.registerForTemporalEvent(FIVE_MINUTES);
-      //   } else {
-      //     System.println("**** background not available on this device ****");
-      //   }
+      } else if (obj instanceof WhatAltitude) {
+        obj.setTargetAltitude(Utils.getApplicationProperty("targetAltitude", 1500) as Number);  
+        obj.setTargetTotalAscent(Utils.getApplicationProperty("targetTotalAscent", 2000) as Number);         
       }
     }
         
