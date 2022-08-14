@@ -3,6 +3,7 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.System;
 import Toybox.Graphics;
+import Toybox.AntPlus;
 using Toybox.UserProfile;
 module WhatAppBase {
 
@@ -21,7 +22,18 @@ module WhatAppBase {
     hidden const SECONDS_TO_FALLBACK = 60;
     hidden var counterToFallback as Number = SECONDS_TO_FALLBACK;
 
-    function initialize() { WhatInfoBase.initialize(); }
+    hidden var bikePower as AntPlus.BikePower;
+    hidden var listener as ABikePowerListener;
+    hidden var mPowerBalanceLeft as Number = 0;
+    hidden var mPowerBalanceRight as Number = 0;  
+    hidden var ticks as Number = 0;
+    hidden var avgPowerBalanceLeft as Double = 0.0d;  
+
+    function initialize() { 
+      WhatInfoBase.initialize();
+      listener = new ABikePowerListener(self.weak(), :onPedalPowerBalanceUpdate);
+      bikePower = new AntPlus.BikePower(listener);        
+      }
 
     function initWeight() as Void {
       var profile = UserProfile.getProfile();
@@ -39,10 +51,10 @@ module WhatAppBase {
       mAvailable = false;
       mActivityPaused = activityIsPaused(info);
       var activityStarted = activityIsStarted(info);
+      var power = 0;
 
       if (info has :currentPower) {
         mAvailable = true;
-        var power = 0;
         if (info.currentPower != null) {
           power = info.currentPower as Number;
           counterToFallback = SECONDS_TO_FALLBACK;
@@ -75,7 +87,24 @@ module WhatAppBase {
           maxPower = info.maxPower as Number;
         }
       }
+
+      if (power > 0 && mPowerBalanceLeft != null && mPowerBalanceLeft > 0) {
+        ticks = ticks + 1;
+        var a = 1 / ticks.toDouble();
+        var b = 1 - a;
+        avgPowerBalanceLeft = (a * mPowerBalanceLeft) + b * avgPowerBalanceLeft;
+      }
       
+    }
+
+    function onPedalPowerBalanceUpdate(pedalPowerPercent as Lang.Number, rightPedalIndicator as Lang.Boolean) as Void {
+        if (rightPedalIndicator) {
+            mPowerBalanceLeft = (100 - pedalPowerPercent);
+            mPowerBalanceRight = pedalPowerPercent;
+        } else {
+            mPowerBalanceLeft = pedalPowerPercent;
+            mPowerBalanceRight = (100 - pedalPowerPercent);
+        }
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(powerPerX(), true); }
@@ -83,7 +112,8 @@ module WhatAppBase {
     function getFormattedValue() as String {
       return powerPerX().format("%.0f");
     }
-    function getUnits() as String { return "w"; }
+    function getUnits() as String { return "w"; }    
+    function getInfo() as String { return _getPowerBalanceString("w"); }    
     function getLabel() as String { return "Power (" + perSec + "sec)"; }
 
     function getAltZoneInfo() as ZoneInfo {
@@ -94,6 +124,7 @@ module WhatAppBase {
       return getAveragePower().format("%.0f");
     }
     function getAltUnits() as String { return "w"; }
+    function getAltInfo() as String { return _getPowerBalanceString("w"); }    
     function getAltLabel() as String { return "Avg power"; }
 
     function getMaxValue() as WhatValue { return getMaxPower(); }
@@ -112,11 +143,18 @@ module WhatAppBase {
       return convertToMetricOrStatute(powerPerWeight()).format("%.1f");
     }
     function getPPWUnits() as String {
+      var units = "w/kg";
       if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
-        return "w/lbs";  // watt per pounds
-      } else {
-        return "w/kg";
+        units = "w/lbs";  // watt per pounds
       }
+      return units;
+    }
+    function getPPWInfo() as String {
+      var units = "w/kg";
+      if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
+        units = "w/lbs";  // watt per pounds
+      }
+      return _getPowerBalanceString(units);
     }
     function getPPWLabel() as String {
       if (mDevSettings.weightUnits == System.UNIT_STATUTE) {
@@ -127,6 +165,18 @@ module WhatAppBase {
     }
         
     //
+
+    function _getPowerBalanceString(units as String) as String { 
+      if (mActivityPaused && avgPowerBalanceLeft > 0) {
+        var avgLeft = avgPowerBalanceLeft.toNumber();
+        return avgLeft.format("%d") + " " + units + " " + (100-avgLeft).format("%d");
+      }
+      if (mPowerBalanceLeft>0 && mPowerBalanceRight>0) {
+        return mPowerBalanceLeft.format("%d") + " " + units + " " + mPowerBalanceRight.format("%d");
+      } 
+      return units;
+    } 
+
     function getPercOfTarget() as Numeric {
       return Utils.percentageOf(powerPerX(), ftp);
     }
