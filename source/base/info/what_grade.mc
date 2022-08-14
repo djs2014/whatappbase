@@ -9,39 +9,90 @@ module WhatAppBase {
     hidden var currentAltitude as Float = 0.0f;
     hidden var previousElapsedDistance as Float = 0.0f;
     hidden var elapsedDistance as Float = 0.0f;
-    hidden var grade as Float = 0.0f;  // %
+    hidden var grade as Double = 0.0d;  // %
     hidden var targetGrade as Number = 8;  // %
+
+    hidden var gradeWindowSize as Number = 4;
+    hidden var arrGrade as Array = [];
+    hidden var gradeCutoff as Number = 100;
+
+    // @@ settings
+    hidden var minimalDistance as Float = 0.0f; // meter
+    hidden var minimalAltitudeDiff as Float = 0.0f; // meter
+
 
     function initialize() { WhatInfoBase.initialize(); }
 
     function setTargetGrade(grade as Number) as Void { self.targetGrade = grade; }
+    function setGradeWindow(size as Number) as Void { self.gradeWindowSize = size; }
 
     function updateInfo(info as Activity.Info) {
+      var runOk = false;
+      var riseOk = false;
+      var rise = 0.0f;
+
       if (info has :altitude) {
-        previousAltitude = currentAltitude;
+        var tmpPreviousAltitude = currentAltitude;
+        var tmpCurrentAltitude = 0.0f;
         if (info.altitude != null) {
-          currentAltitude = info.altitude as Float;
-        } else {
-          currentAltitude = 0.0f;
+          tmpCurrentAltitude = info.altitude as Float;
+        } 
+        System.println("CurrentAltitude: " + tmpCurrentAltitude);
+        var tmpRise = tmpCurrentAltitude - tmpPreviousAltitude;
+        if (Utils.abs(tmpRise) > minimalAltitudeDiff) {
+          runOk = true;
+          rise = tmpRise;
+          
+          currentAltitude = tmpCurrentAltitude;
+          previousAltitude = currentAltitude;
+          
+          System.println("Rise: " + rise);
         }
       }
+    
+      var run = 0.0f;
       if (info has :elapsedDistance) {
-        previousElapsedDistance = elapsedDistance;
-        if (info.elapsedDistance != null) {
-          elapsedDistance = info.elapsedDistance as Float;
-        } else {
-          elapsedDistance = 0.0f;
+        var tmpPreviousElapsedDistance = elapsedDistance;
+        var tmpElapsedDistance = 0.0f;
+        if (info.elapsedDistance != null) { tmpElapsedDistance = info.elapsedDistance as Float; } 
+        run = tmpElapsedDistance - tmpPreviousElapsedDistance;
+        if (run > minimalDistance) {
+          riseOk = true;
+          elapsedDistance = tmpElapsedDistance;
+          previousElapsedDistance = tmpPreviousElapsedDistance;
+          System.println("Run (distance): " + run );
         }
       }
 
-      grade = 0.0f;
-      if (info has :altitude && info has :elapsedDistance) {
-        var rise = currentAltitude - previousAltitude;
-        var run = elapsedDistance - previousElapsedDistance;
-        if (run != 0.0) {
-          grade = (rise.toFloat() / run.toFloat()) * 100.0;
-        }
+      var tmpGrade = 0.0f;
+      if (runOk || riseOk) {                    
+          if (run != 0.0) {
+            tmpGrade = (rise.toFloat() / run.toFloat()) * 100.0;
+            System.println("tmpGrade: " + tmpGrade);         
+          }
       }
+      
+      System.println(arrGrade);
+      var skip = Utils.abs(tmpGrade) > gradeCutoff;
+
+      if (skip || (arrGrade.size() == 0 && tmpGrade == 0 && grade == 0)) { 
+        // No need to add 0 if already 0 
+      } else if (runOk || riseOk) {
+
+        if (((tmpGrade >=0 && grade < 0) || (tmpGrade < 0 && grade >= 0)) && arrGrade.size() > 1) {
+          // Reset array - only last element remains
+          arrGrade = arrGrade.slice(-1, null); 
+        }  
+        
+        arrGrade.add(tmpGrade);
+        if (arrGrade.size() > gradeWindowSize) {
+            arrGrade = arrGrade.slice(1, null);
+        }
+        grade = Math.mean(arrGrade as Array<Float>);
+        if (grade == 0) { arrGrade = []; }
+        System.println("grade: " + grade);
+      }
+      
     }
 
     function getZoneInfo() as ZoneInfo { return _getZoneInfo(getGrade()); }
@@ -65,14 +116,14 @@ module WhatAppBase {
       return self.elapsedDistance;
     }
 
-    hidden function getGrade() as Float {
+    hidden function getGrade() as Double {
       if (grade == null) {
-        return 0.0f;
+        return 0.0d;
       }
       return grade;
     }
 
-    hidden function _getZoneInfo(grade as Float) as ZoneInfo {
+    hidden function _getZoneInfo(grade as Double) as ZoneInfo {
       if (grade == null || grade == 0) {
         return new ZoneInfo(0, "Grade", Graphics.COLOR_WHITE,
                             Graphics.COLOR_BLACK, 0, null);
@@ -88,50 +139,6 @@ module WhatAppBase {
 
       return new ZoneInfo(0, "Grade", color, Graphics.COLOR_BLACK, percOfTarget, color100perc);
     }
-
-    // hidden function getGradeColor(grade as Float) as ColorType {
-    //   if (grade < -12) {
-    //     return Colors.COLOR_WHITE_DK_BLUE_4;
-    //   }
-    //   if (grade < -10) {
-    //     return Colors.COLOR_WHITE_DK_BLUE_3;
-    //   }
-    //   if (grade < -4) {
-    //     return Colors.COLOR_WHITE_BLUE_3;
-    //   }
-
-    //   if (grade < 0) {
-    //     return Colors.COLOR_WHITE_LT_GREEN_3;
-    //   }
-    //   if (grade < 4) {
-    //     return Colors.COLOR_WHITE_GREEN_3;
-    //   }
-
-    //   if (grade < 6) {
-    //     return Colors.COLOR_WHITE_YELLOW_3;
-    //   }
-    //   if (grade < 8) {
-    //     return Colors.COLOR_WHITE_ORANGE_3;
-    //   }
-    //   if (grade < 10) {
-    //     return Colors.COLOR_WHITE_ORANGERED_3;
-    //   }
-    //   if (grade < 12) {
-    //     return Colors.COLOR_WHITE_ORANGERED2_3;
-    //   }
-    //   if (grade < 14) {
-    //     return Colors.COLOR_WHITE_RED_3;
-    //   }
-    //   if (grade < 15) {
-    //     return Colors.COLOR_WHITE_DK_RED_3;
-    //   }
-    //   if (grade < 16) {
-    //     return Colors.COLOR_WHITE_PURPLE_3;
-    //   }
-    //   if (grade < 17) {
-    //     return Colors.COLOR_WHITE_DK_PURPLE_3;
-    //   }
-    //   return Colors.COLOR_WHITE_DK_PURPLE_4;
-    // }
+    
   }
 }

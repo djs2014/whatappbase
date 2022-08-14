@@ -126,6 +126,7 @@ module WhatAppBase {
         obj.setMinimalElapsedDistanceInMeters(Utils.getApplicationProperty("minimalElapsedDistanceInMeters", 0) as Number);
       } else if (obj instanceof WhatGrade) {
         obj.setTargetGrade(Utils.getApplicationProperty("targetGrade", 8) as Number);  
+        obj.setGradeWindow(Utils.getApplicationProperty("gradeWindowSize", 3) as Number);  
       } else if (obj instanceof WhatTemperature) {
         obj.setTargetTemperature(Utils.getApplicationProperty("targetTemperature", 20) as Number);  
       } else if (obj instanceof WhatTestField) {
