@@ -12,6 +12,11 @@ module WhatAppBase {
     hidden var mAvailable as Boolean = true;
     hidden var mLabelHidden as Boolean = false;
     hidden var mActivityPaused as Boolean = false;
+    hidden var mActivityStarted as Boolean = false; // Started, includes paused
+    hidden var mActivityActive as Boolean = false; 
+    hidden var mActivityStartedOrResumed as Boolean = false; 
+    hidden var mActivityStoppedOrPaused as Boolean = false; 
+    hidden var mActivityState as Number = Activity.TIMER_STATE_OFF;    
     hidden var mDebug as Boolean = false;
 
     function initialize() {}
@@ -23,26 +28,27 @@ module WhatAppBase {
     function getFieldType() as Number { return mFieldType; }
 
     function setDebug(debug as Boolean) as Void { mDebug = debug; }
-    function isDebug() as Boolean { return mDebug; }
-
-    function activityIsPaused(info as Activity.Info) as Boolean {
-      if (info has :timerState) {
-        return info.timerState == Activity.TIMER_STATE_PAUSED;
-      }
-      return false;
-    }
-    function activityIsStarted(info as Activity.Info) as Boolean {
-      if (info has :timerState) {
-        return info.timerState != Activity.TIMER_STATE_OFF;
-      }
-      return false;
-    }
-    // function showAverageWhenPaused() {
-    //   return showAverageWhenmActivityPaused && mActivityPaused;
-    // }
+    function isDebug() as Boolean { return mDebug; }   
 
     // ---
-    function updateInfo(info as Activity.Info) as Void {}
+    function updateInfo(info as Activity.Info) as Void {
+      if (info has :timerState && info.timerState != null) {
+         var activityState = info.timerState as Number;
+         mActivityPaused = activityState == Activity.TIMER_STATE_PAUSED;
+         mActivityStarted = activityState != Activity.TIMER_STATE_OFF;
+         mActivityActive = activityState == Activity.TIMER_STATE_ON;
+         mActivityStartedOrResumed = false;
+         mActivityStoppedOrPaused = false;
+         if (mActivityActive && mActivityState != Activity.TIMER_STATE_ON) {
+          mActivityStartedOrResumed = true;
+         }
+         if (!mActivityActive && 
+          (mActivityState == Activity.TIMER_STATE_PAUSED || mActivityState == Activity.TIMER_STATE_STOPPED)) {
+           mActivityStoppedOrPaused = true;
+         }
+         mActivityState = activityState;
+      }
+    }
 
     function getZoneInfo() as ZoneInfo {
       return new ZoneInfo(0, "", Graphics.COLOR_WHITE, Graphics.COLOR_BLACK, 0,

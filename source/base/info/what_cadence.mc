@@ -13,7 +13,8 @@ module WhatAppBase {
     function setTargetCadence(targetCadence as Number) as Void { self.targetCadence = targetCadence; }
 
     function updateInfo(info as Activity.Info) as Void {
-      mActivityPaused = activityIsPaused(info);
+      WhatInfoBase.updateInfo(info);
+      // mActivityPaused = activityIsPaused(info);
       if (info has :currentCadence) {
         if (info.currentCadence != null) {
           currentCadence = info.currentCadence as Number;

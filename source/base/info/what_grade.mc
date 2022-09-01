@@ -19,7 +19,8 @@ module WhatAppBase {
     // @@ settings
     hidden var minimalDistance as Float = 0.0f; // meter
     hidden var minimalAltitudeDiff as Float = 0.0f; // meter
-
+    hidden var initialCountDownAfterActivityResume as Number = 3; // seconds
+    hidden var countDownAfterActivityResume as Number = 0;
 
     function initialize() { WhatInfoBase.initialize(); }
 
@@ -27,10 +28,15 @@ module WhatAppBase {
     function setGradeWindow(size as Number) as Void { self.gradeWindowSize = size; }
 
     function updateInfo(info as Activity.Info) {
+      WhatInfoBase.updateInfo(info);
       var runOk = false;
       var riseOk = false;
       var rise = 0.0f;
-
+      // mActivityPaused = activityIsPaused(info);
+      
+      if (mActivityStartedOrResumed || mActivityStoppedOrPaused) {
+        countDownAfterActivityResume = initialCountDownAfterActivityResume;
+      }
       if (info has :altitude) {
         var tmpPreviousAltitude = currentAltitude;
         var tmpCurrentAltitude = 0.0f;
@@ -75,6 +81,16 @@ module WhatAppBase {
       System.println(arrGrade);
       var skip = Utils.abs(tmpGrade) > gradeCutoff;
 
+      if (mActivityPaused) {
+        skip = true;
+        arrGrade = [];
+        grade = 0.0d;
+      } else if (countDownAfterActivityResume > 0) {
+        countDownAfterActivityResume = countDownAfterActivityResume - 1;
+        skip = true;
+        arrGrade = [];
+        grade = 0.0d;
+      }
       if (skip || (arrGrade.size() == 0 && tmpGrade == 0 && grade == 0)) { 
         // No need to add 0 if already 0 
       } else if (runOk || riseOk) {

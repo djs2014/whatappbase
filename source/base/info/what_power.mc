@@ -48,9 +48,11 @@ module WhatAppBase {
    
     // Must be called once per second
     function updateInfo(info as Activity.Info) as Void {
+      WhatInfoBase.updateInfo(info);
+
       mAvailable = false;
-      mActivityPaused = activityIsPaused(info);
-      var activityStarted = activityIsStarted(info);
+      //mActivityPaused = activityIsPaused(info);
+      //var activityStarted = activityIsStarted(info);
       var power = 0;
 
       if (info has :currentPower) {
@@ -58,7 +60,7 @@ module WhatAppBase {
         if (info.currentPower != null) {
           power = info.currentPower as Number;
           counterToFallback = SECONDS_TO_FALLBACK;
-        } else if (activityStarted && !mActivityPaused) {
+        } else if (mActivityStarted && !mActivityPaused) {
           // When activity not paused and no power for x seconds
           if (counterToFallback < 0) {
             mAvailable = false;

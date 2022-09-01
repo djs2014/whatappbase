@@ -13,8 +13,9 @@ module WhatAppBase {
     function setTargetSpeed(targetSpeed as Float) as Void { self.targetSpeed = targetSpeed; }
 
     function updateInfo(info as Activity.Info) as Void {
+      WhatInfoBase.updateInfo(info);
       mAvailable = false;
-      mActivityPaused = activityIsPaused(info);
+      // mActivityPaused = activityIsPaused(info);
       if (info has :currentSpeed) {
         mAvailable = true;
         if (info.currentSpeed != null) {

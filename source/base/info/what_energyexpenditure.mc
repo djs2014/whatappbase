@@ -17,7 +17,8 @@ module WhatAppBase {
     }
 
     function updateInfo(info as Activity.Info) as Void {
-      mActivityPaused = activityIsPaused(info);
+      WhatInfoBase.updateInfo(info);
+      // mActivityPaused = activityIsPaused(info);
       if (info has : energyExpenditure) {
         if (info.energyExpenditure != null) {
           energyExpenditure = info.energyExpenditure as Float;

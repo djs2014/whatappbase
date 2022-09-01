@@ -7,7 +7,10 @@ diff callback for draw info data
     ex: l/r power balance with color
     
 -- option to show top/bottom on small field (based on what_x field, like temp/pressure/heading/)
- 
+
+grade: activity paused -> stop calculating / reset 
+activity started -> wait 2 seconds before calculating
+
 x grade <0 colors
 callback for display extra info in field
 power / left/right balance

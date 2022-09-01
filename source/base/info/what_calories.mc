@@ -21,7 +21,8 @@ module WhatAppBase {
     }
 
     function updateInfo(info as Activity.Info) as Void {
-      mActivityPaused = activityIsPaused(info);
+      WhatInfoBase.updateInfo(info);
+      // mActivityPaused = activityIsPaused(info);
       
       if (info has :calories) {
         if (info.calories != null) {

@@ -38,8 +38,9 @@ module WhatAppBase {
    
     // Must be called once per second
     function updateInfo(info as Activity.Info) as Void {
+      WhatInfoBase.updateInfo(info);
       mAvailable = false;
-      mActivityPaused = activityIsPaused(info);
+      // mActivityPaused = activityIsPaused(info);
 
       if (info has :currentPower) {
         mAvailable = true;
