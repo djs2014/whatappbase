@@ -41,7 +41,7 @@ module WhatAppBase {
       if (mTrainingEffect == null) {
         return 0.0f;
       }
-      return mTrainingEffect;
+      return mTrainingEffect as Float;
     }
     
     hidden function _getZoneInfo(effect as Float?) as ZoneInfo {

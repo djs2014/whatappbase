@@ -17,6 +17,8 @@ module WhatAppBase {
         var mBGActive as Boolean = false;
         var mBGDisabled as Boolean = false;
 
+        var mCheckPhoneConnected as Boolean = false;
+        
         var mUpdateFrequencyInMinutes as Number = 5;
         var mRequestCounter as Number = 0; 
         var mObservationTimeDelayedMinutesThreshold as Number = 10;
@@ -84,7 +86,7 @@ module WhatAppBase {
                 mError =BGService.ERROR_BG_NONE;
             }
             
-            if (!mPhoneConnected) {
+            if (mCheckPhoneConnected && !mPhoneConnected) {
                 mError =BGService.ERROR_BG_NO_PHONE;            
             } else if (mCurrentLocation != null) {
                 var currentLocation = mCurrentLocation as Utils.CurrentLocation;

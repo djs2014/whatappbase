@@ -180,7 +180,7 @@ module WhatAppBase {
             }
           }
 
-          return mwPower;
+          return mwPower as WhatInfoBase;
 
         case ShowInfoHeartrate:
           if (mwHeartrate == null && createIfNotExists) {
@@ -193,49 +193,49 @@ module WhatAppBase {
               return _getInstance(hrFallback, ShowInfoNothing, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
             }
           }
-          return mwHeartrate;
+          return mwHeartrate as WhatInfoBase;
 
         case ShowInfoSpeed:
           if (mwSpeed == null && createIfNotExists) {
             mwSpeed = new WhatSpeed();
           }
-          return mwSpeed;
+          return mwSpeed as WhatInfoBase;
 
         case ShowInfoCadence:
           if (mwCadence == null && createIfNotExists) {
             mwCadence = new WhatCadence();
           }
-          return mwCadence;
+          return mwCadence as WhatInfoBase;
 
         case ShowInfoAltitude:
           if (mwAltitude == null && createIfNotExists) {
             mwAltitude = new WhatAltitude();
           }
-          return mwAltitude;
+          return mwAltitude as WhatInfoBase;
 
         case ShowInfoGrade:
           if (mwGrade == null && createIfNotExists) {
             mwGrade = new WhatGrade();
           }
-          return mwGrade;
+          return mwGrade as WhatInfoBase;
 
         case ShowInfoHeading:
           if (mwHeading == null && createIfNotExists) {
             mwHeading = new WhatHeading();
           }
-          return mwHeading;
+          return mwHeading as WhatInfoBase;
 
         case ShowInfoDistance:
           if (mwDistance == null && createIfNotExists) {
             mwDistance = new WhatDistance();
           }
-          return mwDistance;
+          return mwDistance as WhatInfoBase;
 
         case ShowInfoAmbientPressure:
           if (mwPressure == null && createIfNotExists) {
             mwPressure = new WhatPressure();
           }
-          return mwPressure;
+          return mwPressure as WhatInfoBase;
 
         case ShowInfoTimeOfDay:
         case ShowInfoElapsedTime:
@@ -243,13 +243,13 @@ module WhatAppBase {
           if (mwTime == null && createIfNotExists) {
             mwTime = new WhatTime();
           }
-          return mwTime;
+          return mwTime as WhatInfoBase;
 
         case ShowInfoCalories:
           if (mwCalories == null && createIfNotExists) {
             mwCalories = new WhatCalories();
           }
-          return mwCalories;
+          return mwCalories as WhatInfoBase;
 
           //   case ShowInfoTotalDescent:
           //     return new WhatInformation(mwAltitude);
@@ -265,19 +265,19 @@ module WhatAppBase {
               return _getInstance(trainingEffectFallback, ShowInfoNothing, ShowInfoNothing, ShowInfoNothing, createIfNotExists);
             }
           }
-          return mwTrainingEffect;
+          return mwTrainingEffect as WhatInfoBase;
 
         case ShowInfoTemperature:
           if (mwTemperature == null && createIfNotExists) {
             mwTemperature = new WhatTemperature();
           }
-          return mwTemperature;
+          return mwTemperature as WhatInfoBase;
 
         case ShowInfoEnergyExpenditure:
           if (mwEngergyExpenditure == null && createIfNotExists) {
             mwEngergyExpenditure = new WhatEnergyExpenditure();
           }
-          return mwEngergyExpenditure;
+          return mwEngergyExpenditure as WhatInfoBase;
 
         case ShowInfoPowerPerBodyWeight:
           if (mwPowerPerWeight == null && createIfNotExists) {
@@ -291,13 +291,13 @@ module WhatAppBase {
             }
           }
 
-          return mwPowerPerWeight;
+          return mwPowerPerWeight as WhatInfoBase;
 
         case ShowInfoPowerVo2Max:
           if (mwVo2Max == null && createIfNotExists) {
             mwVo2Max = new WhatVo2Max();
           }               
-          return mwVo2Max;
+          return mwVo2Max as WhatInfoBase;
        
 
         case ShowInfoNothing:

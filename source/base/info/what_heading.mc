@@ -108,7 +108,7 @@ module WhatAppBase {
         degrees = previousDegrees;
       }
       previousDegrees = degrees as Number;
-      return degrees;
+      return degrees as Number?;
     }
 
     // Heading in degrees

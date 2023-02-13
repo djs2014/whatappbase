@@ -144,7 +144,7 @@ module WhatAppBase {
           if (data.hasKey("Temperature")) { 
             var wt = mFactory.getTemperatureInstance();
             if (wt != null) {
-              wt.setTemperature(data["Temperature"]);
+              wt.setTemperature(data["Temperature"] as Float?);
             }
             //@@ remove mTemperature = data["Temperature"];                              
           }
@@ -154,12 +154,12 @@ module WhatAppBase {
 
     function getBGServiceHandler() as BGServiceHandler {
       if (mBGServiceHandler == null) { mBGServiceHandler = new BGServiceHandler(); }
-      return mBGServiceHandler;
+      return mBGServiceHandler as BGServiceHandler;
     }
 
     static function instance() as WhatApp {
       if (gWhatApp == null) { gWhatApp = new WhatApp(); }
-      return gWhatApp;
+      return gWhatApp as WhatApp;
     }
     
   }

@@ -44,7 +44,7 @@ module WhatAppBase {
 
     function getTemperature() as Float {
         if (temperature == null) { return 0.0f;}
-        return temperature;
+        return temperature as Float;
     }
 
     hidden function convertToMetricOrStatute(value as Numeric) as Numeric {

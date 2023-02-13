@@ -1,6 +1,8 @@
 # Todo:
 odometer + start km/mi
-odometer current year / month / week
+odometer current year / month / week / new tyre
+
+altitude -> speed less than 15km/u -> show meters in perc circle
 
 diff callback for draw info data
     -- weak object?

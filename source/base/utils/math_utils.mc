@@ -55,8 +55,8 @@ module WhatAppBase {
     }
 
     function valueOfPercentage(percentage as Numeric?, maxValue as Numeric?) as Numeric {
-      if (percentage == null || maxValue == null) { return maxValue;}
-      return (maxValue * (percentage / 100.0));
+      if (percentage == null || maxValue == null) { return maxValue as Numeric;}
+      return (maxValue * (percentage / 100.0)) as Numeric;
     }
 
     // straight line formula y = slope * x + b;

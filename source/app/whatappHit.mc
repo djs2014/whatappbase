@@ -338,7 +338,7 @@ module WhatAppBase {
 
     function getVo2Max() as Float {
       if (wVo2Max == null) { return 0.0f; }
-      return (wVo2Max as WhatVo2Max).getValue();
+      return (wVo2Max as WhatVo2Max).getValue() as Float;
     }
     
     // @@ settings, no sound

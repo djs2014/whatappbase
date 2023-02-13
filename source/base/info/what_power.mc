@@ -139,7 +139,7 @@ module WhatAppBase {
     //   return _getZoneInfo(powerPerX()); 
     // }
     function getPPWValue() as Number {
-      return convertToMetricOrStatute(powerPerWeight());
+      return convertToMetricOrStatute(powerPerWeight()) as Number;
     }
     function getPPWFormattedValue() as String {
       return convertToMetricOrStatute(powerPerWeight()).format("%.1f");

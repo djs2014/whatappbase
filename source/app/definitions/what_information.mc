@@ -56,30 +56,30 @@ import Toybox.Activity;
       methodIsLabelHidden = new Lang.Method(self.objInstance, :isLabelHidden);
     }
 
-    function getObject() as WhatInfoBase? { return objInstance; }
+    function getObject() as WhatInfoBase? { return objInstance as WhatInfoBase?; }
     function updateInfo(info as Activity.Info) as Void { methodUpdateInfo.invoke(info); }
 
     // @@ TODO
     function isLabelHidden() as Boolean {
-      return methodIsLabelHidden.invoke();
+      return methodIsLabelHidden.invoke() as Boolean;
     }
 
-    function getZoneInfo() as ZoneInfo { return methodGetZoneInfo.invoke(); }
+    function getZoneInfo() as ZoneInfo { return methodGetZoneInfo.invoke() as ZoneInfo; }
     // function getValue() as WhatValue { return methodGetValue.invoke(); }
-    function getFormattedValue() as String { return methodGetFormattedValue.invoke(); }
-    function getUnits() as String { return methodGetUnits.invoke(); }
-    function getInfo() as String { return methodGetInfo.invoke(); }
-    function getLabel() as String { return methodGetLabel.invoke(); }
+    function getFormattedValue() as String { return methodGetFormattedValue.invoke() as String; }
+    function getUnits() as String { return methodGetUnits.invoke() as String; }
+    function getInfo() as String { return methodGetInfo.invoke() as String; }
+    function getLabel() as String { return methodGetLabel.invoke() as String; }
 
-    function getAltZoneInfo() as ZoneInfo { return methodGetAltZoneInfo.invoke(); }
+    function getAltZoneInfo() as ZoneInfo { return methodGetAltZoneInfo.invoke() as ZoneInfo; }
     // function getAltValue() as WhatValue { return methodGetAltValue.invoke(); }
-    function getAltFormattedValue() as String { return methodGetAltFormattedValue.invoke(); }
-    function getAltUnits() as String { return methodGetAltUnits.invoke(); }
-    function getAltInfo() as String { return methodGetAltInfo.invoke(); }
-    function getAltLabel() as String { return methodGetAltLabel.invoke(); }
+    function getAltFormattedValue() as String { return methodGetAltFormattedValue.invoke() as String; }
+    function getAltUnits() as String { return methodGetAltUnits.invoke() as String; }
+    function getAltInfo() as String { return methodGetAltInfo.invoke() as String; }
+    function getAltLabel() as String { return methodGetAltLabel.invoke() as String; }
 
-    function getMaxZoneInfo() as ZoneInfo { return methodGetMaxZoneInfo.invoke(); }
-    function getMaxValue() as WhatValue { return methodGetMaxValue.invoke(); }
+    function getMaxZoneInfo() as ZoneInfo { return methodGetMaxZoneInfo.invoke() as ZoneInfo; }
+    function getMaxValue() as WhatValue { return methodGetMaxValue.invoke() as WhatValue; }
 
     function setCallback(callbackMethod as CallbackType, callback as Symbol) as Void {
       switch (callbackMethod) {
