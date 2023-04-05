@@ -1,8 +1,16 @@
 # Todo:
-odometer + start km/mi
-odometer current year / month / week / new tyre
+redesign only for edge 1040+
+transparent color etc.
+on device settings
+git module base
+
+
+top: large font calc with ex heading
 
 altitude -> speed less than 15km/u -> show meters in perc circle
+ - extra show total asc/desc
+
+temp bg allow even if phone not connected.
 
 diff callback for draw info data
     -- weak object?

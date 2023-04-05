@@ -104,12 +104,9 @@ module WhatAppBase {
       mWD.onUpdate(dc);
 
       mWD.setNightMode((getBackgroundColor() == Graphics.COLOR_BLACK));
-      var TopFontColor = null;
       if (mWD.isNightMode()) {  // @@ in mWD
-        TopFontColor = Graphics.COLOR_WHITE;
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
       } else {
-        TopFontColor = Graphics.COLOR_BLACK;
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
       }
 

@@ -35,5 +35,19 @@ module WhatAppBase {
       }
       return dflt;
     }
+
+    function getNumericValue(value as Numeric?, def as Numeric?) as Numeric? {
+      if (value == null) {
+        return def;
+      }
+      return value;
+    }
+
+    function getStringValue(value as String?, def as String?) as String? {
+      if (value == null) {
+        return def;
+      }
+      return value;
+    }
   }
 }

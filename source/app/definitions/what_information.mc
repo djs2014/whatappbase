@@ -1,7 +1,7 @@
-module WhatAppBase {
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.Activity;
+module WhatAppBase {
 
   class WhatInformation {
     var objInstance as Object?;
